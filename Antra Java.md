@@ -1580,7 +1580,33 @@ why mongoDB and redis did not achieve availability? High consistency > availabil
 
 ## MongoDB
 
+MongoDB是一个基于文档型数据库，MongoDB中文档数据，使用BSON（一种和JSON类似的 (Binary JSON)）东西作为数据格式。
+
+![img](https://static001.infoq.cn/resource/image/0c/e8/0c7485717cce321c7ab85de654f524e8.png)
+
 ### MongoDB
+
+```json
+{
+  "_id": 1,
+  "name" : { "first" : "John", "last" : "Backus" },
+  "contribs" : [ "Fortran", "ALGOL", "Backus-Naur Form", "FP" ],
+  "awards" : [
+    {
+      "award" : "W.W. McDowell Award",
+      "year" : 1967,
+      "by" : "IEEE Computer Society"
+    }, {
+      "award" : "Draper Prize",
+      "year" : 1993,
+      "by" : "National Academy of Engineering"
+    }
+  ]
+}
+
+```
+
+
 
 • document store, no-sql database
 • hash-based, schema-less database
