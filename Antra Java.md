@@ -817,7 +817,7 @@ static 和 transient 区别：transient修饰的变量跟普通的成员变量�
 
 ## Java 8 features - Lambda Expression
 
-one line statement, a simpified anonymous method.
+one line statement, a simpified anonymous method. lambda expression经常用来做argument（work with functional interface).
 
 ![img](https://pic3.zhimg.com/80/v2-a712753b42972e094a548ae02fa82987_720w.jpg?source=1940ef5c)
 
@@ -1027,6 +1027,8 @@ System.out.println("Average of all prime numbers : " + stats.getAverage());
 
 a functional interface only has one abstract method. 
 
+https://www.cnblogs.com/javazhiyin/p/12009464.html 从入门到入土：Lambda完整学习指南，包教包会！
+
 ![2](/Users/spikycrown/Desktop/lec notes/2.png)
 
 | 口诀                                 | 接口签名       | 接口方法          |
@@ -1063,15 +1065,80 @@ public interface Comparator<T> {
 }
 ```
 
-##### predicate interface
+```java
+//Consumer   
+@Test
+    public void test1(){
+        hello("张三", (m) -> System.out.println("你好：" + m));
+    }
+    public void hello(String st, Consumer<String> con){
+        con.accept(st);
+    }
+
+
+ //Supplier<T> 供给型接口 :
+    @Test
+    public void test2(){
+        List list = Arrays.asList(121, 1231, 455, 56, 67,78);
+        List<Integer> numList = getNumList(1, () -> (int)(Math.random() * 100));
+        for (Integer num : numList) {
+            System.out.println(num);
+        }
+    }
+    //需求：产生指定个数的整数，并放入集合中
+    public List<Integer> getNumList(int num, Supplier<Integer> sup){
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < num; i++) {
+            Integer n = sup.get();
+            list.add(n);
+        }
+        return list;
+    }
+
+    //Function<T, R> 函数型接口：
+    @Test
+    public void test3(){
+        String newStr = strHandler("ttt 这是一个函数型接口 ", (str) -> str.trim());
+        System.out.println(newStr);
+        String subStr = strHandler("这是一个函数型接口", (str) -> str.substring(4, 7));
+        System.out.println(subStr);
+    }
+    //需求：用于处理字符串
+    public String strHandler(String str, Function<String, String> fun){
+        return fun.apply(str);
+    }
+
+
+  // Predicate<T> 断言型接口：
+    @Test
+    public void test4(){
+        List<String> list = Arrays.asList("Hello", "Java8", "Lambda", "www", "ok");
+        List<String> strList = filterStr(list, (s) -> s.length() > 3);
+        for (String str : strList) {
+            System.out.println(str);
+        }
+    }
+    //需求：将满足条件的字符串，放入集合中
+    public List<String> filterStr(List<String> list, Predicate<String> pre){
+        List<String> strList = new ArrayList<>();
+        for (String str : list) {
+            if(pre.test(str)){
+                strList.add(str);
+            }
+        }
+        return strList;
+    }
+```
+
+
 
 ##### Method Reference
 
 ## Java 8 features - Stream API
 
-## ![3](/Users/spikycrown/Desktop/lec notes/3.png) 
-
 ### What is a stream?
+
+![3.png](https://github.com/aloha666/Java2021/blob/main/3.png?raw=true)
 
 A stream does not store data and, in that sense, is not a data structure. It also never modifies the underlying data source.This functionality – java.util.stream – supports functional-style operations on streams of elements, such as map-reduce transformations on collections.
 声明但不计算 最后需要取值再计算， can be infinit.(https://www.runoob.com/java/java8-streams.html)  
@@ -1166,6 +1233,8 @@ isPresent(): check optional instance is empty or not
 of(object): pop out nullpointerexception if object is null
 
 ofNullable(object): accept null value if object is null
+
+
 
 ## MultiThreading
 
@@ -1349,7 +1418,7 @@ public class ForkJoinCalculator implements Calculator {
 
 **File System**: a way of arranging files in a storage medium like the hard disk
 
-![4](C:\Users\GrantW\Downloads\md\4.png)
+![4.png](https://github.com/aloha666/Java2021/blob/main/4.png?raw=true)
 
 
 
@@ -1431,3 +1500,157 @@ normalization: eliminate redundant data and ensure the data is stored logically
 
 • be in 2NF
 • has no transitive functional dependencies
+
+
+
+# Lecture 7 
+
+## Non-relational Databse
+
+does not use the tabular schema of rows and columns, Instead, it uses a storage model that isoptimized for specific requirements of the type of data being stored.
+
+### Document data stores  
+
+○key
+○ document: form of JSON documents -> XML, YAML, JSON, BSON
+
+代表：MongoDB , CouchDB
+
+### columnar data stores
+
+○column family
+
+代表：Cassandra, Hbase
+
+### de-normalization
+
+
+
+### Key/value data stores
+
+○essentially a large hash table
+
+代表：Redis, riak
+
+### Graph data stores
+
+○node: entity
+
+○edge: relationship
+
+代表：Neo4j, Hyper GrphDb
+
+
+
+## CAP Theory
+
+Consistency: all clients will always have the same view of data
+
+Availability: each client can always read and write the data
+
+Partition tolerance: the system works well despite the physical network partition
+
+CAP theorem: satisfying all three at the same time is impossible, 
+
+CP 代表: BigTable, MongoDB, Hbase, Redis
+
+ AP 代表: DynamoDB, Cassandra, Cassandra, CouchDb, Riak
+
+
+
+## Sharding and replica
+
+### Sharding of data
+
+• distributes a single logical database system across a cluster of machines
+• use range-based partition to distribute documents based on a specific shard key
+
+### Replica
+
+• copy of database
+• failover (zero downtime)
+
+
+
+## MongoDB
+
+### MongoDB
+
+• document store, no-sql database
+• hash-based, schema-less database
+• written in C++
+• support API in many computer language:
+
+
+
+**Mongod**: database instance
+
+### Mongos: sharding process
+
+• analogous to a database router
+• process all request
+• decides how many and which mongods should receive the query
+• collect the result and send it back
+
+### Mongo:  an interactive shell
+
+
+
+### Functionality of MongoDb
+
+• dynamic schema
+• document based
+• support secondary indexes
+
+• master-slave replication
+• horizontal scaling
+• range based partition
+• no joins and transactions
+• CP
+
+
+
+## Redis
+
+Redis (remote directory server) is an in-memory, key value data
+
+### structure store 
+
+• key :  Printable ASCII 
+
+• value :
+
+​		○ primitives: String 
+
+​		○ Containers (of strings) :Hashes, Lists, Sets, Sorted Sets
+
+
+
+### Redis usage in cache
+
+
+
+### Redis suports two persistence mechanisms
+
+• RDB (redis database): the RDB persistence performs point-in-time snapshots of dataset as specifiedintervals
+
+• AOF (append only file): the AOF persistence logs every write operation received by the server
+
+
+
+### Redis 
+
+• various data types
+
+ • support persistence mechanish 
+
+• support cluster mode
+
+### Other usage:
+
+• distributed lock
+		○ SETNX (set if not exists)
+					• return 0, the key is already locked by some other clients
+					• return 1, the client get the lock
+• message system
+• store configuration information
