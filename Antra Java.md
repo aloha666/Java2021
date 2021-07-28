@@ -1509,30 +1509,36 @@ normalization: eliminate redundant data and ensure the data is stored logically
 
 does not use the tabular schema of rows and columns, Instead, it uses a storage model that isoptimized for specific requirements of the type of data being stored.
 
-### Document data stores  
+### 1. Document data stores  
 
-○key
-○ document: form of JSON documents -> XML, YAML, JSON, BSON
+Two filelds:
 
-代表：MongoDB , CouchDB
+​		○**key**
+​		○ **document**: form of JSON documents -> XML, YAML, JSON, BSON
 
-### columnar data stores
+代表：**MongoDB** , CouchDB
 
-○column family
+
+
+### 2. columnar data stores or column family 
+
+One column family is one topic/ID.
+
+**de-normalization**: group all information in one column family
 
 代表：Cassandra, Hbase
 
-### de-normalization
+
+
+### 3. Key/value data stores
+
+essentially a large hash table, hash value is opaque to data store
+
+代表：**Redis**, riak
 
 
 
-### Key/value data stores
-
-○essentially a large hash table
-
-代表：Redis, riak
-
-### Graph data stores
+### 4.Graph data stores
 
 ○node: entity
 
@@ -1548,15 +1554,15 @@ Consistency: all clients will always have the same view of data
 
 Availability: each client can always read and write the data
 
-Partition tolerance: the system works well despite the physical network partition
+Partition tolerance: the system works well despite the physical network partition (always achieve in non-relation database since they are distributed)
 
 CAP theorem: satisfying all three at the same time is impossible, 
 
-CP 代表: BigTable, MongoDB, Hbase, Redis
+CP 代表: BigTable, **MongoDB**, Hbase, **Redis**
 
  AP 代表: DynamoDB, Cassandra, Cassandra, CouchDb, Riak
 
-
+why mongoDB and redis did not achieve availability? High consistency > availability
 
 ## Sharding and replica
 
@@ -1568,7 +1574,7 @@ CP 代表: BigTable, MongoDB, Hbase, Redis
 ### Replica
 
 • copy of database
-• failover (zero downtime)
+• failover (zero downtime) : when the leader node is down, the follower will replace the leader so that the system is 0 downtime.
 
 
 
@@ -1581,7 +1587,7 @@ CP 代表: BigTable, MongoDB, Hbase, Redis
 • written in C++
 • support API in many computer language:
 
-
+shard can be in one machine, but the lead node and the following node will never on one machine.
 
 **Mongod**: database instance
 
@@ -1600,7 +1606,7 @@ CP 代表: BigTable, MongoDB, Hbase, Redis
 
 • dynamic schema
 • document based
-• support secondary indexes
+• support secondary indexes (expect primary index, all other index are secondary index)
 
 • master-slave replication
 • horizontal scaling
