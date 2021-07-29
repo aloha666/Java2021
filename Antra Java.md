@@ -2176,5 +2176,156 @@ Redis cluster 支撑 N 个 Redis master node，每个master node都可以挂载�
    */
    ```
 
-   
+
+# Lecture 8
+
+
+
+## SQL vs No-Sql
+
+| SQL                                       | NO-Sql                                        |
+| ----------------------------------------- | --------------------------------------------- |
+| relational database management system     | Non-relational or distributed database system |
+| have fixed or static or predefined schema | dynamic schema                                |
+| vertically scalable                       | horizontal scalable                           |
+| not suited for hierarchical data storage  | suited                                        |
+| ACID                                      | CAP                                           |
+
+**vertical scaling:** adding prcoessing power to the server to make it faster 
+
+**horizontal scaling:** add more servers/ machine/ nodes in the cluster
+
+**ACID:**
+
+• atomicity原子性: all changes to data are performed as if they are a single operation
+
+ • consistency持续性: Data is in a consistent state when a transaction starts and ends
+
+ • Isolation独立性: The intermediate state of a transcation is invisible to other transactions
+
+• durability持续性: after a transaction sucessfully completes, changes to data persist and are not undone.
+
+
+
+## Index
+
+Indexing is a way to optimize the performace of a database by minimizing the number of disk accesses
+
+- cluster index (primary index)
+- non-cluster index (secondary index)
+
+**Cluster Index：**primiary key?
+
+- defines the order in which data is physically stored
+
+- one table have only one order -> one cluster index per table
+
+  
+
+**Non-cluster index**:
+
+1. - doesn't sort the physical data inside the table
+   - allow to have more than one non-cluster index per table
+
+
+
+**B tree vs Hash:**
+
+B tree: good for range search, O(logn)
+
+Hash: effcient for looking up values, not eff for range search
+
+
+
+**Bitmap Index:**
+
+• columns with low selectivity
+
+
+
+## Query execution and optimization
+
+
+
+### Typical RDBMS Execution
+
+<img src="/Users/spikycrown/Desktop/Java2021/images/8.png" alt="8"  />
+
+### Example SQL Query
+
+
+
+### Parse Tree
+
+![9](/Users/spikycrown/Desktop/Java2021/images/9.png)
+
+### Logical Query Plan
+
+![10](/Users/spikycrown/Desktop/Java2021/images/10.png)
+
+
+
+### Improved Logical Query Plan
+
+![11](/Users/spikycrown/Desktop/Java2021/images/11.png)
+
+### Estimate Result Sizes
+
+![12](/Users/spikycrown/Desktop/Java2021/images/12.png)
+
+### Physical Plan
+
+![13](/Users/spikycrown/Desktop/Java2021/images/13.png)
+
+![14](/Users/spikycrown/Desktop/Java2021/images/14.png)
+
+
+
+### Estimating Plan Cost
+
+![15](/Users/spikycrown/Desktop/Java2021/images/15.png)
+
+
+
+### SQL Tunning (when sql is slow)
+
+- using execution plan to identify the cause of slowness
+- try to reduce joins. remove unused join and join conditions
+- use UNION ALL instead UNION
+- use the LIMIT to do the pagenation
+- Create View or stored procedure to improve performance
+- avoid using IN
+
+
+
+### Join
+
+- index join: if an index exists
+- merge join: if at least one table is sorted
+- hash join: if both tables unsorted
+- ...
+
+```sql
+/*index join*/
+for each r in R1:
+list = index_lookup(R2, C, r.C) for each s in list
+output(r, s) I/O time
+
+/*merge join*/
+procedure outputTuples:
+while R1[i].C == R2[j].C && i < T(R1)
+jj = j
+while R1[i].C == R2[jj].C && jj <= T(R2):
+output(R1[i], R2[jj])
+jj ++ i += 1
+
+/*hash join*/
+for each r in R1:
+list = hash_lookup(R2, C, r.C) for each s in list
+output(r, s)
+
+/*left/right/outer join on*/
+
+
+```
 
