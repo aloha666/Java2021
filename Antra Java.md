@@ -1200,7 +1200,9 @@ System.out.println("Average of all prime numbers : " + stats.getAverage());
 
 ## Java 8 features - Functional Interface
 
-a functional interface only has one abstract method. 
+Functional interface is a kind of interface that has **only 1 abstract method**.
+
+Functional interface can have multiple *default methods and static methods.*
 
 https://www.cnblogs.com/javazhiyin/p/12009464.html 从入门到入土：Lambda完整学习指南，包教包会！
 
