@@ -90,6 +90,139 @@ The Java ClassLoader is a part of the Java Runtime Environment that dynamically 
 
 Java classes aren’t loaded into memory all at once, but when required by an application. At this point, the Java ClassLoader is called by the JRE and these ClassLoaders load classes into memory dynamically.
 
+## The Class Class & Reflection API
+
+java.lang.Class is one of the most important class in java. It is used to describe the meta information inside a class. When a class is loaded from ClassLoader, one(and only one per classloader) Class object will be created.
+
+Every class or object can call getClass() method or .class field to get the instance of the Class class.
+
+```java
+Class c1 = String.class;
+Class c2 = "hello".getClass();
+Class c3 = "hi".getClass();
+
+System.out.println(c1 == c2); // true
+System.out.println(c2 == c3); // true, becuase they all get the same Class object from the classloader.
+```
+
+The object of Class class can perform lots of useful/powerful functionalities related to the class and objects of it.
+
+```java
+// a demo class
+class Apple{
+    private String color;
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+}
+
+
+public class ChangeDataType {
+
+    public static void main(String[] args) throws Exception {
+        Class appleClass = Class.forName("net.antra.reflection.Apple"); // Load the class without create object from Apple class
+        Apple a = (Apple) appleClass.newInstance(); // create Apple class using Class.
+        Constructor[] constructors = appleClass.getConstructors(); // get constructors.
+        Method[] methods = appleClass.getDeclaredMethods(); // get methods
+        Annotation[] annotations = appleClass.getDeclaredAnnotations(); // get annotations
+        Field[] fields =  appleClass.getDeclaredFields(); // get fields
+// During the runtime, all the members inside a class is visible to ClassLoader.
+// By using Reflection API.
+// All the methods and field can be called. Even for those who are private.
+        constructors[0].newInstance();
+        methods[0].invoke(a);
+        fields[0].set(a,"newValue");
+    }
+}
+```
+
+As the code above, using reflection api, developers don't need to know the class utill at the runtime. Reflection gives us information about the class to which an object belongs and also the methods of that class which can be executed by using the object. Through reflection we can invoke methods at runtime irrespective of the access specifier used with them.
+
+Combine with annotations, using reflection api can achieve lots of framework jobs. 
+
+Below is a small "framework" to print out company value in the annotation Antra.
+
+```java
+// Framework code: Annotation
+@Target({ElementType.METHOD,ElementType.TYPE,ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Antra {
+    String companyValue() default "Java is the best";
+}
+
+// Scanning class
+public class ScanDemo {
+
+    public static void scanThisClass(String className) {
+        try {
+            Class clazz = Class.forName(className);
+                        
+            //Annotation on top of class
+            Annotation[] ann = clazz.getDeclaredAnnotations();
+            for (Annotation a : ann) {
+                if(a instanceof Antra) {
+                    System.out.println(((Antra) a).companyValue());
+                }
+            }
+            //Annotations on Fields
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field f : fields) {
+                Annotation[] fAnn = f.getDeclaredAnnotations();
+                for (Annotation a : fAnn) {
+                    if(a instanceof Antra) {
+                        System.out.println(((Antra) a).companyValue());
+                    }
+                }
+            }
+            //Annotation on Methods
+            Method[] methods = clazz.getDeclaredMethods();
+            for (Method m : methods) {
+                Annotation[] mAnn = m.getDeclaredAnnotations();           
+                for (Annotation a : mAnn) {
+                    if(a instanceof Antra) {
+                        System.out.println(((Antra) a).companyValue());
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+//////////// with above code, we are able to read the annotation Antra from any class.
+
+//////////// below is usage code.
+// Demo Apple 
+@Antra(companyValue = "hqweqwei")
+public class Apple {
+
+    @Antra(companyValue = ".Net is OK")
+    private String color;
+
+    @Antra
+    public String getColor(){
+        return color;
+    }
+}
+
+// Demo Test. Run the main method.
+public class TestScan {
+
+    public static void main(String[] args) {
+        ScanDemo.scanThisClass("net.antra.design.scan.Apple");
+    }
+}
+```
+
+
+
 ## 8 basic data type
 
 There are 8: boolean , byte , char , short , int , long , float and double.
@@ -449,6 +582,39 @@ Throwable is the parent class of all exceptions and errors.
 
 
 
+## Garbage Collector
+
+The ***heap*** is where your object data is stored. This area is then managed by the garbage collector selected at startup. Most tuning options relate to sizing the heap and choosing the most appropriate garbage collector for your situation.
+
+<img src="C:\Users\GrantW\Downloads\Java2021\6.png" alt="6" style="zoom:50%;" />
+
+
+
+### Garbage Collection
+
+Automatic garbage collection is the process of looking at heap memory, identifying which objects are in use and which are not, and deleting the unused objects. An in use object, or a referenced object, means that some part of your program still maintains a pointer to that object. An unused object, or unreferenced object, is no longer referenced by any part of your program. So the memory used by an unreferenced object can be reclaimed.
+
+Java GC uses Mark and Sweep strategy to clean the heap.
+
+- Mark – it is where the garbage collector identifies which pieces of memory are in use and which are not
+- Sweep – this step removes objects identified during the “mark” phase
+
+### JVM Generations
+
+<img src="C:\Users\GrantW\Downloads\Java2021\7.png" alt="7" style="zoom:50%;" />
+
+As stated earlier, having to mark and compact all the objects in a JVM is inefficient. As more and more objects are allocated, the list of objects grows and grows leading to longer and longer garbage collection time. However, empirical analysis of applications has shown that most objects are short lived
+
+The heap is broken up into smaller parts or generations. The heap parts are: Young Generation, Old or Tenured Generation, and Permanent Generation( before java 8).
+
+The **Young Generation** is where all new objects are allocated and aged. When the young generation fills up, this causes a ***minor garbage collection\***. Minor collections can be optimized assuming a high object mortality rate. A young generation full of dead objects is collected very quickly. Some surviving objects are aged and eventually move to the old generation.
+
+The **Old Generation** is used to store long surviving objects. Typically, a threshold is set for young generation object and when that age is met, the object gets moved to the old generation. Eventually the old generation needs to be collected. This event is called a ***major garbage collection\***.
+
+ The **Permanent generation** contains metadata required by the JVM to describe the classes and methods used in the application. The permanent generation is populated by the JVM at runtime based on classes in use by the application. In addition, Java SE library classes and methods may be stored here. From Java 8, Permanent generation is replaced with MetaSpace.
+
+**Metaspace** is native memory grows automatically by default. 
+
 # Lecture 3
 
 ## stackoverflow vs out of memory
@@ -511,7 +677,7 @@ public enum Level {
 
 https://zhuanlan.zhihu.com/p/85612062 Java注解总结
 
-What is an Annotation for ?
+Annotations provide data about a program that is **not** part of the program itself. What is an Annotation for ?
 
 - Compiler instructions
 - Build-time instructions
@@ -569,9 +735,18 @@ public void methodWithWarning() {
 
 
 
-##### Constumized Java Annotations
+##### Customized Java Annotations
 
+```java
+// Target is to declear where the annotation can be put on.
+// Retention is to declear until when this annotation can be read. Indicates how long annotations with the annotated type are to be retained.
 
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface AntraAnnotation {
+    String name() default ""; // declear attribute
+}
+```
 
 ```java
 public @interface MyAnnotation {
@@ -1308,6 +1483,31 @@ callable can thorw an exception
 
 The **java.lang.Object.notifyAll()** wakes up all threads that are waiting on this object's monitor. A thread waits on an object's monitor by calling one of the wait methods.
 
+```java
+class A {
+  // put on instance method.
+  // instance method belong to object.
+  // For the same object if two threads calling this method.
+  // they have to run one by one.
+  // so "this"-current object, is the lock.
+  public synchronized void doSomething(){
+      System.out.println("hi");
+  }
+
+}
+
+A a = new A();
+
+Thread1 call a.doSomething();
+Thread2 call a.doSomething(); <- they have to run one by one.
+
+A a1 = new A();
+Thread 1 call a.doSomething();
+Thread 2 call a1.doSomething(); <- they don't have to wait. because "this" of a and a1 are different.
+```
+
+
+
 **Lock:** a interface that lock() the resource for the thread to use, will unlock()  after use. wait will release lock, while sleep will not.
 
 lock condition: control flow 
@@ -1326,6 +1526,8 @@ normally we cannot have a abstract method in a non-abstract class. BUT CAN HAVE 
 
 ## Thread Pool
 
+Threads are objects. It takes memory and consumes computation power. To reduce the cost of creating and destroying new threads, and also to confine the memory usage. On the server side applications, we use thread pool to pre-populate certiain number of threads to be reused by different tasks.
+
 A thread pool is used to aviod cosuming resources: repetively using existing thread which could reduce the cost of new and GC threads increase response time: Once the task is ready to be executed, we do not need to wait for the thread creation, which improve multi-thread management.
 
 线程池顾名思义就是事先创建若干个可执行的线程放入一个池中，需要的时候就从池中获取线程不用自行创建，使用完毕不用销毁线程而是放回池中，从而减少创建和销毁线程对象的开销。
@@ -1335,6 +1537,25 @@ A thread pool is used to aviod cosuming resources: repetively using existing thr
 FixedThreadPool: a pool with a fixed size
 
 CachedThreadPool: a pool with a dynamic size
+
+```java
+//callable can return. runnable do not return value
+class MyCallableClass implements Callable<String> { // means it will return String
+  public String call() { // can throw exception here
+     // do a lot of work and get a result = "Hi"
+     //...
+     return "Hi";
+  }
+}
+
+ExecutorService es = Executors.newFixedThreadPool(30);
+Future<String> future = es.submit(new MyCallableClass()); //put thread in pool
+String result = future.get();
+es.shutdown(); //close pool;
+
+```
+
+
 
 ### Customrized pool
 
