@@ -1507,14 +1507,14 @@ normalization: eliminate redundant data and ensure the data is stored logically
 
 ## Non-relational Databse
 
-does not use the tabular schema of rows and columns, Instead, it uses a storage model that isoptimized for specific requirements of the type of data being stored.
+does not use the tabular schema of rows and columns, Instead, it uses a storage model that is optimized for specific requirements of the type of data being stored.
 
 ### 1. Document data stores  
 
 Two filelds:
 
 ​		○**key**
-​		○ **document**: form of JSON documents -> XML, YAML, JSON, BSON
+​		○ **document**: form of JSON documents -> XML, YAML, JSON, **BSON**
 
 代表：**MongoDB** , CouchDB
 
@@ -1522,11 +1522,11 @@ Two filelds:
 
 ### 2. columnar data stores or column family 
 
-One column family is one topic/ID.
+Divide data into groups/colmns, one column family is one topic/ID.
 
 **de-normalization**: group all information in one column family
 
-代表：Cassandra, Hbase
+ 代表：Cassandra, Hbase
 
 
 
@@ -1544,37 +1544,58 @@ essentially a large hash table, hash value is opaque to data store
 
 ○edge: relationship
 
-代表：Neo4j, Hyper GrphDb
+代表：Neo4j, Hyper GraphDb
 
 
 
 ## CAP Theory
 
-Consistency: all clients will always have the same view of data
+Consistency: all clients will always have the same view of data. when you write a piece of data in a system/distributed system, the same data you should get when you read it from any node of the system.
 
-Availability: each client can always read and write the data
+Availability: each client can always read and write the data. The system should always be available for read/write operation.
 
 Partition tolerance: the system works well despite the physical network partition (always achieve in non-relation database since they are distributed)
 
-CAP theorem: satisfying all three at the same time is impossible, 
+CAP theorem: satisfying all three at the same time is impossible, **Most systems are not only available or only consistent, they always offer a bit of both**
 
 CP 代表: BigTable, **MongoDB**, Hbase, **Redis**
 
  AP 代表: DynamoDB, Cassandra, Cassandra, CouchDb, Riak
 
-why mongoDB and redis did not achieve availability? High consistency > availability
+```java
+/*
+**why mongoDB and redis did not achieve availability? High consistency > availability**
+
+MongoDB is highly consistent when reads and write go to the same node(the default case). Further, you can choose in MongoDB to read from other secondary nodes instead of reading from only leader/primary.
+
+MongoDB is mostly always available, but, the only time when the leader is down, MongoDB can't accept writes, until it figures out the new leader. Hence, not `highly available`
+
+
+what is a leader in MongoDB?
+
+A MongoDB cluster needs to have a primary node and a set of secondary nodes in order to be considered a replica set.
+只有leader node 接受写操作
+
+*/
+```
+
+
 
 ## Sharding and replica
 
-### Sharding of data
+### Sharding of data 分片
+
+将一整个database部署到不同的physical machine 上，有利于 concurrency请求。
 
 • distributes a single logical database system across a cluster of machines
 • use range-based partition to distribute documents based on a specific shard key
 
-### Replica
+### Replica 复制
+
+制作小弟，方便查询
 
 • copy of database
-• failover (zero downtime) : when the leader node is down, the follower will replace the leader so that the system is 0 downtime.
+• failover (zero downtime) : when the leader node is down, the follower will replace the leader so that the system is 0 downtime. 大哥倒了 小弟补位
 
 
 
@@ -1606,23 +1627,39 @@ MongoDB是一个基于文档型数据库，MongoDB中文档数据，使用BSON�
 
 ```
 
-
-
-• document store, no-sql database
-• hash-based, schema-less database
+• **document** store, no-sql database
+• **hash-based**, schema-less database
 • written in C++
 • support API in many computer language:
 
-shard can be in one machine, but the lead node and the following node will never on one machine.
+### Shard
 
-**Mongod**: database instance
+内置`Auto-Sharding`自动分片支持云级扩展性，分片简单.
 
-### Mongos: sharding process
+**Each server can contain multiple shards, but the lead node and the following node will never on one server.**
 
-• analogous to a database router
+```java
+//lead node? primary mongod and secodary mongods(seconary is the replica of data.)
+```
+
+
+
+![5.png](https://github.com/aloha666/Java2021/blob/main/5.png?raw=true)
+
+### **Mongod**: database instance, a Node
+
+### **Config Severs**
+
+保存集群的元数据（metadata），包含各个Shard的路由规则，配置服务器由一个副本集(ReplicaSet)组成。To determine which shard to go to?
+
+### Mongos: sharding process (类似router)
+
+• analogous类似 to a database router
 • process all request
 • decides how many and which mongods should receive the query
 • collect the result and send it back
+
+Mongos启动后，会从 Config Server 加载元数据，开始提供服务，并将用户的请求正确路由到对应的Shard。
 
 ### Mongo:  an interactive shell
 
@@ -1632,7 +1669,7 @@ shard can be in one machine, but the lead node and the following node will never
 
 • dynamic schema
 • document based
-• support secondary indexes (expect primary index, all other index are secondary index)
+• support **secondary indexes** (expect primary index, all other index are secondary index)
 
 • master-slave replication
 • horizontal scaling
@@ -1644,7 +1681,9 @@ shard can be in one machine, but the lead node and the following node will never
 
 ## Redis
 
-Redis (remote directory server) is an in-memory, key value data
+http://guanzhou.pub/2020/06/04/Redis/
+
+Redis (remote directory server) is an **in-memory,** **key value data**，完全基于内存
 
 ### structure store 
 
@@ -1654,35 +1693,161 @@ Redis (remote directory server) is an in-memory, key value data
 
 ​		○ primitives: String 
 
-​		○ Containers (of strings) :Hashes, Lists, Sets, Sorted Sets
+​		○ Containers (of strings) :Hashes, Lists（双向链表）, Sets, Sorted Sets
+
+```c++
+//string
+redis 127.0.0.1:6379> SET runoob "菜鸟教程"
+OK
+redis 127.0.0.1:6379> GET runoob
+"菜鸟教程"
+  
+//Hashes
+  
+redis 127.0.0.1:6379> DEL runoob
+redis 127.0.0.1:6379> HMSET runoob field1 "Hello" field2 "World"
+OK  
+redis 127.0.0.1:6379> HGET runoob field1
+"Hello"
+redis 127.0.0.1:6379> HGET runoob field2
+"World"
+  
+//list
+redis 127.0.0.1:6379> DEL runoob
+redis 127.0.0.1:6379> lpush runoob redis
+(integer) 1
+redis 127.0.0.1:6379> lpush runoob mongodb
+(integer) 2
+redis 127.0.0.1:6379> lpush runoob rabbitmq
+(integer) 3
+redis 127.0.0.1:6379> lrange runoob 0 10
+1) "rabbitmq"
+2) "mongodb"
+3) "redis"
+  
+ //set
+redis 127.0.0.1:6379> DEL runoob
+redis 127.0.0.1:6379> sadd runoob redis
+(integer) 1
+redis 127.0.0.1:6379> sadd runoob mongodb
+(integer) 1
+redis 127.0.0.1:6379> sadd runoob rabbitmq
+(integer) 1
+redis 127.0.0.1:6379> sadd runoob rabbitmq
+(integer) 0
+redis 127.0.0.1:6379> smembers runoob
+
+1) "redis"
+2) "rabbitmq"
+3) "mongodb"
+  
+//sortSet
+redis 127.0.0.1:6379> DEL runoob
+redis 127.0.0.1:6379> zadd runoob 0 redis
+(integer) 1
+redis 127.0.0.1:6379> zadd runoob 0 mongodb
+(integer) 1
+redis 127.0.0.1:6379> zadd runoob 0 rabbitmq
+(integer) 1
+redis 127.0.0.1:6379> zadd runoob 0 rabbitmq
+(integer) 0
+redis 127.0.0.1:6379> ZRANGEBYSCORE runoob 0 1000
+1) "mongodb"
+2) "rabbitmq"
+3) "redis"
+
+
+```
 
 
 
 ### Redis usage in cache
 
+- 存储 **缓存** 用的数据；
 
+- 需要高速读/写的场合**使用它快速读/写**
 
-### Redis suports two persistence mechanisms
+  
+
+### Redis suports two persistence mechanisms （持久化，把内存中数据持久化到disk上）
 
 • RDB (redis database): the RDB persistence performs point-in-time snapshots of dataset as specifiedintervals
 
+按时备份
+
 • AOF (append only file): the AOF persistence logs every write operation received by the server
 
+记录写操作
 
 
-### Redis 
+
+### Redis 特点
 
 • various data types
 
- • support persistence mechanish 
+ • support persistence mechanism 
 
 • support cluster mode
 
+```java
+/*
+#### 是否使用过Redis集群，集群的高可用怎么保证，集群的原理是什么？
+
+Redis Sentinal着眼于高可用，在master宕机时会自动将slave提升为master，继续提供服务。
+
+Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储。
+
+#### 单机会有瓶颈，那你们是怎么解决这个瓶颈的？
+
+我们用到了集群的部署方式也就是Redis cluster，并且是主从同步读写分离，类似Mysql的主从同步
+
+Redis cluster 支撑 N 个 Redis master node，每个master node都可以挂载多个 slave node。
+
+这样 Redis 就可以横向扩容了。如果你要支撑更大数据量的缓存，那就横向扩容更多的 master 节点，每个 master 节点就能存放更多的数据了。
+*/
+```
+
+
+
 ### Other usage:
 
-• distributed lock
+• distributed lock 分布式锁 为了保证数据的最终一致性
 		○ SETNX (set if not exists)
 					• return 0, the key is already locked by some other clients
 					• return 1, the client get the lock
 • message system
 • store configuration information
+
+
+
+### MongoDB`与`Redis比较：
+
+1. `MongoDB`文件存储是`Bson`格式，类似`Json`，或自定义的二进制格式。`MongoDB`与`Redis`性能都很依赖内存的大小，`MongoDB`有丰富的数据表达、索引；最类似于关系数据库，支持丰富的查询语言，`Redis`数据丰富，较少的 IO，这方面`MongoDB`优势明显。
+
+2. `MongoDB`不支持事务，靠客户端自身保证，`Redis`支持事务，比较弱，仅能保证事务中的操作按顺序执行，这方面`Redis`优于`MongoDB`。
+
+3. `MongoDB`对海量数据的访问效率提升，`Redis`较小数据量的性能及运算，这方面`MongoDB`优于`Redis`。
+
+4. `MongoDB`有`MapReduce`功能，提供数据分析，`Redis`没有，这方面`MongoDB`优于`Redis`。
+
+5. `MongoDB`应用场景：大规模不需要事务及复杂join支持,需要快速读写及水平扩展：如craglist，
+
+   `Redis`应用场景：高性能，单进程， 多用于缓存，秒杀场景。
+
+   ```java
+   /*
+   现在说明一下，如果现在做一个秒杀，那么，Redis应该如何结合进行使用?
+   
+   提前预热数据，放入Redis
+   商品列表放入Redis List
+   商品的详情数据 Redis hash保存，设置过期时间
+   商品的库存数据Redis sorted set保存
+   用户的地址信息Redis set保存
+   订单产生扣库存通过Redis制造分布式锁，库存同步扣除
+   订单产生后发货的数据，产生Redis list，通过消息队列处理
+   秒杀结束后，再把Redis数据和数据库进行同步
+   */
+   ```
+
+   
+
