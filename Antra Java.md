@@ -1459,7 +1459,7 @@ callable can thorw an exception
 
 **this.notifyAll():**This method simply wakes all threads that are waiting on this object's monitor. The awakened threads will complete in the usual manner, like any other thread.
 
-
+![16](/Users/spikycrown/Desktop/Java2021/images/16.png)
 
 ### States of a thread: 
 
@@ -1908,7 +1908,7 @@ A MongoDB cluster needs to have a primary node and a set of secondary nodes in o
 
 
 
-## Sharding and replica
+## Sharding and replica 各有什么好处？
 
 ### Sharding of data 分片
 
