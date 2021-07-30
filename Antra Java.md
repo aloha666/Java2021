@@ -2183,13 +2183,13 @@ Redis cluster 支撑 N 个 Redis master node，每个master node都可以挂载�
 
 ## SQL vs No-Sql
 
-| SQL                                       | NO-Sql                                        |
-| ----------------------------------------- | --------------------------------------------- |
-| relational database management system     | Non-relational or distributed database system |
-| have fixed or static or predefined schema | dynamic schema                                |
-| vertically scalable                       | horizontal scalable                           |
-| not suited for hierarchical data storage  | suited                                        |
-| ACID                                      | CAP                                           |
+| SQL                                             | NO-Sql                                        |
+| ----------------------------------------------- | --------------------------------------------- |
+| relational database management system           | Non-relational or distributed database system |
+| have fixed or static or predefined schema架构   | dynamic schema                                |
+| vertically scalable                             | horizontal scalable                           |
+| not suited for hierarchical 分层的 data storage | suited                                        |
+| ACID                                            | CAP                                           |
 
 **vertical scaling:** adding prcoessing power to the server to make it faster 
 
@@ -2229,6 +2229,26 @@ Indexing is a way to optimize the performace of a database by minimizing the num
 - allow to have more than one non-cluster index per table
 
 wher the non-cluster index saved? saved with data?  
+
+**B tree vs B+ tree**
+
+![img](https://media.geeksforgeeks.org/wp-content/uploads/20191219160544/Untitled-Diagram111.png)
+
+<img src="https://media.geeksforgeeks.org/wp-content/uploads/Btree.jpg" alt="img" style="zoom: 67%;" />
+
+
+
+|      | B tree                                                       | B+ tree                                                      |
+| :--- | :----------------------------------------------------------- | ------------------------------------------------------------ |
+| 1.   | All internal and leaf nodes have data pointers               | Only leaf nodes have data pointers                           |
+| 2.   | Since all keys are not available at leaf, search often takes more time. | All keys are at leaf nodes, hence search is faster and accurate.. |
+| 3.   | No duplicate of keys is maintained in the tree.              | Duplicate of keys are maintained and all nodes are present at leaf. |
+| 4.   | Insertion takes more time and it is not predictable sometimes. | Insertion is easier and the results are always the same.     |
+| 5.   | Deletion of internal node is very complex and tree has to undergo lot of transformations. | Deletion of any node is easy because all node are found at leaf. |
+| 6.   | Leaf nodes are not stored as structural linked list.         | Leaf nodes are stored as structural linked list.             |
+| 7.   | No redundant search keys are present..                       | Redundant search keys may be present..                       |
+
+
 
 **B tree vs Hash:**
 
