@@ -2453,7 +2453,7 @@ is an action or a series of actions, carried out by a single user or application
 
 •Atomicity
 	○tractions are atomic - they don't have parts
-	○can't be executed paritcally
+	○can't be executed paritcally, either all happen, or nothing happens
 •Consistency
 	○transactions take the database from one consistent state into another
 •Isolation
@@ -2469,7 +2469,7 @@ is an action or a series of actions, carried out by a single user or application
 
 ## Isolation Levels
 
-**Dirty read**: read UNCOMMITED data from another transaction
+**Dirty read**: read UNCOMMITED data from another transaction (may did a rollback, so the value read is not correct)
 
 **Non-repeatable read**: read COMMITED data from an UPDATE query from another transaction
 
