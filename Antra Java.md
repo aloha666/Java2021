@@ -2214,7 +2214,7 @@ Indexing is a way to optimize the performace of a database by minimizing the num
 - cluster index (primary index)
 - non-cluster index (secondary index)
 
-**Cluster Index：**primiary key?
+**Cluster Index：**primiary key? such as ID
 
 - defines the order in which data is physically stored
 
@@ -2222,22 +2222,23 @@ Indexing is a way to optimize the performace of a database by minimizing the num
 
   
 
-**Non-cluster index**:
+**Non-cluster index**: (自定义index) such as Name 
 
-1. - doesn't sort the physical data inside the table
-   - allow to have more than one non-cluster index per table
+- doesn't sort the physical data inside the table
 
+- allow to have more than one non-cluster index per table
 
+wher the non-cluster index saved? saved with data?  
 
 **B tree vs Hash:**
 
-B tree: good for range search, O(logn)
+B tree: good for range search, O(logn) B+ tree?
 
 Hash: effcient for looking up values, not eff for range search
 
 
 
-**Bitmap Index:**
+**Bitmap Index:** use 1 and 0 to represent yes/no, thus a number 101001 represents yes to cloumn 0, 2 and 5 while no to column 1 and 3.
 
 • columns with low selectivity
 
@@ -2247,7 +2248,7 @@ Hash: effcient for looking up values, not eff for range search
 
 
 
-### Typical RDBMS Execution
+### Typical RDBMS Execution (working flow )
 
 <img src="/Users/spikycrown/Desktop/Java2021/images/8.png" alt="8"  />
 
@@ -2255,25 +2256,25 @@ Hash: effcient for looking up values, not eff for range search
 
 
 
-### Parse Tree
+##### 1.Parse Tree
 
 ![9](/Users/spikycrown/Desktop/Java2021/images/9.png)
 
-### Logical Query Plan
+##### 2.Logical Query Plan
 
 ![10](/Users/spikycrown/Desktop/Java2021/images/10.png)
 
 
 
-### Improved Logical Query Plan
+##### 3.Improved Logical Query Plan
 
 ![11](/Users/spikycrown/Desktop/Java2021/images/11.png)
 
-### Estimate Result Sizes
+##### 4. Estimate Result Sizes
 
 ![12](/Users/spikycrown/Desktop/Java2021/images/12.png)
 
-### Physical Plan
+##### 5. Physical Plan
 
 ![13](/Users/spikycrown/Desktop/Java2021/images/13.png)
 
@@ -2281,7 +2282,7 @@ Hash: effcient for looking up values, not eff for range search
 
 
 
-### Estimating Plan Cost
+##### 6. Estimating Plan Cost
 
 ![15](/Users/spikycrown/Desktop/Java2021/images/15.png)
 
@@ -2291,19 +2292,24 @@ Hash: effcient for looking up values, not eff for range search
 
 - using execution plan to identify the cause of slowness
 - try to reduce joins. remove unused join and join conditions
-- use UNION ALL instead UNION
-- use the LIMIT to do the pagenation
+- use UNION ALL (do not remove duplicate data) instead UNION (will remove duplicate data)
+- use the LIMIT to do the pagenation分页 to get part of the data?
 - Create View or stored procedure to improve performance
 - avoid using IN
 
 
 
-### Join
+### Join（not in interview）
 
-- index join: if an index exists
+- index join: if an index  exists
+
 - merge join: if at least one table is sorted
+
 - hash join: if both tables unsorted
+
 - ...
+
+  
 
 ```sql
 /*index join*/
@@ -2324,7 +2330,7 @@ for each r in R1:
 list = hash_lookup(R2, C, r.C) for each s in list
 output(r, s)
 
-/*left/right/outer join on*/
+/*left/right/outer join on application level干什么, above join are in physican plan怎么干*/
 
 
 ```
