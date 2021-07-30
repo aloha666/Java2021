@@ -1,4 +1,4 @@
-# Lecture 1
+Lecture 1
 
 ## Maven
 
@@ -1459,7 +1459,7 @@ callable can thorw an exception
 
 **this.notifyAll():**This method simply wakes all threads that are waiting on this object's monitor. The awakened threads will complete in the usual manner, like any other thread.
 
-![16](/Users/spikycrown/Desktop/Java2021/images/16.png)
+<img src="https://github.com/aloha666/Java2021/blob/main/images/16.png?raw=true" alt="16.png" style="zoom:80%;" />
 
 ### States of a thread: 
 
@@ -2209,17 +2209,21 @@ Redis cluster 支撑 N 个 Redis master node，每个master node都可以挂载�
 
 ## Index
 
-Indexing is a way to optimize the performace of a database by minimizing the number of disk accesses
+Indexing is a way to optimize the performace of a database by minimizing the number of disk accesses      索引主要用来提升数据检索速度,在数据量很大的时候很有用. 索引相当于图书馆的图书目录,你要找本书可以在图书目录上找到这本书在哪个书架第几本,这样明显比到书架去找书要快得多,索引就是这个道理. 
 
 - cluster index (primary index)
 - non-cluster index (secondary index)
 
-**Cluster Index：**primiary key? such as ID
+**Cluster Index：** **聚集索引一般是表中的主键索引（也有可能不是），如果表中没有显示指定主键，则会选择表中的第一个不允许为NULL的唯一索引，如果还是没有的话，就采用Innodb存储引擎为每行数据内置的6字节ROWID作为聚集索引。**
 
-- defines the order in which data is physically stored
+- defines the order in which data is **physically stored**
 
-- one table have only one order -> one cluster index per table
+- one table have only one order -> **one cluster index per table**
 
+  ```sql
+  create CLUSTERED INDEX 索引名称 ON 表名(字段名)
+  ```
+  
   
 
 **Non-cluster index**: (自定义index) such as Name 
@@ -2228,9 +2232,51 @@ Indexing is a way to optimize the performace of a database by minimizing the num
 
 - allow to have more than one non-cluster index per table
 
-wher the non-cluster index saved? saved with data?  
+  ```sql
+  create NONCLUSTERED INDEX 索引名称 ON 表名(字段名)
+  
+  --将指定字段设置成主键非聚集索引
+  alter table 表名 
+  add constraint 主键约束名称 primary key NONCLUSTERED(字段名) 
+  
+  --创建表指定主键为非聚集索引,默认不写NONCLUSTERED为聚集索引
+  CREATE TABLE Test
+  ( 
+    ID INT PRIMARY KEY NONCLUSTERED  --非聚集索引
+  )
+  
+  ```
+
+  
+
+where the non-cluster index saved? saved with data?  
+
+```java
+/*聚集索引表记录的排列顺序与索引的排列顺序一致
+
+优点是查询速度快，因为一旦具有第一个索引值的纪录被找到，具有连续索引值的记录也一定物理的紧跟其后。
+缺点是对表进行修改速度较慢，这是为了保持表中的记录的物理顺序与索引的顺序一致，而把记录插入到数据页的相应位置，必须在数据页中进行数据重排， 降低了执行速度。建议使用聚集索引的场合为：
+a. 此列包含有限数目的不同值；
+b. 查询的结果返回一个区间的值；
+c. 查询的结果返回某值相同的大量结果集。
+非聚集索引指定了表中记录的逻辑顺序，但记录的物理顺序和索引的顺序不一致，聚集索引和非聚集索引都采用了B+树的结构，但非聚集索引的叶子层并不与实际的数据页相重叠，而采用叶子层包含一个指向表中的记录在数据页中的指针的方式。
+非聚集索引比聚集索引层次多，添加记录不会引起数据顺序的重组。
+建议使用非聚集索引的场合为：
+a. 此列包含了大量数目不同的值；
+b. 查询的结束返回的是少量的结果集；
+c. order by 子句中使用了该列。
+
+作者：bobcorbett
+链接：https://www.jianshu.com/p/5681ebd5b0ef
+来源：简书
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+```
+
+
 
 **B tree vs B+ tree**
+
+B+ tree index is most used cluster index.
 
 ![img](https://media.geeksforgeeks.org/wp-content/uploads/20191219160544/Untitled-Diagram111.png)
 
@@ -2250,15 +2296,15 @@ wher the non-cluster index saved? saved with data?
 
 
 
-**B tree vs Hash:**
+**B tree 索引 vs Hash索引:**
 
 B tree: good for range search, O(logn) B+ tree?
 
-Hash: effcient for looking up values, not eff for range search
+Hash: efficient for looking up values, not eff for range search
 
 
 
-**Bitmap Index:** use 1 and 0 to represent yes/no, thus a number 101001 represents yes to cloumn 0, 2 and 5 while no to column 1 and 3.
+**Bitmap Index索引:** use 1 and 0 to represent yes/no, thus a number 101001 represents yes to column 0, 2 and 5 while no to column 1 and 3.
 
 • columns with low selectivity
 
@@ -2266,11 +2312,9 @@ Hash: effcient for looking up values, not eff for range search
 
 ## Query execution and optimization
 
-
-
 ### Typical RDBMS Execution (working flow )
 
-<img src="/Users/spikycrown/Desktop/Java2021/images/8.png" alt="8"  />
+![8.png](https://github.com/aloha666/Java2021/blob/main/images/8.png?raw=true)
 
 ### Example SQL Query
 
@@ -2278,44 +2322,86 @@ Hash: effcient for looking up values, not eff for range search
 
 ##### 1.Parse Tree
 
-![9](/Users/spikycrown/Desktop/Java2021/images/9.png)
+![9.png](https://github.com/aloha666/Java2021/blob/main/images/9.png?raw=true)
 
 ##### 2.Logical Query Plan
 
-![10](/Users/spikycrown/Desktop/Java2021/images/10.png)
-
-
+![10.png](https://github.com/aloha666/Java2021/blob/main/images/10.png?raw=true)
 
 ##### 3.Improved Logical Query Plan
 
-![11](/Users/spikycrown/Desktop/Java2021/images/11.png)
+![11.png](https://github.com/aloha666/Java2021/blob/main/images/11.png?raw=true)
 
 ##### 4. Estimate Result Sizes
 
-![12](/Users/spikycrown/Desktop/Java2021/images/12.png)
+![12.png](https://github.com/aloha666/Java2021/blob/main/images/12.png?raw=true)
 
 ##### 5. Physical Plan
 
-![13](/Users/spikycrown/Desktop/Java2021/images/13.png)
+![13.png](https://github.com/aloha666/Java2021/blob/main/images/13.png?raw=true)
 
-![14](/Users/spikycrown/Desktop/Java2021/images/14.png)
+![14.png](https://github.com/aloha666/Java2021/blob/main/images/14.png?raw=true)
 
 
 
 ##### 6. Estimating Plan Cost
 
-![15](/Users/spikycrown/Desktop/Java2021/images/15.png)
+![15.png](https://github.com/aloha666/Java2021/blob/main/images/15.png?raw=true)
 
 
 
-### SQL Tunning (when sql is slow)
+### SQL Tuning (when sql is slow)
 
-- using execution plan to identify the cause of slowness
-- try to reduce joins. remove unused join and join conditions
-- use UNION ALL (do not remove duplicate data) instead UNION (will remove duplicate data)
-- use the LIMIT to do the pagenation分页 to get part of the data?
-- Create View or stored procedure to improve performance
-- avoid using IN
+1. using **execution plan** to identify the cause of slowness 诊断原因
+
+2. try to reduce joins. remove unused join and join conditions
+
+<img src="https://www.runoob.com/wp-content/uploads/2019/01/sql-join.png" alt="img" style="zoom:67%;" />
+
+```sql
+--SQL JOIN 子句用于把来自两个或多个表的行结合起来，基于这些表之间的共同字段。
+
+SELECT Websites.id, Websites.name, access_log.count, access_log.date
+FROM Websites
+INNER JOIN access_log
+ON Websites.id=access_log.site_id;
+
+
+```
+
+3. use UNION ALL (do not remove duplicate data) instead UNION (will remove duplicate data)
+
+```sql
+--SQL UNION 操作符合并两个或多个 SELECT 语句的结果。默认地，UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION ALL。
+
+SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2;
+
+SELECT column_name(s) FROM table1
+UNION ALL
+SELECT column_name(s) FROM table2;
+```
+
+4. use the LIMIT to do the pagination 分页 to get part of the data?
+
+```sql
+--按照成绩排名，并取出第m名到第n名的学生信息 m-1开始，n-m+1 范围
+SELECT * FROM list ORDER BY score LIMIT m-1, n - m + 1
+```
+
+5. Create View or stored procedure to improve performance
+
+6. avoid using IN，O(N*M) time
+
+```sql
+--IN 操作符允许您在 WHERE 子句中规定多个值。
+--语句含义：返回column_name是{value1，value2...}的数据行
+
+SELECT *
+FROM table_name
+WHERE column_name IN (value1,value2,...);
+```
 
 
 
