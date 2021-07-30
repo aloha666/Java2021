@@ -2441,3 +2441,140 @@ output(r, s)
 
 ```
 
+# Lecture 9
+
+## Transaction / ACID / Rollback / Commit
+
+### Transaction
+
+is an action or a series of actions, carried out by a single user or application, which reads or updates the contents of a database.
+
+### ACID
+
+•Atomicity
+	○tractions are atomic - they don't have parts
+	○can't be executed paritcally
+•Consistency
+	○transactions take the database from one consistent state into another
+•Isolation
+	○The effects of atranaction are not visible to other transactions until it hascompleted
+•Durablility
+	○Once a transaction has completed, its changes are made permanent
+
+### Commit: success
+
+### Rollback: fail
+
+
+
+## Isolation Levels
+
+**Dirty read**: read UNCOMMITED data from another transaction
+
+**Non-repeatable read**: read COMMITED data from an UPDATE query from another transaction
+
+**Phantom read**: read COMMITTED data from an INSERT or DELETE query from another transaction
+
+
+
+**isolation level**
+	• read uncommited/
+	• read committed/
+	• repeatable read /
+	• serizalizable
+
+| Isolation Level  | Dirty Reads | Unrepeatable Reads | Phantom Reads |
+| ---------------- | ----------- | ------------------ | ------------- |
+| Read uncommitted | Y           | Y                  | Y             |
+| Read committed   | N           | Y                  | Y             |
+| Repeatable read  | N           | N                  | Y             |
+| Serializable     | N           | N                  | N             |
+
+
+
+transaction. -> a series of actions
+schedule -> a series of transactions
+				-> one by one
+
+lock strategy
+
+## Lock
+
+### Types of Lock
+
+**Binary lock**
+	• locked. (x = 1)
+	• unlocked (x =0)
+**Shared lock and exclusive lock**
+	• share lock == read lock
+	• exclusive lock == write lock
+
+
+
+### Dead lock: 
+
+both transactions wait for other to release a lock.
+
+Deadlock detection -> wait for graph
+
+prevent the dead lock
+
+​		• Conservative 2PL
+​		• wait-die or wound-wait
+​		• ....
+
+optimistic lock
+pessimistic lock
+
+
+
+## Distributed Transaction
+
+### 2PC 
+
+​		• transaction coordinator sends prepare message to each participating node
+
+​		 • each participating node responds to coordinator with prepared or no
+
+​	     • if coordinator receives all prepared: broadcase commit 
+
+​		• if coordinator receives any no: broadcase abort
+
+
+
+### there are two ways to achieve sagas:
+
+​		• Choreograph: each local transaction publishes domain events that trigger local transactions in other services
+
+​		• Orchestration: an orchestrator tells the participants what local transactions to execute
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
