@@ -2469,11 +2469,11 @@ is an action or a series of actions, carried out by a single user or application
 
 ## Isolation Levels
 
-**Dirty read**: read UNCOMMITED data from another transaction (may did a rollback, so the value read is not correct)
+**Dirty read**: read UNCOMMITED data from another transaction (may did a rollback  by other transaction , so the value read is not correct) 读的数据由于别的操作rollback,不再有效
 
-**Non-repeatable read**: read COMMITED data from an UPDATE query from another transaction
+**Non-repeatable read**: read COMMITED data from an UPDATE query from another transaction 读的数据被别的操作修改,不能重读
 
-**Phantom read**: read COMMITTED data from an INSERT or DELETE query from another transaction
+**Phantom read**: read COMMITTED data from an INSERT or DELETE query from another transaction 读的数据由于别的操作添加或删除，跟开始读的不一样
 
 
 
@@ -2490,13 +2490,15 @@ is an action or a series of actions, carried out by a single user or application
 | Repeatable read  | N           | N                  | Y             |
 | Serializable     | N           | N                  | N             |
 
+Y-yes to the problem, N- prevent the problem.
+
+**transaction**. -> a series of actions
+**schedule** -> a series of transactions
+				-> one by one **(Serilizable level isolation)**
+
+**lock strategy**: the higher the isolation, the more locks required. and slower.
 
 
-transaction. -> a series of actions
-schedule -> a series of transactions
-				-> one by one
-
-lock strategy
 
 ## Lock
 
@@ -2506,8 +2508,8 @@ lock strategy
 	• locked. (x = 1)
 	• unlocked (x =0)
 **Shared lock and exclusive lock**
-	• share lock == read lock
-	• exclusive lock == write lock
+	• share lock == read lock 读可以share can only read 
+	• exclusive lock == write lock 写必须独有 can write and  read
 
 
 
@@ -2515,40 +2517,114 @@ lock strategy
 
 both transactions wait for other to release a lock.
 
-Deadlock detection -> wait for graph
+Deadlock detection -> wait for graph (cycle in graph means deadlock)
 
-prevent the dead lock
+**prevent the dead lock (methods?)**
 
-​		• Conservative 2PL
+​		• Conservative 2PL 
 ​		• wait-die or wound-wait
 ​		• ....
 
-optimistic lock
-pessimistic lock
+**optimistic lock**
+**pessimistic lock**
 
 
 
-## Distributed Transaction
+## Distributed Transaction 分布式事务
 
-### 2PC 
+**分布式事务是为了解决微服务架构（形式都是分布式系统）中不同节点之间的数据一致性问题。这个一致性问题本质上解决的也是传统事务需要解决的问题，即一个请求在多个微服务调用链中，所有服务的数据处理要么全部成功，要么全部回滚**
+
+### 2PC - 2 phase commitment: prepare and commit
+
+2pc是一个非常经典的**强一致、中心化的原子提交协议**。这里所说的中心化是指协议中有两类节点：一个是中心化**协调者节点（coordinator）**和**N个参与者节点（partcipant）**。
 
 ​		• transaction coordinator sends prepare message to each participating node
 
 ​		 • each participating node responds to coordinator with prepared or no
 
-​	     • if coordinator receives all prepared: broadcase commit 
+​	     • if coordinator receives all prepared: broadcast commit 
 
-​		• if coordinator receives any no: broadcase abort
+​		• if coordinator receives any no: broadcast abort
+
+**CanCommit**
+
+![640?wx_fmt=png](https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/l89kosVutontX5z9jbdn8FnGsmBcghzLYTVwvdWlXg7EtOAsE7fmBGbpYiasptViazc8uYI3HNdmTSiaX6NCo3ssA/640?wx_fmt=png)
+
+**PreCommit**
+
+![640?wx_fmt=png](https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/l89kosVutontX5z9jbdn8FnGsmBcghzLQdwgHZWsict28a2K9TB1jz5fFgkCnianEtEhyY0yHpWKN8X6laraQz6w/640?wx_fmt=png)
+
+**DoCommit**
+
+![640?wx_fmt=png](https://ss.csdn.net/p?https://mmbiz.qpic.cn/mmbiz_png/l89kosVutontX5z9jbdn8FnGsmBcghzLNUOn74RUywTe6lu56wu9XAdaxmQqvqx1A1eMFY7SHyYJAm1M4txhiaQ/640?wx_fmt=png)
+
+在阶段一中，如果所有的参与者都返回Yes的话，那么就会进入PreCommit阶段进行事务预提交。此时分布式事务协调者会向所有的参与者节点发送PreCommit请求，参与者收到后开始执行事务操作，并将Undo和Redo信息记录到事务日志中。参与者执行完事务操作后（此时属于未提交事务的状态），就会向协调者反馈“Ack”表示我已经准备好提交了，并等待协调者的下一步指令。
+
+否则，如果阶段一中有任何一个参与者节点返回的结果是No响应，或者协调者在等待参与者节点反馈的过程中超时（**2PC中只有协调者可以超时，参与者没有超时机制）**。整个分布式事务就会中断，协调者就会向所有的参与者发送**“abort”**请求。
 
 
 
-### there are two ways to achieve sagas:
+### Saga 
 
-​		• Choreograph: each local transaction publishes domain events that trigger local transactions in other services
+Saga 是一种补偿协议，在 Saga 模式下，分布式事务内有多个参与者，每一个参与者都是一个冲正补偿服务，需要用户根据业务场景实现其正向操作和逆向回滚操作。
 
-​		• Orchestration: an orchestrator tells the participants what local transactions to execute
+分布式事务执行过程中，依次执行各参与者的正向操作，如果所有正向操作均执行成功，那么分布式事务提交。**如果任何一个正向操作执行失败，那么分布式事务会退回去执行前面各参与者的逆向回滚操作，回滚已提交的参与者，使分布式事务回到初始状态。**
 
+![Saga](https://cdn.nlark.com/yuque/0/2019/jpeg/226702/1565776830706-3a486950-04fb-48c9-9322-c0119e560ff0.jpeg)
 
+##### there are two ways to achieve sagas:
+
+**Choreograph 协调编排:** 
+
+Choreography 是一种协调 sagas 的方法，在此方法中，参与者无需集中控制即可交换事件。 对于     choreography，每个本地事务都会发布触发其他服务中的本地事务的域事件。
+
+![Choreography 概述](https://docs.microsoft.com/zh-cn/azure/architecture/reference-architectures/saga/images/choreography-pattern.png)
+
+​		each local transaction publishes domain events that trigger local transactions in other services
+
+#### 优点
+
+- 适用于需要少量参与者且不需要协调逻辑的简单工作流。
+- 不需要额外的服务实现和维护。
+- 不会引入单点故障，因为责任分布在 saga 参与者。
+
+#### 缺点
+
+- 添加新步骤时，工作流可能会令人感到困惑，因为这样做很难跟踪哪些 saga 参与者侦听哪些命令。
+- Saga 参与者之间存在循环依赖关系，因为它们必须使用彼此的命令。
+- 集成测试非常困难，因为所有服务都必须运行才能模拟事务。
+
+### 
+
+ **Orchestration 业务流程**: 
+
+业务流程是一种协调 sagas 的方式，其中集中式控制器告知 saga 参与者要执行的本地事务。 Saga orchestrator (or SEC, saga cordination executor) 处理所有事务，并告诉参与者基于事件执行哪个操作。 Orchestrator 执行 saga 请求，存储和解释每个任务的状态，并处理补偿事务的故障恢复。
+
+![业务流程概述](https://docs.microsoft.com/zh-cn/azure/architecture/reference-architectures/saga/images/orchestrator.png)
+
+an orchestrator tells the participants what local transactions to execute
+
+#### 优点
+
+- 适用于涉及多个参与者的复杂工作流或随时间推移增加的新参与者。
+- 适用于控制过程中的每个参与者，并控制活动流的情况。
+- 不会引入循环依赖关系，因为 orchestrator 单方面依赖于 saga 参与者。
+- Saga 参与者无需知道其他参与者的命令。 清除问题分离可简化业务逻辑。
+
+#### 缺点
+
+- 其他设计复杂性要求实现协调逻辑。
+- 还有一个额外的故障点，因为 orchestrator 管理完整的工作流。
+
+## 
+
+### 2PC vs Saga**对比？**
+
+自己理解（？）：
+
+2PC：先问一遍行不行 行就commit，不行就abort 。
+
+Saga: 干了再说，干不下去了就回滚到原来状态。
 
 
 
