@@ -766,7 +766,7 @@ So, even though an unchecked exception is not required to be caught, you may wan
 
 The ***heap*** is where your object data is stored. This area is then managed by the garbage collector selected at startup. Most tuning options relate to sizing the heap and choosing the most appropriate garbage collector for your situation.
 
-<img src="C:\Users\GrantW\Downloads\Java2021\6.png" alt="6" style="zoom:50%;" />
+<img src="https://github.com/aloha666/Java2021/blob/main/images/6.png?raw=true" alt="6.png" style="zoom:67%;" />
 
 
 
@@ -781,7 +781,7 @@ Java GC uses Mark and Sweep strategy to clean the heap.
 
 ### JVM Generations
 
-<img src="C:\Users\GrantW\Downloads\Java2021\7.png" alt="7" style="zoom:50%;" />
+<img src="https://github.com/aloha666/Java2021/blob/main/images/7.png?raw=true" alt="7.png" style="zoom:50%;" />
 
 As stated earlier, having to mark and compact all the objects in a JVM is inefficient. As more and more objects are allocated, the list of objects grows and grows leading to longer and longer garbage collection time. However, empirical analysis of applications has shown that most objects are short lived
 
@@ -823,7 +823,7 @@ Reference to Jakov.
 
 ## Enum
 
-A *Java Enum* is a special Java type used to define collections of constants. More precisely, a Java enum type is a special kind of Java class. An enum can contain constants, methods etc. Java enums were added in Java 5.(Before is Object, after is Enum)
+A *Java Enum* is a special Java type used to define **collections of constants**. More precisely, a Java enum type is a special kind of Java class. An enum can contain constants, methods etc. Java enums were added in Java 5.(Before is Object, after is Enum)
 
 Enum的constructor是private，实际上是signleton, aviod change later on, 这样Enum可以作为constants的collection.
 
@@ -878,6 +878,15 @@ public class Vehicle {
 ```
 
 ##### Built-in Java Annotations
+
+1、@Deprecated – 所标注内容不再被建议使用；
+2、@Override – 只能标注方法，表示该方法覆盖父类中的方法；
+3、@Documented --所标注内容可以出现在javadoc中；
+**4、@Inherited – 只能被用来标注“Annotation类型”，它所标注的Annotation具有继承性；**
+**5、@Retention – 只能被用来标注“Annotation类型”，而且它被用来指定Annotation的RetentionPolicy属性；**
+**6、@Target – 只能被用来标注“Annotation类型”，而且它被用来指定Annotation的ElementType属性；**
+7、@SuppressWarnings – 所标注内容产生的警告，编译器会对这些警告保持静默；
+**8、@interface – 用于定义一个注解；**
 
 ```java
 //The @Deprecated annotation is used to mark a class, method or field as deprecated, meaning it should no longer be used.
@@ -1045,17 +1054,17 @@ The *Java* *BufferedInputStream* class, java.io.BufferedInputStream, provides tr
 
 ## IO Stream Continue
 
-![1](/Users/spikycrown/Desktop/lec notes/1.png)
+![1.png](https://github.com/aloha666/Java2021/blob/main/images/1.png?raw=true)
 
 ### InputStreamReader(Transfer Stream) vs FileReader
 
-InputStream读bytes然后转化成character，同时可以指定编码的方式(GBK, UTF-8, etc)，filereader直接读character。
+InputStreamReader读bytes然后转化成character，同时可以指定编码的方式(GBK, UTF-8, etc)，filereader直接读character。
 
 `InputStreamReader` can handle all input streams, not just files. Other examples are network connections, classpath resources and ZIP files.
 
 FileReader reads character from a file in the file system. InputStreamReader reads characters from any kind of input stream. The stream cound be a FileInputStream, but could also be a stream obtained from a socket, an HTTP connection, a database blob, whatever.
 
-"I usually prefer using an InputStreamReader wrapping a FileInputStream to read from a file because it allows specifying a specific character encoding."
+"**I usually prefer using an InputStreamReader wrapping a FileInputStream to read from a file because it allows specifying a specific character encoding.**"
 
 **为何要用char[]来读input String？**用来减少IO inter actinons between JVM and hard disk. 比一个一个读要快
 
@@ -1065,11 +1074,89 @@ FileReader reads character from a file in the file system. InputStreamReader rea
 
 **close():** always close a buffer after use.
 
-### Object Stream
+```java
+	@Test
+    public void testInputOutputStream() throws IOException {
+
+        FileInputStream fip = null;
+        FileOutputStream fop = null;
+
+        File src = new File("/Users/spikycrown/Desktop/lecp/lec3/src/resources/1.png"); //可以读Png
+        File des = new File("/Users/spikycrown/Desktop/lecp/lec3/src/resources/2.png");
+
+        fip = new FileInputStream(src);
+        fop = new FileOutputStream(des);
+
+        byte[] buffer = new byte[5]; //读byte
+        int len;
+
+        while ((len = fip.read(buffer)) != -1) {
+            fop.write(buffer, 0, len);
+
+        }
+
+        fip.close();
+        fop.close();
+
+    }		
+@Test
+    public void testFileReaderFileWriter1() throws IOException {
+
+        FileReader fr = null;
+        FileWriter fw = null;
+
+        File src = new File("/Users/spikycrown/Desktop/lecp/lec3/src/resources/file1.txt");//只能读txt
+        File des = new File("/Users/spikycrown/Desktop/lecp/lec3/src/resources/file2.txt");
+
+        fr = new FileReader(src);
+        fw = new FileWriter(des);
+
+        char[] buffer = new char[5]; //读char
+        int len;
+
+        while ((len = fr.read(buffer)) != -1) {
+            fw.write(buffer, 0, len);
+
+        }
+
+        fr.close();
+        fw.close();
+
+    }
+
+
+    @Test
+    public void testInputOutputStreamReader() throws IOException {
+
+        FileInputStream fip = null;
+        FileOutputStream fop = null;
+
+        File src = new File("/Users/spikycrown/Desktop/lecp/lec3/src/resources/file1.txt"); //只能读txt
+        File des = new File("/Users/spikycrown/Desktop/lecp/lec3/src/resources/file2.txt");
+
+        fip = new FileInputStream(src);
+        fop = new FileOutputStream(des);
+
+        InputStreamReader isr = new InputStreamReader(fip,"UTF-8");
+        OutputStreamWriter osw = new OutputStreamWriter(fop,"GBK");
+
+        char[] buffer = new char[5]; //读char
+        int len;
+
+        while ((len = isr.read(buffer)) != -1) {
+            osw.write(buffer, 0, len);
+
+        }
+
+        isr.close();
+        osw.close();
+
+    }
+```
 
 
 
-### Serializable Interface
+### Object Stream & Serializable Interface
 
 Use with objectstream, stream could be unreadable after serialized - writeObject(). Only readable after deserialization-readObject().
 
