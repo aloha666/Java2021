@@ -52,7 +52,7 @@ It is a shared runtime data area and stores the **actual object** in a memory. I
 
 ### method area （共享）
 
-It is a **logical part** of the heap area and is created on virtual machine startup.Needs not to be contiguous连续. 
+It is a **logical part** of the heap area and is created on virtual machine startup. Needs not to be contiguous连续. 
 
 **字符串常量池则存在于方法区**
 
@@ -62,7 +62,7 @@ It is a **logical part** of the heap area and is created on virtual machine star
 
 ### stack （私有）
 
-A stack is created at the same time when a **thread** is created and is used to store data and partial results which will be needed while returning value for method and performing dynamic linking.Needs not to be contiguous. 
+A stack is created at the same time when a **thread** is created and is used to store data and partial results which will be needed while returning value for method and performing dynamic linking.Needs not to be contiguous 连续. 
 
 **Local variabels, operating stacks, dynamic linking组成。**
 
@@ -72,7 +72,7 @@ A stack is created at the same time when a **thread** is created and is used to 
 
 每条线程都有自己的pc寄存器，在任意时刻虚拟机只会执行一个方法，如果执行的是方法不是native方法 pc寄存器则保存指向当前执行字节码的指令地址，如果执行的是native方法 pc寄存器会保存undefined。
 
-Each **JVM thread** which carries out the task of a specific method has a program counter register associated with it. The non native method has a PC which stores the address of the available JVM instruction whereas in a native method, the value of program counter is undefined. PC register is capable of storing the return address or a native pointer on some specific platform.
+Each **JVM thread** which carries out the task of a specific method has a **program counter register** associated with it. The non native method has a PC which stores the address of the available JVM instruction whereas in a native method, the value of program counter is undefined. PC register is capable of storing the return address or a native pointer on some specific platform.
 
 A PC (Program Counter) Register contains the address of the instruction currently being executed in its associated thread. The PC Register is very small data area and has a fixed size. Java applications do not have any impact on its content and size.
 
@@ -290,7 +290,7 @@ All types are passed by value when calling a method.
 
 ```java
 public void method1(){
-  int i = 100;
+  int i = 100; //local variable 
   doSomething(i);
   System.out.println(i); // 100
 }
@@ -302,7 +302,7 @@ public void doSomething(int i) {. // the i here is a local variable. value is co
 }
 ----------------------------------------------------
 public void method1(){
-  Apple a1 = new Apple("RED");
+  Apple a1 = new Apple("RED"); // object/class instance
   doSomething(a1);
   System.out.println(a1.color); // GREEN 
 }
@@ -323,7 +323,7 @@ public void method1(){
 }
 
 public void doSomething(Apple a){ 
-  a = new Apple("RED"); // here we create a new Apple. and a is its reference now.
+  a = new Apple("RED"); // here we create a new Apple. and a is its reference now. become to a local variable.
   a.color="GREEN";      // so changing the new Object value won't do anything to a1.
 }
 ```
@@ -384,7 +384,7 @@ public class Main {
         }
 
         @Override
-        public boolean equals(Object o){  //override equals method
+        public boolean equals(Object o){  //override equals method 此处必须用object 如果直接用watermelon会导致override失效
             if(((Watermelon)o).color.equals(color) && ((Watermelon)o).size==size) return true;
             return false;
         }
@@ -447,9 +447,90 @@ for (Character c : str.toCharArray()) {
 }
 ```
 
+**ConcurrentHashMap**
+
+multi-thread safe HashMap, use in high concurrecy situation.将ConcurrentHashMap容器的数据分段存储，每一段数据分配一个Segment（锁），当线程占用其中一个Segment时，其他线程可正常访问其他段数据。
+
+get操作：所有的value都定义成了volatile类型，volatile可以保证线程之间的可见性，
+
+put操作：
+
+1. 获取锁，保证put操作的线程安全；
+2. 定位到HashEntry数组中具体的HashEntry；
+3. 遍历HashEntry链表，假若待插入key已存在：
+
+- 需要更新key所对应value（!onlyIfAbsent），更新oldValue -> newValue，跳转到步骤5；
+- 否则，直接跳转到步骤5；
+
+4. 遍历完HashEntry链表，key不存在，插入HashEntry节点，oldValue = null，跳转到步骤5；
+
+5. 释放锁，返回oldValue
+
+   
+
 ### Linked HashMap
 
 Maintain the insertion order of the key-value pairs. This implementation differs from HashMap in that it maintains a doubly-linked list running through all of its entries. This linked list defines the iteration ordering, which is normally the order in which keys were inserted into the map (insertion-order). Note that insertion order is not affected if a key is re-inserted into the map.
+
+我们构建一个空间占用敏感的资源池，希望可 以自动将最不常被访问的对象释放掉，这就可以利用 LinkedHashMap 提供的机制来实现。**LRU类似**
+
+```java
+package LinkedHashMap;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * @author jiangwentao
+ */
+public class LinkedHashMapSample {
+    public static void main(String[] args) {
+        LinkedHashMap<String, String> accessOrderedMap = new LinkedHashMap<String, String>(16, 0.75F, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+        // 实现自定义删除策略，否则行为就和普遍 Map 没有区别
+                return size() > 3;
+            }
+        };
+        accessOrderedMap.put("Project1", "Valhalla");
+        accessOrderedMap.put("Project2", "Panama");
+        accessOrderedMap.put("Project3", "Loom");
+        accessOrderedMap.forEach((k, v) -> System.out.println(k + ":" + v));
+        // 模拟访问
+        accessOrderedMap.get("Project2");
+        accessOrderedMap.get("Project2");
+        accessOrderedMap.get("Project3");
+        System.out.println("Iterate over should be not affected:");
+        accessOrderedMap.forEach((k, v) -> System.out.println(k + ":" + v));
+        // 触发删除
+        accessOrderedMap.put("Project4", "Mission Control");
+        System.out.println("Oldest entry should be removed:");
+        accessOrderedMap.forEach((k, v) -> {
+            // 遍历顺序不变
+            System.out.println(k + ":" + v);
+        });
+    }
+}
+
+/*
+Output:
+Project1:Valhalla
+Project2:Panama
+Project3:Loom
+--------------------------
+Iterate over should be not affected:
+Project1:Valhalla
+Project2:Panama
+Project3:Loom
+---------------------------
+Oldest entry should be removed:
+Project2:Panama
+Project3:Loom
+Project4:Mission Control
+*/
+```
+
+
 
 ##### TreeMap
 
@@ -458,6 +539,8 @@ The map is sorted according to the natural ordering of its keys, or by a Compara
 # Lecture 2
 
 ## JVM runtime map overview + example 
+
+![17](/Users/spikycrown/Desktop/Java2021/images/17.png)
 
 ### ClassLoder:
 
@@ -481,6 +564,8 @@ An Application ClassLoader is also known as a System ClassLoader. It loads the A
 
 ### 	class v.s. interface
 
+An **interface can have methods and variables** just like the class but the methods declared in interface are by default abstract (only method signature, no body, see: Java abstract method). Also, the variables declared in an interface are public, static & final by default.
+
 ### 	primitive data type
 
 Auto-boxing/Unboxing	
@@ -491,7 +576,12 @@ The Java compiler applies unboxing when an object of a wrapper class is: **Passe
 
 Wrapper classes are those whose objects wraps a primitive data type within them. In the ***java.lang\*** package java provides a separate class for each of the primitive data type namely Byte, Character, Double, Integer, Float, Long, Short.
 
-Converting primitive datatype to object is called boxing.
+Converting primitive datatype to object is called **boxing**.
+
+Converting an object of a wrapper type (`Integer`) to its corresponding primitive (`int`) value is called **unboxing**. The Java compiler applies unboxing when an object of a wrapper class is:
+
+- Passed as a parameter to a method that expects a value of the corresponding primitive type.
+- Assigned to a variable of the corresponding primitive type.
 
 ```java
 //Unboxing
@@ -528,11 +618,17 @@ public class Unboxing {
 
 default v.s. protected :
 
-The Protected access specifier is visible within the s**ame package and also visible in the subclass(even not in same package)**, the Default is a package 	level access specifier and it can be visible in the same package.
+The Protected access specifier is visible within the s**ame package and also visible in the subclass(even not in same package)**, the Default is a package level access specifier and it can be visible in the same package.
 
 ### 	inheritance 
 
 ​		implements v.s. extends
+
+​	一个类实现接口和继承抽象类对于抽象方法的实现原则是相同的：
+（1）如果这个类是个普通类，那么必须实现这个接口/抽象类的所有抽象方法；
+（2）如果这个类是个抽象类，那么不必实现这个接口/抽象类的抽象方法，因为抽象类中可以定义抽象方法。
+
+
 
 ### 	control flow:
 
@@ -544,41 +640,125 @@ The Protected access specifier is visible within the s**ame package and also vis
 
 ### 	immutable class
 
-​		final, static 
+final, static 
 
-​		The main difference between a static and final keyword is that static is keyword is used to define the class member that can be used independently of any 		object of that class. Final keyword is used to declare, a constant variable, a method which can not be overridden and a class that can not be inherited.
+The main difference between a static and final keyword is that static is keyword is used to define the class member that can be used independently of any object of that class. Final keyword is used to declare, a constant variable, a method which can not be overridden and a class that can not be inherited.
+
+```
+静态变量并不是说其就不能改变值，不能改变值的量叫常量。 其拥有的值是可变的 ，而且它会保持最新的值。说其静态，是因为它不会随着函数的调用和退出而发生变化。即上次调用函数的时候，如果我们给静态变量赋予某个值的话，下次函数调用时，这个值保持不变。
+
+父类的普通方法可以被继承和重写，不多作解释，如果子类继承父类，而且子类没有重写父类的方法，但是子类会有从父类继承过来的方法。
+静态的方法可以被继承，但是不能重写。
+```
+
+
 
 ### OOP: encapsulation
 
+Encapsulation is used to bind together both data and methods which manipulate those data, to make sure taht certain data can only be used in a proper way and keep them safe from outside. e.g: packages
+
 ### 	  abstraction
+
+**抽象方法，是指没有方法体的方法，同时抽象方法还必须使用关键字abstract做修饰。**
+
+**抽象方法必须为public或者protected**（因为如果为private，则不能被子类继承，子类便无法实现该方法），缺省情况下默认为public。
+
+```java
+//没有方法体，有abstract关键字做修饰, 需要确定return type.
+public abstract void xxx();
+
+//一个类不能实现两个具有名称相同但返回类型不同的方法的接口。它将给出编译时错误。
+```
+
+
 
 ### 	  polymorphism: 
 
   		1. Inheritance 
   		2. Override and Overload. 
   		3. Upper casting： Upcasting is the typecasting of **a child object to a parent object**. Upcasting gives us the flexibility to access the parent class members but it is not possible to access all the child class members using this feature. 子类可以用到任何需要父类的地方，反之则不行。
+  		
+
+```java
+1。父类引用指向子类对象，而子类引用不能指向父类对象。
+
+2。把子类对象直接赋给父类引用叫upcasting向上转型，向上转型不用强制转换。
+
+3。把指向子类对象的父类引用赋给子类引用叫向下转型(downcasting)，要强制转换。
+  
+  Father f1 = new Son(); // 这就叫 upcasting （向上转型)
+
+// 现在f1引用指向一个Son对象
+
+	Son s1 = (Son)f1; // 这就叫 downcasting (向下转型)
+```
+
+
 
 ## Exception Handling
 
 ### 	Exception v.s. Error
 
-![Java Exception Hierarchy](https://i.stack.imgur.com/v2NAj.png)
+![Top 20 Java Exception Handling Best Practices - HowToDoInJava](https://howtodoinjava.com/wp-content/uploads/2013/04/exceptionhierarchy3-8391226.png)
+
+### Error
 
 An Error is a subclass of Throwable that indicates serious problems that a reasonable application should not try to catch. Most such errors are abnormal conditions.
 
+An `Error` normally indicates a problem, which *the application can not recover from*. Therefore, they should not be caught.
+
+- OutOfMemoryError
+
+- NoClassDefFoundError :如果 JVM 或者 ClassLoader 实例尝试加载（可以通过正常的方法调用，也可能是使用 new 来创建新的对象）类的时候却找不到类的定义。要查找的类在编译的时候是存在的，运行的时候却找不到了。这个时候就会导致 NoClassDefFoundError。原因：
+
+  1. 打包过程漏掉了部分类。
+  2. jar包出现损坏或者篡改。
+
+  ```java
+  //对比：
+  /*ClassNotFoundException 产生的原因是：产生在runtime
+  
+  Java 支持使用反射方式在运行时动态加载类，例如使用 Class.forName 方法来动态地加载类时，可以将类名作为参数传递给上述方法从而将指定类加载到 JVM 内存中，如果这个类在类路径中没有被找到，那么此时就会在运行时抛出ClassNotFoundException 异常。
+  原因：
+  
+  常见问题在于类名书写错误。
+  当一个类已经被某个类加载器加载到内存中了，此时另一个类加载器又尝试着动态地从同一个包中加载这个类。通过控制动态类加载过程，可以避免上述情况发生。
+  ```
+
+  | 异常类型 | ClassNotFoundException                                       | NoClassDefFoundError                                         |
+  | -------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | 继承模型 | 从java.lang.Exception继承，是一个Exception类型               | 从java.lang.Error继承，是一个Error类型                       |
+  | 触发原因 | 当动态加载Class的时候找不到类会抛出该异常                    | 程序在编译时可以找到所依赖的类，但是在运行时找不到指定的类文件，运行过程中Class找不到导致抛出该错误 |
+  | 触发主体 | 一般在执行Class.forName()、ClassLoader.loadClass()或ClassLoader.findSystemClass()的时候抛出 | JVM或者ClassLoader实例尝试加载类的时候，找不到类的定义而发生，通常在**import**和**new**一个类的时候触发 |
+  | 处理方式 | 程序可以从Exception中恢复，ClassNotFoundException可由程序捕获和处理 | 程序无法从错误中恢复，Error是系统错误，用户无法处理          |
+  | 可能原因 | 要加载的类不存在；类名书写错误                               | jar包缺失；调用初始化失败的类                                |
+
 ### 	Exception: checked/unchecked Exception
 
-Checked Exception: Has to be try-catched or decleared using throws keyword on method.
+Checked Exception: Has to be try-catched or decleared using throws keyword on method. compile编译时检查
 
-UnChecked Exception: Don't need to be try-catched or decleared.
+UnChecked Exception: Don't need to be try-catched or decleared.可以catch 但没必要， 运行时抛出
 
 Throwable is the parent class of all exceptions and errors.
 
 ### 	Exception Handling: 
 
-​	 1. try-catch-finally (try with resource) 
-
+	 1. try-catch-finally (try with resource) 
   	 2. throws Customized Exception
+
+### Unchecked Exception vs Error
+
+```java
+/*From the Error Javadoc:
+
+An Error is a subclass of Throwable that indicates serious problems that a reasonable application should not try to catch. Most such errors are abnormal conditions. The ThreadDeath error, though a "normal" condition, is also a subclass of Error because most applications should not try to catch it.
+
+Versus the Exception Javadoc
+
+The class Exception and its subclasses are a form of Throwable that indicates conditions that a reasonable application might want to catch.
+
+So, even though an unchecked exception is not required to be caught, you may want to. An error, you don't want to catch.
+```
 
 
 
@@ -1855,6 +2035,8 @@ Divide data into groups/colmns, one column family is one topic/ID.
 
  代表：Cassandra, Hbase
 
+![img](http://www.timestored.com/time-series-data/images/column-vs-row-oriented-database.png)
+
 
 
 ### 3. Key/value data stores
@@ -1877,11 +2059,11 @@ essentially a large hash table, hash value is opaque to data store
 
 ## CAP Theory
 
-Consistency: all clients will always have the same view of data. when you write a piece of data in a system/distributed system, the same data you should get when you read it from any node of the system.
+Consistency: 一致性 all clients will always have the same view/version of data. when you write a piece of data in a system/distributed system, the same data you should get when you read it from any node of the system.
 
-Availability: each client can always read and write the data. The system should always be available for read/write operation.
+Availability: 可用性 each client can always read and write the data. The system should always be available for read/write operation.
 
-Partition tolerance: the system works well despite the physical network partition (always achieve in non-relation database since they are distributed)
+Partition tolerance: 分区容错性 the system works well despite the physical network partition (always achieve in non-relation database since they are distributed)
 
 CAP theorem: satisfying all three at the same time is impossible, **Most systems are not only available or only consistent, they always offer a bit of both**
 
@@ -1890,6 +2072,14 @@ CP 代表: BigTable, **MongoDB**, Hbase, **Redis**
  AP 代表: DynamoDB, Cassandra, Cassandra, CouchDb, Riak
 
 ```java
+/*
+分区耐受性
+保证数据可持久存储，在各种情况下都不会出现数据丢失的问题。为了实现数据的持久性，不但需要在写入的时候保证数据能够持久存储，还需要能够将数据备份一个或多个副本，存放在不同的物理设备上，防止某个存储设备发生故障时，数据不会丢失。
+数据一致性
+在数据有多份副本的情况下，如果网络、服务器、软件出现了故障，会导致部分副本写入失败。这就造成了多个副本之间的数据不一致，数据内容冲突。
+数据可用性
+多个副本分别存储于不同的物理设备的情况下，如果某个设备损坏，就需要从另一个数据存储设备上访问数据。如果这个过程不能很快完成，或者在完成的过程中需要停止终端用户访问数据，那么在切换存储设备的这段时间内，数据就是不可访问的。
+
 /*
 **why mongoDB and redis did not achieve availability? High consistency > availability**
 
@@ -1994,7 +2184,7 @@ Mongos启动后，会从 Config Server 加载元数据，开始提供服务，�
 
 ### Functionality of MongoDb
 
-• dynamic schema
+• dynamic schema: meaning?
 • document based
 • support **secondary indexes** (expect primary index, all other index are secondary index)
 
@@ -2445,20 +2635,20 @@ output(r, s)
 
 ## Transaction / ACID / Rollback / Commit
 
-### Transaction
+### Transaction事务
 
 is an action or a series of actions, carried out by a single user or application, which reads or updates the contents of a database.
 
 ### ACID
 
-•Atomicity
+•Atomicity 要么全部完成，要么全部不完成；
 	○tractions are atomic - they don't have parts
 	○can't be executed paritcally, either all happen, or nothing happens
-•Consistency
+•Consistency 
 	○transactions take the database from one consistent state into another
-•Isolation
-	○The effects of atranaction are not visible to other transactions until it hascompleted
-•Durablility
+•Isolation 一个事务单元需要提交之后才会被其他事务可见；
+	○The effects of atranaction are not visible to other transactions until it has completed
+•Durablility 事务提交后即持久化到磁盘不会丢失。
 	○Once a transaction has completed, its changes are made permanent
 
 ### Commit: success
@@ -2467,30 +2657,42 @@ is an action or a series of actions, carried out by a single user or application
 
 
 
-## Isolation Levels
+## Isolation Levels 数据库隔离级别
 
-**Dirty read**: read UNCOMMITED data from another transaction (may did a rollback  by other transaction , so the value read is not correct) 读的数据由于别的操作rollback,不再有效
+**Dirty read**: read UNCOMMITED data from another transaction (may did a rollback  by other transaction , so the value read is not correct) 
 
-**Non-repeatable read**: read COMMITED data from an UPDATE query from another transaction 读的数据被别的操作修改,不能重读
+修改数据不加锁---》脏读（正在修改的数据未提交时被读取）
 
-**Phantom read**: read COMMITTED data from an INSERT or DELETE query from another transaction 读的数据由于别的操作添加或删除，跟开始读的不一样
+**Non-repeatable read**: read COMMITED data from an UPDATE query from another transaction 
+
+查询数据不加锁---》不可重复读（正在读取的数据，被修改了再次读取就不一样了）
+
+**Phantom read**: read COMMITTED data from an INSERT or DELETE query from another transaction 
+
+读、修改都加锁---》幻读（读取之后，有数据添加）
 
 
 
 **isolation level**
-	• read uncommited/
-	• read committed/
-	• repeatable read /
+	• read uncommited
+	• read committed
+	• repeatable read 
 	• serizalizable
 
-| Isolation Level  | Dirty Reads | Unrepeatable Reads | Phantom Reads |
-| ---------------- | ----------- | ------------------ | ------------- |
-| Read uncommitted | Y           | Y                  | Y             |
-| Read committed   | N           | Y                  | Y             |
-| Repeatable read  | N           | N                  | Y             |
-| Serializable     | N           | N                  | N             |
+| Isolation Level                                 | Dirty Reads | Unrepeatable Reads | Phantom Reads |
+| ----------------------------------------------- | ----------- | ------------------ | ------------- |
+| Read uncommitted 允许其他事务看到没有提交的数据 | Y           | Y                  | Y             |
+| Read committed 被读取的数据可以被其他事务修改   | N           | Y                  | Y             |
+| Repeatable read                                 | N           | N                  | Y             |
+| Serializable 事物依次执行避免幻读               | N           | N                  | N             |
 
 Y-yes to the problem, N- prevent the problem.
+
+**Repeatable read：** 所有被Select获取的数据会生成快照，这样就可以避免一个事务前后读取数据不一致的情况。但是却没有办法控制幻读，因为这个时候其他事务不能更改所选的数据，但是可以增加数据，因为前一个事务没有范围锁。
+
+**串行化（SERIALIZABLE）**：所有事务都一个接一个地串行执行，这样可以避免幻读（phantom reads）。对于基于锁来实现并发控制的数据库来说，串行化要求在执行范围查询（如选取年龄在10到30之间的用户）的时候，需要获取范围锁（range lock）。如果不是基于锁实现并发控制的数据库，则检查到有违反串行操作的事务时，需要滚回该事务。
+
+**range lock间隙锁**： 是一种加在两个索引之间的**锁**，或者加在第一个索引之前，或最后一个索引之后的间隙。 有时候又称为**范围锁**（**Range Locks**），这个**范围**可以跨一个索引记录，多个索引记录，甚至是空的。 使用间隙**锁**可以防止其他事务在这个**范围**内插入或修改记录，**保证两次读取这个范围内的记录不会变**，从而不会出现幻读现象。虽然解决了幻读问题，但是数据库的并发性一样受到了影响.
 
 **transaction**. -> a series of actions
 **schedule** -> a series of transactions
@@ -2502,16 +2704,49 @@ Y-yes to the problem, N- prevent the problem.
 
 ## Lock
 
+https://www.aneasystone.com/archives/2017/11/solving-dead-locks-two.html 解决死锁之路 - 了解常见的锁类型
+
 ### Types of Lock
 
 **Binary lock**
 	• locked. (x = 1)
 	• unlocked (x =0)
 **Shared lock and exclusive lock**
-	• share lock == read lock 读可以share can only read 
-	• exclusive lock == write lock 写必须独有 can write and  read
+	• share lock == read lock 读可以share can only read  **S锁**
+	• exclusive lock == write lock 写必须独有 can write and  read **X锁**
 
 
+
+### Read Lock & Write Lock
+
+##### Read Lock:
+
+- 持有读锁的会话可以读表，但不能写表；
+- 允许多个会话同时持有读锁；
+- 其他会话就算没有给表加读锁，也是可以读表的，但是不能写表；
+- 其他会话申请该表写锁时会阻塞，直到锁释放。
+
+##### Write Lock:
+
+- 持有写锁的会话既可以读表，也可以写表；
+
+- 只有持有写锁的会话才可以访问该表，其他会话访问该表会被阻塞，直到锁释放；
+
+- 其他会话无论申请该表的读锁或写锁，都会阻塞，直到锁释放。
+
+  
+
+### **每个级别需要什么锁？**
+
+- 读未提交（Read Uncommitted）：事务读不阻塞其他事务读和写，事务写阻塞其他事务写但不阻塞读；通过对写操作加 “持续X锁”，对读操作**不加锁** 实现；
+
+- 读已提交（Read Committed）：事务读不会阻塞其他事务读和写，事务写会阻塞其他事务读和写；通过对写操作加 “**持续X锁**”，对读操作加 “**临时S锁**” 实现；不会出现脏读；
+
+- 可重复读（Repeatable Read）：事务读会阻塞其他事务事务写但不阻塞读，事务写会阻塞其他事务读和写；通过对写操作加 **“持续X锁”**，对读操作加 “**持续S锁**” 实现；
+
+- 序列化（Serializable）：为了解决幻读问题，**行级锁**做不到，需使用**表级锁**。
+
+  
 
 ### Dead lock: 
 
@@ -2526,7 +2761,22 @@ Deadlock detection -> wait for graph (cycle in graph means deadlock)
 ​		• ....
 
 **optimistic lock**
+
+就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在提交更新的时候会判断一下在此期间别人有没有去更新这个数据。乐观锁适用于读多写少的应用场景，这样可以提高吞吐量。
+
+乐观锁：假设不会发生并发冲突，只在提交操作时检查是否违反数据完整性。
+
+乐观锁一般来说有以下2种方式：
+
+使用数据版本（Version）记录机制实现，这是乐观锁最常用的一种实现方式。何谓数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 “version” 字段来实现。当读取数据时，将version字段的值一同读出，数据每更新一次，对此version值加一。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的version值进行比对，如果数据库表当前版本号与第一次取出来的version值相等，则予以更新，否则认为是过期数据。
+
+使用时间戳（timestamp）。乐观锁定的第二种实现方式和第一种差不多，同样是在需要乐观锁控制的table中增加一个字段，名称无所谓，字段类型使用时间戳（timestamp）, 和上面的version类似，也是在更新提交的时候检查当前数据库中数据的时间戳和自己更新前取到的时间戳进行对比，如果一致则OK，否则就是版本冲突。
+
 **pessimistic lock**
+
+悲观锁，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。
+
+Java synchronized 就属于悲观锁的一种实现，每次线程要修改数据时都先获得锁，保证同一时刻只有一个线程能操作数据，其他线程则会被block。
 
 
 
@@ -2534,7 +2784,9 @@ Deadlock detection -> wait for graph (cycle in graph means deadlock)
 
 **分布式事务是为了解决微服务架构（形式都是分布式系统）中不同节点之间的数据一致性问题。这个一致性问题本质上解决的也是传统事务需要解决的问题，即一个请求在多个微服务调用链中，所有服务的数据处理要么全部成功，要么全部回滚**
 
-### 2PC - 2 phase commitment: prepare and commit
+### 2PC
+
+**2 phase commitment: prepare and commit**
 
 2pc是一个非常经典的**强一致、中心化的原子提交协议**。这里所说的中心化是指协议中有两类节点：一个是中心化**协调者节点（coordinator）**和**N个参与者节点（partcipant）**。
 
@@ -2594,8 +2846,6 @@ Choreography 是一种协调 sagas 的方法，在此方法中，参与者无需
 - Saga 参与者之间存在循环依赖关系，因为它们必须使用彼此的命令。
 - 集成测试非常困难，因为所有服务都必须运行才能模拟事务。
 
-### 
-
  **Orchestration 业务流程**: 
 
 业务流程是一种协调 sagas 的方式，其中集中式控制器告知 saga 参与者要执行的本地事务。 Saga orchestrator (or SEC, saga cordination executor) 处理所有事务，并告诉参与者基于事件执行哪个操作。 Orchestrator 执行 saga 请求，存储和解释每个任务的状态，并处理补偿事务的故障恢复。
@@ -2616,7 +2866,11 @@ an orchestrator tells the participants what local transactions to execute
 - 其他设计复杂性要求实现协调逻辑。
 - 还有一个额外的故障点，因为 orchestrator 管理完整的工作流。
 
-## 
+自己理解（？）：
+
+**编排（Choreography）**：参与者（子事务）之间的调用、分配、决策和排序，通过交换事件进行进行。是一种去中心化的模式，参与者之间通过消息机制进行沟通，通过监听器的方式监听其他参与者发出的消息，从而执行后续的逻辑处理。由于没有中间协调点，靠参与靠自己进行相互协调。
+
+**控制（Orchestration）**：Saga提供一个控制类，其方便参与者之前的协调工作。事务执行的命令从控制类发起，按照逻辑顺序请求Saga的参与者，从参与者那里接受到反馈以后，控制类在发起向其他参与者的调用。所有Saga的参与者都围绕这个控制类进行沟通和协调工作
 
 ### 2PC vs Saga**对比？**
 
