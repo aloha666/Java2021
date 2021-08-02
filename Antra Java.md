@@ -1251,7 +1251,15 @@ UID is on the template and needed by both serialization and deserialization. (?)
 
 Serialization只能保存对象的非静态成员变量，不能保存任何的成员方法和静态的成员变量，而且Serialization保存的只是变量的值，对于变量的任何修饰符都不能保存。即序列化后不能通过反序列化恢复。
 
-如果把Person类中的name定义为static类型的话，试图重构，就不能得到原来的值，只能得到null。说明对静态成员变量值是不保存的。这其实比较容易理解，序列化保存的是对象的状态，静态变量属于类的状态，因此 序列化并不保存静态变量。 
+如果把Person类中的name定义为static类型的话，试图重构，就不能得到原来的值，只能得到null。说明对静态成员变量值是不保存的。这其实比较容易理解，序列化保存的是对象的状态，静态变量属于类的状态，因此 序列化并不保存静态变量。
+
+UID 也是 static 是否在序列化中保存？ **YES** https://coderanch.com/t/593227/java/serialVersionUID-field-type-static-final
+
+```java
+/* Yes it is the exception because serialVersionUID is used by the serialisation system to determine if a class has been changed since the object was serialized ie if it is safe to de-serialize the object to the current class definition. If the serialVersionUID in a serialized object is the same as the in class then it is assumed that no modifications that will effect the de-serialisation have been made to the class. So for instance, if a class has been modified to add a new method then there is probably no need to change the class' serialVersionUID however if you have added/removed/changed the type of an instance variable then you must change the serialVersionUID or provide special handling code for de-serialising objects serialized before the change.
+```
+
+
 
 transient关键字的作用是：阻止实例中那些用此关键字声明的变量持久化；当对象被反序列化时（从源文件读取字节序列进行重构），这样的实例变量值不会被持久化和恢复。当某些变量不想被序列化，同是又不适合使用static关键字声明，那么此时就需要用transient关键字来声明该变量。
 
