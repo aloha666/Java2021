@@ -677,7 +677,7 @@ public abstract void xxx();
   		1. Inheritance 
   		2. Override and Overload. 
   		3. Upper casting： Upcasting is the typecasting of **a child object to a parent object**. Upcasting gives us the flexibility to access the parent class members but it is not possible to access all the child class members using this feature. 子类可以用到任何需要父类的地方，反之则不行。
-  		
+
 
 ```java
 1。父类引用指向子类对象，而子类引用不能指向父类对象。
@@ -744,7 +744,7 @@ Throwable is the parent class of all exceptions and errors.
 ### 	Exception Handling: 
 
 	 1. try-catch-finally (try with resource) 
-  	 2. throws Customized Exception
+	 2. throws Customized Exception
 
 ### Unchecked Exception vs Error
 
@@ -3066,9 +3066,83 @@ Saga: 干了再说，干不下去了就回滚到原来状态。
 
 
 
+# lecture 10
+
+## Mysql Operations
+
+```sql
+-- CRUD OPREATIONS
+
+-- create schema testdb
+
+-- create a table
+
+-- create table testdb.Persons(
+-- personID int primary key,
+-- LastName varchar(255),
+-- FirstName varchar(255),
+-- Address varchar(255),
+-- City varchar(255)
+-- )
+
+-- create table base on existing table
+
+-- create table testdb.employees as
+-- select personId, firstname, lastname
+-- from testDB.persons
 
 
+-- alter table, add column
 
+-- alter table testdb.employees
+-- add dep varchar(255);
+
+-- add multiple columns
+
+-- alter table testdb.employees
+-- add(
+-- salaray int,
+-- address varchar(255)
+-- ) 
+
+-- alter table drop colmn
+
+-- alter table testdb.employees
+-- drop address
+
+-- alter table, modify column
+-- alter table testdb.employees
+-- modify column dep varchar(144)
+
+
+-- insert data
+
+-- use testdb;
+-- insert into employees(personid, firstname, lastname, dep, salaray)
+-- values
+-- (1,'lei','li','HR','10000'),
+-- (2,'meimei','han','Account','20000')
+
+-- if add all vaule, can ignore the column name
+-- use testdb;
+-- insert into employees
+-- values
+-- (3,'san','zhang','sale','20000')
+
+
+-- update data
+
+-- set sql_safe_updates =0;
+
+-- update testdb.employees
+-- set salaray = 40000
+-- where lastname = 'zhang';
+
+-- delete 删一行数据 truncate 删所有数据 保留结构  drop 删掉表
+
+```
+
+https://zhuanlan.zhihu.com/p/29413183 Learn SQL | 基础操作综合练习
 
 
 
