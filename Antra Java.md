@@ -3144,6 +3144,688 @@ Saga: 干了再说，干不下去了就回滚到原来状态。
 
 https://zhuanlan.zhihu.com/p/29413183 Learn SQL | 基础操作综合练习
 
+## SQL表问题
+
+1. table里可以有多个主键吗？
+
+   数据库的每张表只能**有**一个**主键**，不可能**有多个主键**. 
+
+   **Every table can have (but does not have to have) a primary key**. The column or columns defined as the primary key ensure uniqueness in the table; no two rows can have the same key. The primary key of one table may also help to identify records in other tables, and be part of the second table's primary key.
+
+2. table里可以有重复行吗？
+
+   没有主键就可以有重复记录了，方便恢复记录。一旦有了主键，必须主键列无重复值。 
+
+3. 什么是联合主键？
+
+   所谓的复合主键 就是指你表的主键含有一个以上的字段组成,不使用无业务含义的自增id作为主键。
+
+   ```sql
+   create table test 
+   ( 
+      name varchar(19), 
+      id number, 
+      value varchar(10), 
+      primary key (name,id) 
+   )
+   ```
+
+   
+
+## SQL基本操作
+
+### SQL SELECT 语句
+
+SELECT 语句用于从数据库中选取数据。
+
+结果被存储在一个结果表中，称为结果集。
+
+### SQL SELECT DISTINCT 语句
+
+在表中，一个列可能会包含多个重复值，有时您也许希望仅仅列出不同（distinct）的值。
+
+DISTINCT 关键词用于返回唯一不同的值
+
+### SQL WHERE 子句
+
+WHERE 子句用于提取那些满足指定条件的记录。
+
+### SQL AND & OR 运算符
+
+如果第一个条件和第二个条件都成立，则 AND 运算符显示一条记录。
+
+如果第一个条件和第二个条件中只要有一个成立，则 OR 运算符显示一条记录。
+
+### SQL ORDER BY 关键字
+
+ORDER BY 关键字用于对结果集按照一个列或者多个列进行排序。
+
+ORDER BY 关键字默认按照升序对记录进行排序。如果需要按照降序对记录进行排序，您可以使用 DESC 关键字。
+
+```sql
+SELECT column_name,column_name
+FROM table_name
+ORDER BY column_name,column_name ASC|DESC;
+```
+
+### SQL INSERT INTO 语法
+
+INSERT INTO 语句可以有两种编写形式。
+
+第一种形式无需指定要插入数据的列名，只需提供被插入的值即可：
+
+```sql
+INSERT INTO *table_name*
+VALUES (*value1*,*value2*,*value3*,...);
+```
+
+
+
+第二种形式需要指定列名及被插入的值：
+
+```sql
+INSERT INTO *table_name* (*column1*,*column2*,*column3*,...)
+VALUES (*value1*,*value2*,*value3*,...);
+```
+
+### SQL UPDATE 语句
+
+UPDATE 语句用于更新表中已存在的记录。
+
+```sql
+UPDATE table_name
+SET column1=value1,column2=value2,...
+WHERE some_column=some_value;
+```
+
+### SQL DELETE 语句
+
+DELETE 语句用于删除表中的行。
+
+```sql
+DELETE FROM table_name
+WHERE some_column=some_value;
+```
+
+### SQL SELECT  LIMIT
+
+SELECT TOP 子句用于规定要返回的记录的数目。LIMIT
+
+```sql
+SELECT column_name(s)
+FROM table_name
+LIMIT number;
+```
+
+### SQL LIKE 操作符
+
+LIKE 操作符用于在 WHERE 子句中搜索列中的指定模式。
+
+```sql
+SELECT column_name(s)
+FROM table_name
+WHERE column_name LIKE pattern
+```
+
+### SQL 通配符
+
+在 SQL 中，通配符与 SQL LIKE 操作符一起使用。
+
+SQL 通配符用于搜索表中的数据。
+
+在 SQL 中，可使用以下通配符：
+
+| 通配符                         | 描述                       |
+| :----------------------------- | :------------------------- |
+| %                              | 替代 0 个或多个字符        |
+| _                              | 替代一个字符               |
+| [*charlist*]                   | 字符列中的任何单一字符     |
+| [^*charlist*] 或 [!*charlist*] | 不在字符列中的任何单一字符 |
+
+
+
+```sql
+SELECT * FROM Websites
+WHERE url LIKE 'https%';
+
+SELECT * FROM Websites
+WHERE url LIKE '%oo%';
+
+SELECT * FROM Websites
+WHERE name LIKE '_oogle';
+
+SELECT * FROM Websites
+WHERE name LIKE 'G_o_le';
+```
+
+### IN 操作符
+
+IN 操作符允许您在 WHERE 子句中规定多个值。
+
+```sql
+SELECT column_name(s)
+FROM table_name
+WHERE column_name IN (value1,value2,...);
+```
+
+### SQL BETWEEN 操作符
+
+BETWEEN 操作符选取介于两个值之间的数据范围内的值。这些值可以是数值、文本或者日期。
+
+```sql
+SELECT column_name(s)
+FROM table_name
+WHERE column_name BETWEEN value1 AND value2;
+```
+
+### SQL 别名
+
+通过使用 SQL，可以为表名称或列名称指定别名。
+
+基本上，创建别名是为了让列名称的可读性更强。
+
+```sql
+-- 列的 SQL 别名语法
+SELECT column_name AS alias_name
+FROM table_name;
+
+SELECT name AS n, country AS c
+FROM Websites;
+
+-- 表的 SQL 别名语法
+SELECT column_name(s)
+FROM table_name AS alias_name;
+
+SELECT w.name, w.url, a.count, a.date
+FROM Websites AS w, access_log AS a
+WHERE a.site_id=w.id and w.name="菜鸟教程";
+```
+
+
+
+### SQL 连接(JOIN)
+
+SQL JOIN 子句用于把来自两个或多个表的行结合起来，基于这些表之间的共同字段。
+
+最常见的 JOIN 类型：**SQL INNER JOIN（简单的 JOIN）**。 SQL INNER JOIN 从多个表中返回满足 JOIN 条件的所有行
+
+<img src="https://www.runoob.com/wp-content/uploads/2019/01/sql-join.png" alt="img" style="zoom:67%;" />
+
+```sql
+SELECT Websites.id, Websites.name, access_log.count, access_log.date
+FROM Websites
+INNER JOIN access_log
+ON Websites.id=access_log.site_id;
+```
+
+
+
+### SQL UNION 操作符
+
+UNION 操作符用于合并两个或多个 SELECT 语句的结果集。
+
+请注意，UNION 内部的每个 SELECT 语句必须拥有相同数量的列。列也必须拥有相似的数据类型。同时，每个 SELECT 语句中的列的顺序必须相同。
+
+**注释：**默认地，UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION ALL。
+
+**注释：**UNION 结果集中的列名总是等于 UNION 中第一个 SELECT 语句中的列名。
+
+```sql
+SELECT column_name(s) FROM table1
+UNION
+SELECT column_name(s) FROM table2;
+
+SELECT column_name(s) FROM table1
+UNION ALL
+SELECT column_name(s) FROM table2;
+```
+
+### SQL SELECT INTO 语句
+
+SELECT INTO 语句从一个表复制数据，然后把数据插入到另一个新表中。 *MySQL 数据库不支持 SELECT ... INTO 语句，但支持* [INSERT INTO ... SELECT](https://www.runoob.com/sql/sql-insert-into-select.html) *。*
+
+```sql
+-- mysql
+CREATE TABLE 新表
+AS
+SELECT * FROM 旧表 
+```
+
+
+
+### SQL INSERT INTO SELECT 语句
+
+INSERT INTO SELECT 语句从一个表复制数据，然后把数据插入到一个已存在的表中。目标表中任何已存在的行都不会受影响。
+
+```sql
+INSERT INTO table2
+SELECT * FROM table1;
+
+INSERT INTO table2
+(column_name(s))
+SELECT column_name(s)
+FROM table1;
+```
+
+
+
+### SQL 约束（Constraints）
+
+SQL 约束用于规定表中的数据规则。
+
+如果存在违反约束的数据行为，行为会被约束终止。
+
+约束可以在创建表时规定（通过 CREATE TABLE 语句），或者在表创建之后规定（通过 ALTER TABLE 语句）。
+
+##### SQL CREATE TABLE + CONSTRAINT 语法
+
+CREATE TABLE *table_name*
+(
+*column_name1 data_type*(*size*) *constraint_name*,
+*column_name2 data_type*(*size*) *constraint_name*,
+*column_name3 data_type*(*size*) *constraint_name*,
+....
+);
+
+在 SQL 中，我们有如下约束：
+
+- **NOT NULL** - 指示某列不能存储 NULL 值。
+- **UNIQUE** - 保证某列的每行必须有唯一的值。
+- **PRIMARY KEY** - NOT NULL 和 UNIQUE 的结合。确保某列（或两个列多个列的结合）有唯一标识，有助于更容易更快速地找到表中的一个特定的记录。
+- **FOREIGN KEY** - 保证一个表中的数据匹配另一个表中的值的参照完整性。
+- **CHECK** - 保证列中的值符合指定的条件。
+- **DEFAULT** - 规定没有给列赋值时的默认值。
+
+
+
+
+
+### SQL NOT NULL 约束
+
+NOT NULL 约束强制列不接受 NULL 值。
+
+NOT NULL 约束强制字段始终包含值。这意味着，如果不向字段添加值，就无法插入新记录或者更新记录。
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255) NOT NULL,
+    Age int
+);
+
+-- 添加 NOT NULL 约束
+ALTER TABLE Persons
+MODIFY Age int NOT NULL;
+
+-- 删除 NOT NULL 约束
+ALTER TABLE Persons
+MODIFY Age int NULL;
+```
+
+
+
+### SQL UNIQUE 约束
+
+UNIQUE 约束唯一标识数据库表中的每条记录。
+
+UNIQUE 和 PRIMARY KEY 约束均为列或列集合提供了唯一性的保证。
+
+PRIMARY KEY 约束拥有自动定义的 UNIQUE 约束。
+
+请注意，每个表可以有多个 UNIQUE 约束，但是每个表只能有一个 PRIMARY KEY 约束。
+
+```sql
+CREATE TABLE Persons
+(
+P_Id int NOT NULL,
+LastName varchar(255) NOT NULL,
+FirstName varchar(255),
+Address varchar(255),
+City varchar(255),
+UNIQUE (P_Id)
+)
+
+-- ALTER TABLE Persons
+ADD UNIQUE (P_Id)
+
+-- 撤销 UNIQUE 约束
+ALTER TABLE Persons
+DROP INDEX uc_PersonID
+```
+
+### SQL PRIMARY KEY 约束
+
+PRIMARY KEY 约束唯一标识数据库表中的每条记录。
+
+主键必须包含唯一的值。
+
+主键列不能包含 NULL 值。
+
+每个表都应该有一个主键，并且每个表只能有一个主键。
+
+```sql
+CREATE TABLE Persons
+(
+P_Id int NOT NULL,
+LastName varchar(255) NOT NULL,
+FirstName varchar(255),
+Address varchar(255),
+City varchar(255),
+PRIMARY KEY (P_Id)
+)
+
+-- ALTER TABLE 时的 SQL PRIMARY KEY 约束
+ALTER TABLE Persons
+ADD PRIMARY KEY (P_Id)
+
+ALTER TABLE Persons
+DROP PRIMARY KEY
+```
+
+
+
+### SQL FOREIGN KEY 约束
+
+一个表中的 FOREIGN KEY 指向另一个表中的 UNIQUE KEY(唯一约束的键)。
+
+```sql
+CREATE TABLE Orders
+(
+O_Id int NOT NULL,
+OrderNo int NOT NULL,
+P_Id int,
+PRIMARY KEY (O_Id),
+FOREIGN KEY (P_Id) REFERENCES Persons(P_Id)
+)
+
+-- ALTER TABLE 时的 SQL FOREIGN KEY 约束
+ALTER TABLE Orders
+ADD FOREIGN KEY (P_Id)
+REFERENCES Persons(P_Id)
+
+ALTER TABLE Orders
+DROP FOREIGN KEY fk_PerOrders
+```
+
+
+
+### SQL CHECK 约束
+
+CHECK 约束用于限制列中的值的范围。
+
+如果对单个列定义 CHECK 约束，那么该列只允许特定的值。
+
+如果对一个表定义 CHECK 约束，那么此约束会基于行中其他列的值在特定的列中对值进行限制。
+
+```sql
+CREATE TABLE Persons
+(
+P_Id int NOT NULL,
+LastName varchar(255) NOT NULL,
+FirstName varchar(255),
+Address varchar(255),
+City varchar(255),
+CHECK (P_Id>0)
+)
+
+-- ALTER TABLE 时的 SQL CHECK 约束
+ALTER TABLE Persons
+ADD CHECK (P_Id>0)
+
+ALTER TABLE Persons
+DROP CONSTRAINT chk_Person
+```
+
+
+
+### SQL DEFAULT 约束
+
+DEFAULT 约束用于向列中插入默认值。
+
+如果没有规定其他的值，那么会将默认值添加到所有的新记录。
+
+```sql
+CREATE TABLE Persons
+(
+    P_Id int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255) DEFAULT 'Sandnes'
+)
+
+-- ALTER TABLE 时的 SQL DEFAULT 约束
+ALTER TABLE Persons
+ALTER City SET DEFAULT 'SANDNES'
+
+ALTER TABLE Persons
+ALTER City DROP DEFAULT
+```
+
+### SQL CREATE INDEX 语句
+
+CREATE INDEX 语句用于在表中创建索引。
+
+用户无法看到索引，它们只能被用来加速搜索/查询。
+
+**注释：**更新一个包含索引的表需要比更新一个没有索引的表花费更多的时间，这是由于索引本身也需要更新。因此，理想的做法是仅仅在常常被搜索的列（以及表）上面创建索引。
+
+```sql
+CREATE INDEX index_name
+ON table_name (column_name)
+
+CREATE UNIQUE INDEX index_name
+ON table_name (column_name)
+```
+
+### SQL DROP 语句
+
+```sql
+DROP INDEX index_name ON table_name
+
+DROP TABLE table_name
+
+DROP DATABASE database_name
+
+-- 删除表内的数据，但并不删除表本身
+TRUNCATE TABLE table_name
+```
+
+
+
+### SQL ALTER TABLE 语句
+
+ALTER TABLE 语句用于在已有的表中添加、删除或修改列。
+
+```sql
+ALTER TABLE table_name
+ADD column_name datatype
+
+ALTER TABLE table_name
+DROP COLUMN column_name
+
+ALTER TABLE table_name
+MODIFY COLUMN column_name datatype
+```
+
+### SQL Date 函数
+
+**MySQL** 使用下列数据类型在数据库中存储日期或日期/时间值：
+
+- DATE - 格式：YYYY-MM-DD
+- DATETIME - 格式：YYYY-MM-DD HH:MM:SS
+- TIMESTAMP - 格式：YYYY-MM-DD HH:MM:SS
+- YEAR - 格式：YYYY 或 YY
+
+MySQL 中最重要的内建日期函数：
+
+| [NOW()](https://www.runoob.com/sql/func-now.html)            | 返回当前的日期和时间                |
+| ------------------------------------------------------------ | ----------------------------------- |
+| [CURDATE()](https://www.runoob.com/sql/func-curdate.html)    | 返回当前的日期                      |
+| [CURTIME()](https://www.runoob.com/sql/func-curtime.html)    | 返回当前的时间                      |
+| [DATE()](https://www.runoob.com/sql/func-date.html)          | 提取日期或日期/时间表达式的日期部分 |
+| [EXTRACT()](https://www.runoob.com/sql/func-extract.html)    | 返回日期/时间的单独部分             |
+| [DATE_ADD()](https://www.runoob.com/sql/func-date-add.html)  | 向日期添加指定的时间间隔            |
+| [DATE_SUB()](https://www.runoob.com/sql/func-date-sub.html)  | 从日期减去指定的时间间隔            |
+| [DATEDIFF()](https://www.runoob.com/sql/func-datediff-mysql.html) | 返回两个日期之间的天数              |
+| [DATE_FORMAT()](https://www.runoob.com/sql/func-date-format.html) | 用不同的格式显示日期/时间           |
+
+```sql
+SELECT * FROM Orders WHERE OrderDate='2008-11-11'
+
+SELECT * FROM Orders WHERE OrderDate='2008-11-11 00：00：00'
+
+-- Datetime 如果没有时间部分，默认时间为 00:00:00。
+```
+
+
+
+## SQL 函数
+
+### AVG() 函数
+
+AVG() 函数返回数值列的平均值。
+
+```sql
+SELECT AVG(column_name) FROM table_name
+```
+
+### COUNT() 函数
+
+COUNT() 函数返回匹配指定条件的行数。
+
+```sql
+-- COUNT(column_name) 函数返回指定列的值的数目（NULL 不计入）：
+SELECT COUNT(column_name) FROM table_name;
+
+-- COUNT(*) 函数返回表中的记录数：
+SELECT COUNT(*) FROM table_name;
+```
+
+
+
+### FIRST() 函数
+
+FIRST() 函数返回指定的列中第一个记录的值。(mysql 不支持)
+
+```sql
+-- mysql实现
+SELECT column_name FROM table_name
+ORDER BY column_name ASC
+LIMIT 1;
+```
+
+
+
+### LAST() 函数
+
+```sql
+-- mysql实现
+SELECT column_name FROM table_name
+ORDER BY column_name DESC
+LIMIT 1;
+```
+
+
+
+### MAX() 函数
+
+MAX() 函数返回指定列的最大值。
+
+```sql
+SELECT MAX(column_name) FROM table_name;
+```
+
+
+
+### MIN() 函数
+
+MIN() 函数返回指定列的最小值。
+
+```sql
+SELECT MIN(column_name) FROM table_name;
+```
+
+
+
+### SUM() 函数
+
+SUM() 函数返回数值列的总数。
+
+```sql
+SELECT SUM(column_name) FROM table_name;
+```
+
+
+
+### GROUP BY 语句
+
+GROUP BY 语句用于结合聚合函数，根据一个或多个列对结果集进行分组。
+
+```sql
+SELECT column_name, aggregate_function(column_name)
+FROM table_name
+WHERE column_name operator value
+GROUP BY column_name;
+```
+
+
+
+### HAVING 子句
+
+在 SQL 中增加 HAVING 子句原因是，WHERE 关键字无法与聚合函数一起使用。
+
+HAVING 子句可以让我们筛选分组后的各组数据。
+
+```sql
+SELECT column_name, aggregate_function(column_name)
+FROM table_name
+WHERE column_name operator value
+GROUP BY column_name
+HAVING aggregate_function(column_name) operator value;
+```
+
+Having 和 where区别？
+
+“Where” 是一个约束声明，使用Where来约束来之数据库的数据，Where是在结果返回之前起作用的，且Where中不能使用聚合函数。 “**Having**”是一个过滤声明，是在查询返回结果集以后对查询结果进行的过滤操作，在**Having**中可以使用聚合函数
+
+### EXISTS 运算符
+
+EXISTS 运算符用于判断查询子句是否有记录，如果有一条或多条记录存在返回 True，否则返回 False。
+
+```sql
+SELECT column_name(s)
+FROM table_name
+WHERE EXISTS
+(SELECT column_name FROM table_name WHERE condition);
+```
+
+
+
+### LEN() 函数
+
+LEN() 函数返回文本字段中值的长度。
+
+```sql
+SELECT LENGTH(column_name) FROM table_name;
+```
+
+### ROUND() 函数
+
+ROUND() 函数用于把数值字段舍入为指定的小数位数。
+
+```sql
+SELECT ROUND(column_name,decimals) FROM table_name;
+```
+
+### NOW() 函数
+
+NOW() 函数返回当前系统的日期和时间。
+
+```sql
+SELECT NOW() FROM table_name;
+```
 
 
 
@@ -3151,18 +3833,28 @@ https://zhuanlan.zhihu.com/p/29413183 Learn SQL | 基础操作综合练习
 
 
 
+## SQL 通用数据类型
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+| CHARACTER(n)                       | 字符/字符串。固定长度 n。                                    |
+| ---------------------------------- | ------------------------------------------------------------ |
+| VARCHAR(n) 或 CHARACTER VARYING(n) | 字符/字符串。可变长度。最大长度 n。                          |
+| BINARY(n)                          | 二进制串。固定长度 n。                                       |
+| BOOLEAN                            | 存储 TRUE 或 FALSE 值                                        |
+| VARBINARY(n) 或 BINARY VARYING(n)  | 二进制串。可变长度。最大长度 n。                             |
+| INTEGER(p)                         | 整数值（没有小数点）。精度 p。                               |
+| SMALLINT                           | 整数值（没有小数点）。精度 5。                               |
+| INTEGER                            | 整数值（没有小数点）。精度 10。                              |
+| BIGINT                             | 整数值（没有小数点）。精度 19。                              |
+| DECIMAL(p,s)                       | 精确数值，精度 p，小数点后位数 s。例如：decimal(5,2) 是一个小数点前有 3 位数，小数点后有 2 位数的数字。 |
+| NUMERIC(p,s)                       | 精确数值，精度 p，小数点后位数 s。（与 DECIMAL 相同）        |
+| FLOAT(p)                           | 近似数值，尾数精度 p。一个采用以 10 为基数的指数计数法的浮点数。该类型的 size 参数由一个指定最小精度的单一数字组成。 |
+| REAL                               | 近似数值，尾数精度 7。                                       |
+| FLOAT                              | 近似数值，尾数精度 16。                                      |
+| DOUBLE PRECISION                   | 近似数值，尾数精度 16。                                      |
+| DATE                               | 存储年、月、日的值。                                         |
+| TIME                               | 存储小时、分、秒的值。                                       |
+| TIMESTAMP                          | 存储年、月、日、小时、分、秒的值。                           |
+| INTERVAL                           | 由一些整数字段组成，代表一段时间，取决于区间的类型。         |
+| ARRAY                              | 元素的固定长度的有序集合                                     |
+| MULTISET                           | 元素的可变长度的无序集合                                     |
+| XML                                | 存储 XML 数据                                                |
