@@ -3144,6 +3144,367 @@ Saga: 干了再说，干不下去了就回滚到原来状态。
 
 https://zhuanlan.zhihu.com/p/29413183 Learn SQL | 基础操作综合练习
 
+```sql
+-- create table testdb.student
+-- (
+-- SNO VARCHAR(3) NOT NULL, 
+-- SNAME VARCHAR(4) NOT NULL,
+-- SSEX VARCHAR(2) NOT NULL,
+-- SBIRTHDAY DATETIME,
+-- CLASS VARCHAR(5)
+-- );
+
+-- create table course
+-- (
+-- CNO VARCHAR(5) NOT NULL, 
+-- CNAME VARCHAR(10) NOT NULL,
+-- TNO VARCHAR(10) NOT NULL
+-- );
+
+-- create table score
+-- ( 
+-- SNO VARCHAR(3) NOT NULL, 
+-- CNO VARCHAR(5) NOT NULL, 
+-- DEGREE NUMERIC(10, 1) NOT NULL
+-- );
+
+-- create table teacher
+-- ( 
+-- TNO VARCHAR(3) NOT NULL, 
+-- TNAME VARCHAR(4) NOT NULL, 
+-- TSEX VARCHAR(2) NOT NULL, 
+-- TBIRTHDAY DATETIME NOT NULL, 
+-- PROF VARCHAR(6), 
+-- DEPART VARCHAR(10) NOT NULL
+-- );
+
+-- insert into student (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (108 ,'曾华' 
+-- ,'男' ,'1977-09-01',95033);
+-- insert into student (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (105 ,'匡明' 
+-- ,'男' ,'1975-10-02',95031);
+-- insert into student (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (107 ,'王丽' 
+-- ,'女' ,'1976-01-23',95033);
+-- insert into student (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (101 ,'李军' 
+-- ,'男' ,'1976-02-20',95033);
+-- insert into student (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (109 ,'王芳' 
+-- ,'女' ,'1975-02-10',95031);
+-- insert into student (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (103 ,'陆君' 
+-- ,'男' ,'1974-06-03',95031);
+
+
+
+
+-- insert into course (CNO,CNAME,TNO)VALUES ('3-105' ,'计算机导论',825);
+-- insert into course (CNO,CNAME,TNO)VALUES ('3-245' ,'操作系统' ,804);
+-- insert into course (CNO,CNAME,TNO)VALUES ('6-166' ,'数据电路' ,856);
+-- insert into course (CNO,CNAME,TNO)VALUES ('9-888' ,'高等数学' ,100);
+
+
+-- insert into score (SNO,CNO,DEGREE)VALUES (103,'3-245',86);
+-- insert into score (SNO,CNO,DEGREE)VALUES (105,'3-245',75);
+-- insert into score (SNO,CNO,DEGREE)VALUES (109,'3-245',68);
+-- insert into score (SNO,CNO,DEGREE)VALUES (103,'3-105',92);
+-- insert into score (SNO,CNO,DEGREE)VALUES (105,'3-105',88);
+-- insert into score (SNO,CNO,DEGREE)VALUES (109,'3-105',76);
+-- insert into score (SNO,CNO,DEGREE)VALUES (101,'3-105',64);
+-- insert into score (SNO,CNO,DEGREE)VALUES (107,'3-105',91);
+-- insert into score (SNO,CNO,DEGREE)VALUES (108,'3-105',78);
+-- insert into score (SNO,CNO,DEGREE)VALUES (101,'6-166',85);
+-- insert into score (SNO,CNO,DEGREE)VALUES (107,'6-106',79);
+-- insert into score (SNO,CNO,DEGREE)VALUES (108,'6-166',81);
+
+
+-- insert into teacher (TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) 
+-- VALUES (804,'李诚','男','1958-12-02','副教授','计算机系');
+-- insert into teacher (TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) 
+-- VALUES (856,'张旭','男','1969-03-12','讲师','电子工程系');
+-- insert into teacher (TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART)
+-- VALUES (825,'王萍','女','1972-05-05','助教','计算机系');
+-- insert into teacher (TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) 
+-- VALUES (831,'刘冰','女','1977-08-14','助教','电子工程系');
+
+
+
+-- 1. 查询Student表中的所有记录的sname、ssex和class列
+-- select sname,ssex,class
+-- from student;
+
+-- 2. 查询教师所有的单位（即不重复的depart列）
+-- select distinct depart 
+-- from teacher
+
+-- 3. 查询student表的所有记录
+-- select *
+-- from student
+
+-- 4. 查询score表中成绩在60到80之间的所有记录
+-- select * 
+-- from score 
+-- where degree<=80 and degree>=60;
+
+-- 5.查询score表中成绩为85，86或88的记录
+-- select *
+-- from score
+-- where degree in (85,86,88);
+
+-- 6. 查询student表中"95031"班或性别为"女"的同学记录
+-- select *
+-- from student
+-- where class = '95031' or ssex = '女';
+
+-- 7. 以class降序查询student表的所有记录
+-- select * 
+-- from student
+-- order by class desc;
+
+-- 8. 以cno升序、degree降序查询score表的所有记录
+-- select *
+-- from score
+-- order by cno asc, degree desc;
+
+-- 9. 查询"95031"班的学生人数
+-- select count(*)
+-- from student 
+-- where class = 95031;
+
+-- 10. 查询score表中的最高分的学生学号和课程号
+-- select sno, cno,degree
+-- from score
+-- where degree =
+-- (select max(degree) from score);
+
+-- 11. 查询"3-105"号课程的平均分
+-- select avg(degree)
+-- from score
+-- where cno='3-105';
+
+-- 12. 查询score表中至少有5名学生选修的并以3开头的课程的平均分数
+
+-- select avg(degree)
+-- from score 
+-- where cno like '3%'
+-- group by cno
+-- having count(*)>=5
+
+
+-- 13. 查询最低分大于70，最高分小于90的sno列
+-- select sno
+-- from score
+-- group by sno
+-- having max(degree)<90 and min(degree)>70;
+
+-- 14. 查询所有学生的sname、cno和degree列
+-- select a.sname, b.cno, b.degree
+-- from student as a
+-- join score as b
+-- on a.sno =b. sno;
+
+-- 15. 查询所有学生的sno、cname和degree列
+
+-- select a.sno, a.sname, b.degree
+-- from student as a
+-- join score as b
+-- on a.sno = b.sno;
+
+-- 16. 查询所有学生的sname、cname和degree列
+-- select a.sname,b.cname,c.degree
+-- from student as a
+-- join course as b
+-- join score as c
+-- on a.sno=c.sno and b.cno = c.cno;
+
+
+-- 17. 查询"95033"班所选课程的平均分
+-- select avg(c.degree)
+-- from (
+-- select a.sno,a.class,b.degree
+-- from student as a 
+-- join score as b
+-- on a.sno = b.sno
+-- ) as c
+-- where c.class = '95033';
+
+-- select avg(degree) from score 
+-- where sno in (
+-- select sno from student where class = '95033'
+-- );
+
+
+-- 18. 假设使用如下命令建立了一个grade表，现查询所有同学的Sno、Cno和rank列，并按照rank列排序
+-- create table grade
+-- (
+-- low numeric(3,0),
+-- upp numeric(3,0),
+-- grank varchar(1)
+-- );
+
+-- insert into grade values (90,100,'A');
+-- insert into grade values (80,89,'B');
+-- insert into grade values (70,79,'C');
+-- insert into grade values (60,69,'D');
+-- insert into grade values (0,59,'E');
+
+
+-- select a.sno,a.cno,b.rank from score a 
+-- join grade b 
+-- where a.degree between b.low and b.upp
+-- order by rank;
+
+
+
+-- 19. 查询score表中选修"3-105"课程的成绩高于"109"号同学成绩的所有同学的记录
+-- # 解法一
+-- select * from score where cno = '3-105'
+-- and degree > (
+-- select degree from score where sno = 109 and cno = '3-105'
+-- );
+-- # 解法二
+-- select a.* from score a 
+-- where a.cno = '3-105' and a.degree > all(select degree from score b 
+-- where b.sno = '109' and b.cno = '3-105');
+
+
+20. 查询score中选学一门以上课程的同学中分数为非最高分成绩的记录
+select * from score s inner join (
+select ss.sno, max(ss.degree) as maxd from score ss group by ss.sno 
+having count(ss.cno)> 1 
+) 
+a on s.sno=a.sno and s.degree <> a.maxd;
+21. 查询和学号为107的同学同年出生的所有学生的sno、sname和sbirthday列
+考察日期与时间函数的运用
+
+select sno,sname,sbirthday from student where year(sbirthday) in 
+(
+select year(sbirthday) from student wehre sno = 107
+);
+22. 查询"张旭"教师任课的学生成绩
+select degree from score where cno in (
+select cno from course where tno in (
+select tno from teacher where teacher = '张旭'));
+# 进阶解法
+select a.degree from score a 
+join (teacher b,course c)
+on a.cno = c.cno and b.tno = c.tno
+where b.tname = '张旭';
+23. 查询选修某课程的同学人数多于5人的教师姓名
+select a.tname from teacher a 
+join(course b,score c)
+on a.tno = b.tno and b.cno = c.cno
+group by c.cno having count(*) > 5;
+24. 查询所有表中关于"95033"班和"95031"班全体学生的信息记录
+select * from student a inner join score b 
+on a.sno = b.sno inner join course c
+on b.cno = c.cno inner join teacher d
+on c.tno = d.tno 
+where a.class = '95033' or a.class = '95031';
+25. 查询存在有85分以上成绩的课程cno
+# 解法一：
+select distinct cno from score where degree > 85;
+# 解法二：
+select cno from score group by cno having max(degree) >85;
+26. 查询出"计算机系"教师所教课程的成绩表
+select a.*,b.cname,c.tname,c.depart from score a
+join (course b, teacher c)
+on a.cno = b.cno and b.tno = c.tno
+where c.depart = '计算机系';
+27. 查询"计算机系"中与"电子工程系"没有相同职称的教师的tname和prof
+select tname,prof from teacher where depart = '计算机系' and prof not in
+(select prof from teacher where depart = '电子工程系');
+28. 查询选修编号为"3-105"课程且成绩高于选修编号为"3-245"的同学的cno、sno和degree,并按degree从高到低次序排序。
+select * from score as a,score as b
+where a.cno = '3-105' and b.cno = '3-245'
+and a.sno = b.sno
+and a.degree > b.degree
+order by a.degree desc;
+29. 查询所有教师和同学的name、sex和birthday
+30. 查询所有女教师和女同学的name、sex和birthday
+# 29
+select sname as name, ssex as sex, sbirthday as birthday from student
+union
+select tname as name, tsex as sex, tbirthday as birthday from teacher;
+# 30
+select sname as name, ssex as sex, sbirthday as birthday from student
+where ssex = '女'
+union
+select tname as name, tsex as sex, tbirthday as birthday from teacher
+where tsex = '女';
+31. 查询成绩比该课程平均成绩低的同学的成绩表
+select a.* from score a where degree < (
+select avg(degree) from score b 
+where a.cno = b.cno );
+32. 查询所有任课教师的tname和depart
+33. 查询所有未讲课的教师的tname和depart
+# 32
+# 解法一
+select a.tname,a.depart from teacher a 
+join course b 
+on a.tno = b.tno;
+# 解法二
+select a.tname,a.depart from teacher a
+where exists (
+select * from course b where a.tno = b.tno
+);
+# 33
+select a.tname,a.depart from teacher a
+where not exists (
+select * from course b where a.tno = b.tno
+);
+34. 查询至少有2名男生的班号
+select class from student where ssex = '男' 
+group by class 
+having count(ssex) >= 2;
+35. 查询Student表中不姓“王”的同学记录
+select * from student where sname not like '王%';
+36. 查询student表中每个学生的姓名和年龄
+# 解法一
+select sname, year(curdate())-year(sbirthday) age from student;
+# 解法二
+select sname, year(now())-year(sbirthday) age from student;
+37. 查询student表中最大和最小的sbirthday日期值
+select sname,max(sbirthday) birthday from student
+where sbirthday in (
+select max(sbirthday) from student )
+union
+select sname,min(sbirthday) birthday from student
+where sbirthday in (
+select min(sbirthday) from student );
+38. 以班号和年龄从大到小的顺序查询student表中的全部记录
+select * from student 
+order by class desc,
+year(now())-year(sbirthday()) desc;
+39. 查询"男"教师及其所上的课程
+select a.tname,b.cname from teacher a 
+join course b
+on a.tno = b.tno
+where a.tsex = '男';
+40. 查询和“李军”同性别并同班的同学sname
+select sname from student where ssex in (
+select ssex from student where sname = '李军')
+and class in (
+select class from student where sname = '李军')
+and sname != '李军';
+41. 查询所有选修“计算机导论”课程的“男”同学的成绩表
+# 解法一
+select a.* from score a join (course b,student c)
+on a.cno = b.cno and a.sno = c.sno
+where c.ssex = '男' and a.cno in (
+select cno from course where cname = '计算机导论'
+);
+# 解法二
+select a.* from score a join (course b,student c)
+using (sno,cno)
+where c.ssex = '男' and b.cname = '计算机导论';
+
+
+
+
+
+
+
+```
+
+
+
 ## SQL表问题
 
 1. table里可以有多个主键吗？
@@ -3358,7 +3719,7 @@ INNER JOIN access_log
 ON Websites.id=access_log.site_id;
 ```
 
-
+如果加修饰符，默认join是inner join
 
 ### SQL UNION 操作符
 
@@ -3858,3 +4219,4 @@ SELECT NOW() FROM table_name;
 | ARRAY                              | 元素的固定长度的有序集合                                     |
 | MULTISET                           | 元素的可变长度的无序集合                                     |
 | XML                                | 存储 XML 数据                                                |
+
