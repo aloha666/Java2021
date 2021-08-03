@@ -4220,3 +4220,201 @@ SELECT NOW() FROM table_name;
 | MULTISET                           | 元素的可变长度的无序集合                                     |
 | XML                                | 存储 XML 数据                                                |
 
+
+
+# leture 11 JDBC & Hiebernate
+
+## JDBC
+
+JDBC (java database connectivity) Driver : software component that enables java applications to interact with the database.
+
+### steps for building JDBC -> database
+
+1. allocate a connection object
+2. allocate a statement
+3. write sql quey and execute the query
+4. process the query result
+5. close the statement, connection object
+
+```java
+Connection conn = DriverManager.getConnection( url,
+username,
+passwored );
+Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery(strSelect);
+
+//don't forget to close the connection and statement
+```
+
+### Try with resources
+
+```java
+try(
+Connection conn = DriverManager.getConnection( JdbcConfig.getUrl(),
+JdbcConfig.getUser(), JdbcConfig.getPassword()
+);
+Statement stmt = conn.createStatement(); ){
+} catch (E) { }
+
+```
+
+
+
+### Atomic Transaction (commit and rollback)
+
+ an atomic transaction is a group of sql statement, which either all succeed or non succeeds. This prevents the partial update to the database
+
+
+
+### Manage trascition in JDBC
+
+ first disable the default auto-commit
+
+```java
+conn.setAutoCommit(false);
+```
+
+then issue a commit() to commit all the changes or rollback() to discard all the changes since the last commit
+
+```java
+  // update something
+ stmt.executeUpdate("update books set qty = qty + 1 where title = 'Data'");
+ stmt.executeUpdate("update books set qty = qty + 1 where title = 'Math'");
+ conn.commit();
+
+ // update but rollback
+ stmt.executeUpdate("update books set qty = qty + 1000 where title = 'Data'");
+ stmt.executeUpdate("update books set qty = qty + 1000 where title = 'Math'");
+ conn.rollback();
+
+//rollback in try and catch block
+try {
+                conn.setAutoCommit(false);
+                // insert two statements
+                stmt.executeUpdate("insert into books values ('AWS', 98, 12)");
+                // duplicate primary key, which will trigger a SQLException
+                stmt.executeUpdate("insert into books values ('AWS', 90, 15)");
+                conn.commit();
+            } catch (SQLException throwables) {
+                System.out.println("rolling back changes");
+                conn.rollback();
+                throwables.printStackTrace();
+            }
+```
+
+
+
+### resultSetMetaData
+
+ResultSet object is associated with a header (called meta data), which contains information about the resultset object
+
+```java
+ ResultSet rset = stmt.executeQuery("select * from books");
+ ResultSetMetaData rsetMD = rset.getMetaData();
+ int numColumns = rsetMD.getColumnCount();
+```
+
+
+
+### sql injection?
+
+
+
+### PreparedStatement
+
+• allows you to pass parameters into a sql statement
+
+ • pre-complied
+
+ • execute the same sql statement multiple times
+
+```java
+PreparedStatement pstmt = conn.prepareStatement(
+                        "insert into books values (?, ?, ?)"
+                );
+```
+
+
+
+
+
+### batch processing
+
+- each statement can be added into the batch via .addBatch() method
+- execute the batch by executeBatch()
+
+```java
+conn.setAutoCommit(false);
+
+            pstmt.setString(1, "Go");
+            pstmt.setInt(2, 123);
+            pstmt.setInt(3, 321);
+            pstmt.addBatch();
+
+            pstmt.setString(1, "Json");
+            pstmt.setInt(2, 345);
+            pstmt.addBatch();
+
+```
+
+
+
+## Hiebernate
+
+connect the java program to sql database, based on JDBC, slower but easier to use.
+
+
+
+### ORM (object relational mapping )
+
+Hibernate: -->. easy orm 
+
+Sequelize. ->. good for node.js 
+
+SQLAlchemy
+
+MyBatis .....
+
+
+
+### JPA: Java persistence API
+
+ defines the management of relational data in java application
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
