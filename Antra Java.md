@@ -1783,11 +1783,11 @@ public void useJava8() {
 
 **process**: an execution of a program, OS will assgin memory for each process.
 
-**thread**: an execution routine of process within a precess which share the same memeory area.
+**thread**: an execution routine of process within a process which share the same memory area.
 
-**why we need multithreading?**  To achiece multi tasking
+**why we need multithreading?**  To achieve multi tasking
 
-One CPU: do threads concrrently, may be not parellelly, (jump from 1 to 2, then jump back to 1, etc)
+One CPU: do threads concurrently, may be not parallelly, (jump from 1 to 2, then jump back to 1, etc)
 
 multi CPU: do threads concreeemtly and parellelly
 
@@ -1803,7 +1803,7 @@ multi CPU: do threads concreeemtly and parellelly
 
 **3.implement callable interface**
 
-callabel can have a return value
+callable can have a return value
 
 callable can thorw an exception
 
@@ -1813,7 +1813,7 @@ callable can thorw an exception
 
 ### Thread Methods:
 
-![img](https://www.baeldung.com/wp-content/uploads/2018/02/Java_-_Wait_and_Notify.png)
+![线程状态图](https://img-blog.csdnimg.cn/20181120173640764.jpeg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3BhbmdlMTk5MQ==,size_16,color_FFFFFF,t_70)
 
 **Thread.sleep():** Thread. sleep **causes the current thread to suspend execution for a specified period**.  This is an efficient means of making processor time available to the other threads of an application or other applications that might be running on a computer system. 暂停当前线程，把cpu片段让出给其他线程，减缓当前线程的执行。**Thread**.**Sleep**(0)的**作用**，就是“触发操作系统立刻重新进行一次CPU竞争，重新计算优先级。
 
@@ -1827,27 +1827,148 @@ callable can thorw an exception
 
 ### States of a thread: 
 
-**New :** a thread not yet start
+**New 初始状态:** a thread not yet start
 
-**Runnable**: a thread is runnable/executing
+**Runnable 可运行状态**: a thread is runnable/executing
 
-**Blocked**: a thread waiting for a monitor lock, after calling **object.wait()**
+**Blocked** **阻塞**: a thread waiting for a monitor **lock**, 线程阻塞于锁。 after calling **object.wait()** 
 
-**Waitting**: a thread waiting for another thread to perform a paticular action, after calling **object.wait()** with no time out, **thread.join()** with no time out, **LockSupport.park**
+**Waitting**: a thread waiting for another thread to perform a particular action, 进入该状态的线程需要等待其他线程做出一些特定动作（通知或中断). 
 
-**Timed_watiing**: thread state for a waiting thread with a specified time. **Thread.Sleep**, **object.wait()** with  time out, **thread.join()** with time out, **LockSupport.park**, **LockSupport.parkUntil**
+​				after calling **object.wait()** with no time out, **thread.join()** with no time out, **LockSupport.park** 
 
-**Terminated**: thread has complete execution and terminated
+**Timed_waiting**: thread state for a waiting thread with a specified time. 该状态不同于WAITING，它可以在指定的时间后自行返回。
+
+​				**Thread.Sleep**, **object.wait()** with  time out, **thread.join()** with time out, **LockSupport.park**, **LockSupport.parkUntil**
+
+**Terminated**:表示该线程已经执行完毕。 thread has complete execution and terminated
 
 **sleep vs wait**: wait will release lock, while sleep will not
+
+
+
+### **thread.join()** 用法
+
+让thread按顺序进行 当前thread结束，才运行下一个thread。
+
+```java
+public class JoinTest {
+    
+    public static void main(String[] args) {
+        
+        ThreadBoy boy = new ThreadBoy();
+        boy.start();
+        
+    }
+    
+    static class ThreadBoy extends Thread{
+        @Override
+        public void run() {
+            
+            System.out.println("男孩和女孩准备出去逛街");
+            
+            ThreadGirl girl = new ThreadGirl();
+            girl.start();
+            
+            try {
+                girl.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+            System.out.println("男孩和女孩开始去逛街了");
+        }
+    }
+    
+    static class ThreadGirl extends Thread{
+        @Override
+        public void run() {
+            int time = 5000;
+            
+            System.out.println("女孩开始化妆,男孩在等待。。。");
+            
+            try {
+                Thread.sleep(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+            System.out.println("女孩化妆完成！，耗时" + time);
+            
+        }
+    }
+    
+}
+
+/*男孩和女孩准备出去逛街
+女孩开始化妆,男孩在等待。。。
+女孩化妆完成！，耗时5000
+男孩和女孩开始去逛街了*/
+
+
+public class JoinTest {
+    
+    public static void main(String[] args) {
+        
+        ThreadBoy boy = new ThreadBoy();
+        boy.start();
+        
+    }
+    
+    static class ThreadBoy extends Thread{
+        @Override
+        public void run() {
+            
+            System.out.println("男孩和女孩准备出去逛街");
+            
+            ThreadGirl girl = new ThreadGirl();
+            girl.start();
+            
+            int time = 2000;
+            try {
+                girl.join(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+            System.out.println("男孩等了" + time + ", 不想再等了，去逛街了");
+        }
+    }
+    
+    static class ThreadGirl extends Thread{
+        @Override
+        public void run() {
+            int time = 5000;
+            
+            System.out.println("女孩开始化妆,男孩在等待。。。");
+            
+            try {
+                Thread.sleep(time);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            
+            System.out.println("女孩化妆完成！，耗时" + time);
+            
+        }
+    }
+    
+}
+
+/*
+这里仅仅把join方法换成了join(time)方法，描述改了点，打印的结果是：
+男孩和女孩准备出去逛街
+女孩开始化妆,男孩在等待。。。
+男孩等了2000, 不想再等了，去逛街了
+女孩化妆完成！，耗时5000
+
+```
 
 
 
 ### Synchronized vs Lock
 
 **Synchorzied**: used on method, coupling and slow, the execuation will be in a random order (?). In other words, use synchorized with notifyAll( ) cannot contorl the order of thread execution.
-
-The **java.lang.Object.notifyAll()** wakes up all threads that are waiting on this object's monitor. A thread waits on an object's monitor by calling one of the wait methods.
 
 ```java
 class A {
@@ -1872,19 +1993,128 @@ Thread 1 call a.doSomething();
 Thread 2 call a1.doSomething(); //<- they don't have to wait. because "this" of a and a1 are different.
 ```
 
+
+
+The **java.lang.Object.notifyAll()** wakes up all threads that are waiting on this object's monitor. A thread waits on an object's monitor by calling one of the wait methods. notify表示唤醒一个线程 notifyAll也表示唤醒一个线程，但它会notify所有的线程，具体唤醒哪一个线程，由jvm来决定
+
+```java
+
+public class TestNotifyNotifyAll {
+ 
+	private static Object obj = new Object();
+	
+	public static void main(String[] args) {
+		
+		//测试 RunnableImplA wait()        
+		Thread t1 = new Thread(new RunnableImplA(obj));
+		Thread t2 = new Thread(new RunnableImplA(obj));
+		t1.start();
+		t2.start();
+		
+		//RunnableImplB notify()
+		Thread t3 = new Thread(new RunnableImplB(obj));
+		t3.start();
+		
+		
+//		//RunnableImplC notifyAll()
+//		Thread t4 = new Thread(new RunnableImplC(obj));
+//		t4.start();
+	}
+	
+}
+ 
+ 
+class RunnableImplA implements Runnable {
+ 
+	private Object obj;
+	
+	public RunnableImplA(Object obj) {
+		this.obj = obj;
+	}
+	
+	public void run() {
+		System.out.println("run on RunnableImplA");
+		synchronized (obj) {
+			System.out.println("obj to wait on RunnableImplA");
+			try {
+				obj.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.out.println("obj continue to run on RunnableImplA");
+		}
+	}
+}
+ 
+class RunnableImplB implements Runnable {
+ 
+	private Object obj;
+	
+	public RunnableImplB(Object obj) {
+		this.obj = obj;
+	}
+	
+	public void run() {
+		System.out.println("run on RunnableImplB");
+		System.out.println("睡眠3秒...");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		synchronized (obj) {
+			System.out.println("notify obj on RunnableImplB");
+			obj.notify();
+		}
+	}
+}
+ 
+class RunnableImplC implements Runnable {
+ 
+	private Object obj;
+	
+	public RunnableImplC(Object obj) {
+		this.obj = obj;
+	}
+	
+	public void run() {
+		System.out.println("run on RunnableImplC");
+		System.out.println("睡眠3秒...");
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		synchronized (obj) {
+			System.out.println("notifyAll obj on RunnableImplC");
+			obj.notifyAll();
+		}
+	}
+
+```
+
+
+
 **Lock:** a interface that lock() the resource for the thread to use, will unlock()  after use. wait will release lock, while sleep will not.
 
 lock condition: control flow 
 
-**Start():** NATIVE METHOD start0( ); writted in C language, will start/run a thread.
+**Start():** NATIVE METHOD start0( ); writted in C language, will start/run a thread. thread.start();
 
 normally we cannot have a abstract method in a non-abstract class. BUT CAN HAVE A NATIVE METHOD.
 
 总结：
 
-**synchronized**: wait(), notify()/notifyAll(), execuation with random order based on OS
+**synchronized**: object.wait(), object.notify()/notifyAll(), execuation with random order based on OS
 
-**Lock + condition**: await(), signal()/signalAll(), execution with assigned order based on programmers requirement.
+**Lock + condition**: condition.await(), condition.signal()/signalAll(), execution with assigned order based on programmers requirement.
+
+```java
+//为什么JAVA,wait（）要放在while循环里？
+//一个线程有可能会在未被通知、打断、或超时的情况下醒来，这就是所谓的“spurious wakeup”。尽管实际上这种情况很少发生，应用程序仍然必须对此有所防范，手段是检查正常的导致线程被唤醒的条件是否满足，如果不满足就继续等待。
+
+//A while loop is the best choice for checking the condition predicate both before and after invoking wait(). When waiting upon a Condition, a "spurious wakeup" is permitted to occur, in general, as a concession to the underlying platform semantics.
+```
 
 
 
