@@ -4802,20 +4802,35 @@ Usage for Singleton
 • thread pool
 
 ```java
+//A: eager loading- create instance when load class
+//B: lazy loading - create instace when class first called (not thread safe)
+//C: sychornaze getInstace() method, thread safe, but slow.  why sychronaze is slow?
+//D: check if instance is exist or not, if not then sychornaze the class. Also use volatile for the instance () to make the implement of the creating new instance in order.
+
 public class SingletonD {
-private static volatile SingletonD instance= null;
-private SingletonD(){}
-public static SingletonD getInstance(){
-if(instance == null){
-synchronized(SingletonD.class){
-if(instance == null){
-instance = new SingletonD();
+	private static volatile SingletonD instance= null;
+	private SingletonD(){}
+
+    public static SingletonD getInstance(){
+		if(instance == null){
+		synchronized(SingletonD.class){
+			if(instance == null){
+				instance = new SingletonD();
+				}
+			}
+		}
+	return instance;
+	}
 }
-}
-}
-return instance;
-}
-}
+
+/* instance == new new SingletonD();
+1. allocate memory space
+2. instaniate the new sington object
+3. point to the new object, after this step the instace will not be null;
+ Normally: 1->2->3
+ Possible: 1->3 instance is not null->2
+ use voltile can prevent CPU instruction reorder and to aviod the possible situation.
+ */
 ```
 
 
