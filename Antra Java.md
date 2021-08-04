@@ -4757,44 +4757,204 @@ MyBatis .....
   如果你需要一个灵活的，可以动态生成映射关系的框架，那么Mybatis确实是一个最好的选择。它几乎可以替代jdbc，拥有动态列，动态表名，存储过程支持，同时提供了简易的缓存，日志，级联。
   但是它的缺陷是需要你提供映射规则和sql，所以开发工作量比hibernate要大些。
 
-
 **5、Jdbc,Mybatis,Hibernate的区别**
 1）从层次上看，JDBC是较底层的持久层操作方式，而Hibernate和MyBatis都是在JDBC的基础上进行了封装使其更加方便程序员对持久层的操作。
 2）从功能上看，JDBC就是简单的建立数据库连接，然后创建statement，将sql语句传给statement去执行，如果是有返回结果的查询语句，会将查询结果放到ResultSet对象中，通过对ResultSet对象的遍历操作来获取数据；Hibernate是将数据库中的数据表映射为持久层的Java对象，对sql语句进行修改和优化比较困难；MyBatis是将sql语句中的输入参数和输出参数映射为java对象，sql修改和优化比较方便。
 
 3）从使用上看，如果进行底层编程，而且对性能要求极高的话，应该采用JDBC的方式；如果要对数据库进行完整性控制的话建议使用Hibernate；如果要灵活使用sql语句的话建议采用MyBatis框架。
 
+# Lecture 12 Design Pattern & Reflection
+
+## Design Pattern
+
+Total 23 design patterns.
+
+### creational patterns: hiding the creation logic
+
+○ Singleton Pattern
+○ Factory Pattern
+○ Builder Pattern
+○ Prototype Pattern
+○ ....
+
+###  structural patterns: concern class and object compositions
+
+○ Proxy Pattern (static / dynamic)
+○ Adapter Pattern
+○ Decorator Pattern
+○ Bridge Pattern
+○ .....
+
+### behavioral patterns: concerned with communication between objects
+
+○ Observer Pattern
+○ Interpreter Pattern
+○ Iterator Pattern
+○
+
+### Singleton Design pattern
+
+• only one single object been created
+Usage for Singleton
+• logger
+• drivers objects
+• caching
+• thread pool
+
+```java
+public class SingletonD {
+private static volatile SingletonD instance= null;
+private SingletonD(){}
+public static SingletonD getInstance(){
+if(instance == null){
+synchronized(SingletonD.class){
+if(instance == null){
+instance = new SingletonD();
+}
+}
+}
+return instance;
+}
+}
+```
 
 
 
+### Builder
+
+builder is a creational design pattern that lets you construct complex objects step by step
+
+### Factory Design Pattern 
+
+we create objects without exposing the creation logic to the client and refer to newly created objectsusing a common interface
 
 
 
+### Proxy Design pattern: 
+
+• provide substitute for another object 
+
+• control the access to the original objects
+
+• perform some operations before and after request/response
 
 
 
+## Reflection
 
+Reflection is an API which is used to examine or modify the behavior of methods, classes, interfaces
+at the run time
 
+```java
+//A simple Java program to demonstrate the use of reflection
+importjava.lang.annotation.Annotation;
+importjava.lang.reflect.Method;
+importjava.lang.reflect.Field;
+importjava.lang.reflect.Constructor;
+//classwhoseobjectistobecreated
+classTest{
+//creatingaprivatefield
+privateStrings;
+//creatingapublicconstructor
+publicTest(){s="123456789";}
+//Creatingapublicmethodwithnoarguments
+publicvoidmethod1(){
+System.out.println("Thestringis"+s);
+}
+//Creatingapublicmethodwithintasargument
+publicvoidmethod2(intn){
+System.out.println("Thenumberis"+n);
+}
+//creatingaprivatemethod
+privatevoidmethod3(){
+System.out.println("Privatemethodinvoked");
+}
+@Deprecated
+publicvoidmethod4(){
+System.out.println("inmethod4oftestclass");
+}
+}
+publicclassReflectionDemo{
+publicstaticvoidmain(Stringargs[])throwsException
+{
+//Creatingobjectwhosepropertyistobechecked
+Testobj=newTest();
+//Creatingclassobjectfromtheobjectusing
+//getclassmethod
+Classcls=obj.getClass();
+System.out.println("Thenameofclassis"+
+cls.getName());
+//Gettingtheconstructoroftheclassthroughthe
+//objectoftheclass
+Constructorconstructor=cls.getConstructor();
+System.out.println("Thenameofconstructoris"+
+constructor.getName());
+System.out.println("Thepublicmethodsofclassare:");
+//Gettingmethodsoftheclassthroughtheobject
+//oftheclassbyusinggetMethods
+Method[]methods=cls.getMethods();
+System.out.println("-------------------");
+//Printingmethodnames
+for(Methodmethod:methods)
+System.out.println(method.getName());
+System.out.println("-------------------");
+Method[]methods1=cls.getDeclaredMethods();
+System.out.println("-------------------");
+//Printingmethodnames
+for(Methodmethod:methods1)
+System.out.println(method.getName());
+System.out.println("-------------------");
+//createsobjectofdesiredmethodbyprovidingthe
+//methodnameandparameterclassasargumentsto
+//thegetDeclaredMethod
+Methodmethodcall2=cls.getDeclaredMethod("method2",
+int.class);
+//invokesthemethodatruntime
+methodcall2.invoke(obj,19);
+//createsobjectofthedesiredfieldbyproviding
+//thenameoffieldasargumenttothe
+//getDeclaredFieldmethod
+Fieldfield=cls.getDeclaredField("s");
+//allowstheobjecttoaccessthefieldirrespective
+//oftheaccessspecifierusedwiththefield
+field.setAccessible(true);
+//takesobjectandthenewvaluetobeassigned
+//tothefieldasarguments
+field.set(obj,"JAVA");
+//Createsobjectofdesiredmethodbyprovidingthe
+//methodnameasargumenttothegetDeclaredMethod
+Methodmethodcall1=cls.getDeclaredMethod("method1");
+//invokesthemethodatruntime
+methodcall1.invoke(obj);
+//Createsobjectofthedesiredmethodbyproviding
+//thenameofmethodasargumenttothe
+//getDeclaredMethodmethod
+Methodmethodcall3=cls.getDeclaredMethod("method3");
+//allowstheobjecttoaccessthemethodirrespective
+//oftheaccessspecifierusedwiththemethod
+methodcall3.setAccessible(true);
+//invokesthemethodatruntime
+methodcall3.invoke(obj);
+System.out.println("-------------------");
+//getthemethod4
+Methodmethodcall4=cls.getDeclaredMethod("method4");
+Annotation[]annotations=methodcall4.getDeclaredAnnotations();
+for(Annotationannotation:annotations){
+System.out.println(annotation.annotationType());
+}
+//@Enity,@Table,@Column....
+```
 
+**normally**
+•write code
+•compile
+•run it
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+**with reflection**
+•write code
+•compile
+•run
+•modify the code with reflection
 
 
 
