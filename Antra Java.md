@@ -3377,123 +3377,217 @@ select sno,sname,sbirthday from student where year(sbirthday) in
 (
 select year(sbirthday) from student wehre sno = 107
 );
-22. 查询"张旭"教师任课的学生成绩
-select degree from score where cno in (
-select cno from course where tno in (
-select tno from teacher where teacher = '张旭'));
-# 进阶解法
-select a.degree from score a 
-join (teacher b,course c)
-on a.cno = c.cno and b.tno = c.tno
-where b.tname = '张旭';
-23. 查询选修某课程的同学人数多于5人的教师姓名
-select a.tname from teacher a 
-join(course b,score c)
-on a.tno = b.tno and b.cno = c.cno
-group by c.cno having count(*) > 5;
-24. 查询所有表中关于"95033"班和"95031"班全体学生的信息记录
-select * from student a inner join score b 
-on a.sno = b.sno inner join course c
-on b.cno = c.cno inner join teacher d
-on c.tno = d.tno 
-where a.class = '95033' or a.class = '95031';
-25. 查询存在有85分以上成绩的课程cno
-# 解法一：
-select distinct cno from score where degree > 85;
-# 解法二：
-select cno from score group by cno having max(degree) >85;
-26. 查询出"计算机系"教师所教课程的成绩表
-select a.*,b.cname,c.tname,c.depart from score a
-join (course b, teacher c)
-on a.cno = b.cno and b.tno = c.tno
-where c.depart = '计算机系';
-27. 查询"计算机系"中与"电子工程系"没有相同职称的教师的tname和prof
-select tname,prof from teacher where depart = '计算机系' and prof not in
-(select prof from teacher where depart = '电子工程系');
-28. 查询选修编号为"3-105"课程且成绩高于选修编号为"3-245"的同学的cno、sno和degree,并按degree从高到低次序排序。
+-- 22. 查询"张旭"教师任课的学生成绩
+select a.sno,a.cno,a.degree
+from score as a
+join (select c.cno,c.tno
+from course as c
+join (select * from teacher where tname ='张旭') as t
+on c.tno=t.tno) as b
+on a.cno = b.cno;
+
+
+
+
+select c.cno,c.tno
+from course as c
+join (select * from teacher where tname ='张旭') as t
+on c.tno=t.tno;
+
+
+-- select degree from score where cno in (
+-- select cno from course where tno in (
+-- select tno from teacher where teacher = '张旭'));
+-- # 进阶解法
+-- select a.degree from score a 
+-- join (teacher b,course c)
+-- on a.cno = c.cno and b.tno = c.tno
+-- where b.tname = '张旭';
+
+-- 23. 查询选修某课程的同学人数多于5人的教师姓名
+
+select cno
+from score 
+group by cno
+having count(*)>5;
+
+
+select tname
+from teacher
+where tno =
+(select tno 
+from course
+where cno = (select cno
+from score 
+group by cno
+having count(*)>5))
+
+
+
+
+-- select a.tname from teacher a 
+-- join(course b,score c)
+-- on a.tno = b.tno and b.cno = c.cno
+-- group by c.cno having count(*) > 5;
+-- 24. 查询所有表中关于"95033"班和"95031"班全体学生的信息记录
+
+select *
+from student as st
+join score as sc
+on st.sno = sc.sno
+where st.class ='95033' or st.class ='95031' 
+
+
+
+
+
+-- select * from student a inner join score b 
+-- on a.sno = b.sno inner join course c
+-- on b.cno = c.cno inner join teacher d
+-- on c.tno = d.tno 
+-- where a.class = '95033' or a.class = '95031';
+-- 25. 查询存在有85分以上成绩的课程cno
+
+select cno
+from score
+where degree>85
+group by cno;
+
+
+-- # 解法一：
+-- select distinct cno from score where degree > 85;
+-- # 解法二：
+-- select cno from score group by cno having max(degree) >85;
+-- 26. 查询出"计算机系"教师所教课程的成绩表
+
+select sc.cno,sc.degree,t.tname
+from score as sc
+join (course as c,teacher as t)
+on sc.cno = c.cno and c.tno = t.tno
+where t.DEPART = '计算机系';
+
+
+
+
+-- select a.*,b.cname,c.tname,c.depart from score a
+-- join (course b, teacher c)
+-- on a.cno = b.cno and b.tno = c.tno
+-- where c.depart = '计算机系';
+-- 27. 查询"计算机系"中与"电子工程系"没有相同职称的教师的tname和prof
+
+
+
+
+
+
+-- select tname,prof from teacher where depart = '计算机系' and prof not in
+-- (select prof from teacher where depart = '电子工程系');
+-- 28. 查询选修编号为"3-105"课程且成绩高于选修编号为"3-245"的同学的cno、sno和degree,并按degree从高到低次序排序。
+
 select * from score as a,score as b
-where a.cno = '3-105' and b.cno = '3-245'
-and a.sno = b.sno
-and a.degree > b.degree
+where a.sno=b.sno
+and a.cno = '3-105' and b.cno = '3-245'
+and a.degree>b.degree
 order by a.degree desc;
-29. 查询所有教师和同学的name、sex和birthday
-30. 查询所有女教师和女同学的name、sex和birthday
-# 29
-select sname as name, ssex as sex, sbirthday as birthday from student
+
+-- select * from score as a,score as b
+-- where a.cno = '3-105' and b.cno = '3-245'
+-- and a.sno = b.sno
+-- and a.degree > b.degree
+-- order by a.degree desc;
+-- 29. 查询所有教师和同学的name、sex和birthday
+select s.sname, s.ssex,s.sbirthday
+from student as s
+where s.ssex = '女'
 union
-select tname as name, tsex as sex, tbirthday as birthday from teacher;
-# 30
-select sname as name, ssex as sex, sbirthday as birthday from student
-where ssex = '女'
-union
-select tname as name, tsex as sex, tbirthday as birthday from teacher
-where tsex = '女';
-31. 查询成绩比该课程平均成绩低的同学的成绩表
-select a.* from score a where degree < (
-select avg(degree) from score b 
-where a.cno = b.cno );
-32. 查询所有任课教师的tname和depart
-33. 查询所有未讲课的教师的tname和depart
-# 32
-# 解法一
-select a.tname,a.depart from teacher a 
-join course b 
-on a.tno = b.tno;
-# 解法二
-select a.tname,a.depart from teacher a
-where exists (
-select * from course b where a.tno = b.tno
-);
-# 33
-select a.tname,a.depart from teacher a
-where not exists (
-select * from course b where a.tno = b.tno
-);
-34. 查询至少有2名男生的班号
-select class from student where ssex = '男' 
-group by class 
-having count(ssex) >= 2;
-35. 查询Student表中不姓“王”的同学记录
-select * from student where sname not like '王%';
-36. 查询student表中每个学生的姓名和年龄
-# 解法一
-select sname, year(curdate())-year(sbirthday) age from student;
-# 解法二
-select sname, year(now())-year(sbirthday) age from student;
-37. 查询student表中最大和最小的sbirthday日期值
-select sname,max(sbirthday) birthday from student
-where sbirthday in (
-select max(sbirthday) from student )
-union
-select sname,min(sbirthday) birthday from student
-where sbirthday in (
-select min(sbirthday) from student );
-38. 以班号和年龄从大到小的顺序查询student表中的全部记录
-select * from student 
-order by class desc,
-year(now())-year(sbirthday()) desc;
-39. 查询"男"教师及其所上的课程
-select a.tname,b.cname from teacher a 
-join course b
-on a.tno = b.tno
-where a.tsex = '男';
-40. 查询和“李军”同性别并同班的同学sname
-select sname from student where ssex in (
-select ssex from student where sname = '李军')
-and class in (
-select class from student where sname = '李军')
-and sname != '李军';
-41. 查询所有选修“计算机导论”课程的“男”同学的成绩表
-# 解法一
-select a.* from score a join (course b,student c)
-on a.cno = b.cno and a.sno = c.sno
-where c.ssex = '男' and a.cno in (
-select cno from course where cname = '计算机导论'
-);
-# 解法二
-select a.* from score a join (course b,student c)
-using (sno,cno)
-where c.ssex = '男' and b.cname = '计算机导论';
+select t.tname, t.tsex, t.tbirthday
+from teacher as t
+where t.tsex = '女'
+
+-- 30. 查询所有女教师和女同学的name、sex和birthday
+-- # 29
+-- select sname as name, ssex as sex, sbirthday as birthday from student
+-- union
+-- select tname as name, tsex as sex, tbirthday as birthday from teacher;
+-- # 30
+-- select sname as name, ssex as sex, sbirthday as birthday from student
+-- where ssex = '女'
+-- union
+-- select tname as name, tsex as sex, tbirthday as birthday from teacher
+-- where tsex = '女';
+
+-- 31. 查询成绩比该课程平均成绩低的同学的成绩表
+
+
+
+
+
+
+-- select a.* from score a where degree < (
+-- select avg(degree) from score b 
+-- where a.cno = b.cno );
+-- 32. 查询所有任课教师的tname和depart
+-- 33. 查询所有未讲课的教师的tname和depart
+-- # 32
+-- # 解法一
+-- select a.tname,a.depart from teacher a 
+-- join course b 
+-- on a.tno = b.tno;
+-- # 解法二
+-- select a.tname,a.depart from teacher a
+-- where exists (
+-- select * from course b where a.tno = b.tno
+-- );
+-- # 33
+-- select a.tname,a.depart from teacher a
+-- where not exists (
+-- select * from course b where a.tno = b.tno
+-- );
+-- 34. 查询至少有2名男生的班号
+-- select class from student where ssex = '男' 
+-- group by class 
+-- having count(ssex) >= 2;
+-- 35. 查询Student表中不姓“王”的同学记录
+-- select * from student where sname not like '王%';
+-- 36. 查询student表中每个学生的姓名和年龄
+-- # 解法一
+-- select sname, year(curdate())-year(sbirthday) age from student;
+-- # 解法二
+-- select sname, year(now())-year(sbirthday) age from student;
+-- 37. 查询student表中最大和最小的sbirthday日期值
+-- select sname,max(sbirthday) birthday from student
+-- where sbirthday in (
+-- select max(sbirthday) from student )
+-- union
+-- select sname,min(sbirthday) birthday from student
+-- where sbirthday in (
+-- select min(sbirthday) from student );
+-- 38. 以班号和年龄从大到小的顺序查询student表中的全部记录
+-- select * from student 
+-- order by class desc,
+-- year(now())-year(sbirthday()) desc;
+-- 39. 查询"男"教师及其所上的课程
+-- select a.tname,b.cname from teacher a 
+-- join course b
+-- on a.tno = b.tno
+-- where a.tsex = '男';
+-- 40. 查询和“李军”同性别并同班的同学sname
+-- select sname from student where ssex in (
+-- select ssex from student where sname = '李军')
+-- and class in (
+-- select class from student where sname = '李军')
+-- and sname != '李军';
+-- 41. 查询所有选修“计算机导论”课程的“男”同学的成绩表
+-- # 解法一
+-- select a.* from score a join (course b,student c)
+-- on a.cno = b.cno and a.sno = c.sno
+-- where c.ssex = '男' and a.cno in (
+-- select cno from course where cname = '计算机导论'
+-- );
+-- # 解法二
+-- select a.* from score a join (course b,student c)
+-- using (sno,cno)
+-- where c.ssex = '男' and b.cname = '计算机导论';
 
 
 
@@ -4222,7 +4316,7 @@ SELECT NOW() FROM table_name;
 
 
 
-# leture 11 JDBC & Hiebernate
+# lecture 11 JDBC & Hiebernate
 
 ## JDBC
 
@@ -4382,7 +4476,63 @@ MyBatis .....
 
 
 
+## JDBC vs Hibernate
 
+**1、JDBC**
+
+  我们平时使用jdbc进行编程，大致需要下面几个步骤：
+  1、使用jdbc编程需要连接数据库，注册驱动和数据库信息；
+  2、操作Connection，打开Statement对象；
+  3、通过Statement对象执行SQL，返回结果到ResultSet对象；
+  4、使用ResultSet读取数据，然后通过代码转化为具体的POJO对象；
+  5、关闭数据库相关的资源。
+
+ Jdbc的缺点：
+   1、工作量比较大，需要连接，然后处理jdbc底层事务，处理数据类型，还需要操作Connection，Statement对象和ResultSet对象去拿数据并关闭他们。
+   2、我们对jdbc编程可能产生的异常进行捕捉处理并正确关闭资源。
+
+  由于JDBC存在的缺陷，在实际工作中我们很少直接使用jdbc进行编程，用的更多的是ORM对象关系模型来操作数据库，Hibernate就是一个ORM模型。
+
+
+
+**2、Hibernate**
+
+​    Hibernate是建立在若干POJO通过xml映射文件（或注解）提供的规则映射到数据库表上的。我们可以通过POJO直接操作数据库的数据，他提供的是一种全表映射的模型。相对而言，Hibernate对JDBC的封装程度还是比较高的，我们已经不需要写SQL，只要使用HQL语言就可以了。
+
+  Hibernate的优点：
+  1、消除了代码的映射规则，它全部分离到了xml或者注解里面去配置。
+  2、无需在管理数据库连接，它也配置到xml里面了。
+  3、一个会话中不需要操作多个对象，只需要操作Session对象。
+  4、关闭资源只需要关闭一个Session便可。
+
+  这就是Hibernate的优势，在配置了映射文件和数据库连接文件后，Hibernate就可以通过Session操作，非常容易，消除了jdbc带来的大量代码，大大提高了编程的简易性和可读性。Hibernate还提供了级联，缓存，映射，一对多等功能。Hibernate是全表映射，通过HQL去操作pojo进而操作数据库的数据。
+
+  Hibernate的缺点：
+  1，全表映射带来的不便，比如更新时需要发送所有的字段。
+  2，无法根据不同的条件组装不同的SQL。
+  3，对多表关联和复杂的sql查询支持较差，需要自己写sql，返回后，需要自己将数据封装为pojo。
+  4，不能有效的支持存储过程。
+  5，虽然有HQL，但是性能较差，大型互联网系统往往需要优化sql，而hibernate做不到。
+
+**3、Mybatis**
+  为了解决Hibernate的不足，Mybatis出现了，Mybatis是半自动的框架。之所以称它为半自动，是因为它需要手工匹配提供POJO，sql和映射关系，而全表映射的Hibernate只需要提供pojo和映射关系即可。
+  Mybatis需要提供的映射文件包含了一下三个部分：sql，映射规则，pojo。在Mybatis里面你需要自己编写sql，虽然比Hibernate配置多，但是Mybatis可以配置动态sql，解决了hibernate表名根据时间变化，
+  不同条件下列不一样的问题，同时你也可以对sql进行优化，通过配置决定你的sql映射规则，也能支持存储过程，所以对于一些复杂和需要优化性能的sql查询它就更加方便。Mybatis几乎可以做到jdbc所有能做到的事情。
+
+
+**4、什么时候使用Hibernate，Mybatis？**
+
+  Hibernate作为留下的Java orm框架，它确实编程简易，需要我们提供映射的规则，完全可以通过IDE生成，同时无需编写sql确实开发效率优于Mybatis。此外Hibernate还提供了缓存，日志，级联等强大的功能，
+  但是Hibernate的缺陷也是十分明显，多表关联复杂sql，数据系统权限限制，根据条件变化的sql，存储过程等场景使用Hibernate十分不方便，而性能又难以通过sql优化，所以注定了Hibernate只适用于在场景不太复杂，要求性能不太苛刻的时候使用。
+  如果你需要一个灵活的，可以动态生成映射关系的框架，那么Mybatis确实是一个最好的选择。它几乎可以替代jdbc，拥有动态列，动态表名，存储过程支持，同时提供了简易的缓存，日志，级联。
+  但是它的缺陷是需要你提供映射规则和sql，所以开发工作量比hibernate要大些。
+
+
+**5、Jdbc,Mybatis,Hibernate的区别**
+1）从层次上看，JDBC是较底层的持久层操作方式，而Hibernate和MyBatis都是在JDBC的基础上进行了封装使其更加方便程序员对持久层的操作。
+2）从功能上看，JDBC就是简单的建立数据库连接，然后创建statement，将sql语句传给statement去执行，如果是有返回结果的查询语句，会将查询结果放到ResultSet对象中，通过对ResultSet对象的遍历操作来获取数据；Hibernate是将数据库中的数据表映射为持久层的Java对象，对sql语句进行修改和优化比较困难；MyBatis是将sql语句中的输入参数和输出参数映射为java对象，sql修改和优化比较方便。
+
+3）从使用上看，如果进行底层编程，而且对性能要求极高的话，应该采用JDBC的方式；如果要对数据库进行完整性控制的话建议使用Hibernate；如果要灵活使用sql语句的话建议采用MyBatis框架。
 
 
 
