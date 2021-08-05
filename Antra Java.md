@@ -4736,11 +4736,70 @@ Fetch type : lazy loading, eager loading;
 
 
 
-### Cascade Type (必考)
+### Fetch Type (必考)
+
+lazy = false:最多sql查询
+
+lazy = true: 默认开启，减少sql查询次数
+
+lazy = extra:比true更加智能
+
+Eager?
 
 
 
-### 
+### Cascade Type 级联 (必考)
+
+Entity relationships often depend on the existence of another entity, for example the *Person*–*Address* relationship. Without the *Person*, the *Address* entity doesn't have any meaning of its own. When we delete the *Person* entity, our *Address* entity should also get deleted.
+
+Cascading is the way to achieve this. **When we perform some action on the target entity, the same action will be applied to the associated entity.**
+
+#### JPA Cascade Type
+
+- *ALL*: **propagates all operations — including Hibernate-specific ones — from a parent to a child entity.**
+
+  包含所有持久化方法
+
+  
+
+- *PERSIST*: The persist operation makes a transient instance persistent. **Cascade Type \*PERSIST\* propagates the persist operation from a parent to a child entity.** 
+
+  获取A对象里也同时也重新获取最新的B时的对象。即会重新查询数据库里的最新数据，并且，只有A类新增时，会级联B对象新增。若B对象在数据库存（跟新）在则抛异常（让B变为持久态），对应EntityManager的presist方法,调用JPA规范中的persist()，不适用于Hibernate的save()方法
+  
+
+- *MERGE*: The merge operation copies the state of the given object onto the persistent object with the same identifier. ***CascadeType.MERGE\* propagates the merge operation from a parent to a child entity**
+
+  指A类新增或者变化，会级联B对象（新增或者变化） ，对应EntityManager的merge方法，调用JPA规范中merge()时，不适用于Hibernate的update()方法
+
+  
+
+- *REMOVE*: as the name suggests, the remove operation removes the row corresponding to the entity from the database and also from the persistent context.
+
+  ***CascadeType.REMOVE\* propagates the remove operation from parent to child entity.** **Similar to JPA's \*CascadeType.REMOVE\*, we have \*CascadeType.DELETE\*, which is specific to Hibernate.** There is no difference between the two.
+
+  只有A类删除时，会级联删除B类,即在设置的那一端进行删除时，另一端才会级联删除，对应EntityManager的remove方法，调用JPA规范中的remove()时，适用于Hibernate的delete()方法
+
+  
+
+- *REFRESH*: Refresh operations **reread the value of a given instance from the database.** In some cases, we may change an instance after persisting in the database, but later we need to undo those changes.
+
+  In that kind of scenario, this may be useful. **When we use this operation with Cascade Type \*REFRESH\*, the child entity also gets reloaded from the database whenever the parent entity is refreshed.**
+
+  获取order（一或多）对象里也同时也重新获取最新的items（多）的对象，对应EntityManager的refresh(object)，调用JPA规范中的refresh()时，适用于Hibernate的flush()方法
+
+  
+
+- *DETACH*:The detach operation removes the entity from the persistent context. **When we use \*CascadeType.DETACH\*, the child entity will also get removed from the persistent context.**
+
+
+
+#### Hibernate Cascade Type
+
+Hibernate supports three additional Cascade Types along with those specified by JPA. 
+
+- *REPLICATE*: **The replicate operation is used when we have more than one data source and we want the data in sync.** With *CascadeType.REPLICATE*, a sync operation also propagates to child entities whenever performed on the parent entity.
+- *SAVE_UPDATE*: *CascadeType.SAVE_UPDATE* propagates the same operation to the associated child entity. It's useful when we use **Hibernate-specific operations like \*save\*, \*update\* and \*saveOrUpdate\*.** 
+- *LOCK*:**Unintuitively, \*CascadeType.LOCK\* reattaches the entity and its associated child entity with the persistent context again**
 
 
 
