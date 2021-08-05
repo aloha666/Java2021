@@ -819,7 +819,7 @@ The **Old Generation** is used to store long surviving objects. Typically, a thr
 
 ## Generics
 
-Reference to Jakov.
+Reference to Jakov. 泛型其实就是在定义类、接口、方法的时候不局限地指定某一种特定类型，而让类、接口、方法的调用者来决定具体使用哪一种类型的参数。
 
 ## Enum
 
@@ -4704,6 +4704,32 @@ MyBatis .....
 
  defines the management of relational data in java application
 
+### First Level Cache vs Second Level Cache (必考)
+
+First: open by default, session level, locally, if session closed, cache is gone
+
+Second: close by default, session factory level, globally, if seesion factory shut down, cache is gone
+
+流程： Query -> first level cache -> second level cache (need open mannually)-> database
+
+### Mapping (必考)
+
+one to one 
+
+one to many
+
+many to many 需要中间表
+
+Fetch type : lazy loading, eager loading;
+
+
+
+### Cascade Type (必考)
+
+
+
+### 
+
 
 
 ## JDBC vs Hibernate
@@ -4792,7 +4818,9 @@ Total 23 design patterns.
 ○ Iterator Pattern
 ○
 
-### Singleton Design pattern
+
+
+### Singleton Design pattern（优缺点？）
 
 • only one single object been created
 Usage for Singleton
@@ -4861,103 +4889,135 @@ Reflection is an API which is used to examine or modify the behavior of methods,
 at the run time
 
 ```java
-//A simple Java program to demonstrate the use of reflection
-importjava.lang.annotation.Annotation;
-importjava.lang.reflect.Method;
-importjava.lang.reflect.Field;
-importjava.lang.reflect.Constructor;
-//classwhoseobjectistobecreated
-classTest{
-//creatingaprivatefield
-privateStrings;
-//creatingapublicconstructor
-publicTest(){s="123456789";}
-//Creatingapublicmethodwithnoarguments
-publicvoidmethod1(){
-System.out.println("Thestringis"+s);
+package com.antra.reflection;
+
+// A simple Java program to demonstrate the use of reflection
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
+
+// class whose object is to be created
+class Test {
+    // creating a private field
+    private String s;
+
+    // creating a public constructor
+    public Test()  {  s = "123456789"; }
+
+    // Creating a public method with no arguments
+    public void method1()  {
+        System.out.println("The string is " + s);
+    }
+
+    // Creating a public method with int as argument
+    public void method2(int n)  {
+        System.out.println("The number is " + n);
+    }
+
+    // creating a private method
+    private void method3() {
+        System.out.println("Private method invoked");
+    }
+
+
+    @Deprecated
+    public void method4() {
+        System.out.println("in method4 of test class");
+    }
 }
-//Creatingapublicmethodwithintasargument
-publicvoidmethod2(intn){
-System.out.println("Thenumberis"+n);
+
+
+public class ReflectionDemo {
+
+    public static void main(String args[]) throws Exception
+    {
+        // Creating object whose property is to be checked
+        Test obj = new Test();
+
+        // Creating class object from the object using
+        // getclass method
+        Class cls = obj.getClass();
+        System.out.println("The name of class is " +
+                cls.getName());
+
+        // Getting the constructor of the class through the
+        // object of the class
+        Constructor constructor = cls.getConstructor();
+        System.out.println("The name of constructor is " +
+                constructor.getName());
+
+        System.out.println("The public methods of class are : ");
+
+        // Getting methods of the class through the object
+        // of the class by using getMethods
+        Method[] methods = cls.getMethods(); // public method + object method
+        //Method[] methods = cls.getDeclaredMethods(); //public method + private method
+        System.out.println("-------------------");
+        // Printing method names 
+        for (Method method:methods)
+            System.out.println(method.getName());
+
+        System.out.println("-------------------");
+
+
+        // creates object of desired method by providing the
+        // method name and parameter class as arguments to
+        // the getDeclaredMethod
+        obj.method1();
+        Method methodcall1 = cls.getDeclaredMethod("method2",
+                int.class);
+
+        // invokes the method at runtime
+        methodcall1.invoke(obj, 19);
+
+        // creates object of the desired field by providing
+        // the name of field as argument to the
+        // getDeclaredField method
+        Field field = cls.getDeclaredField("s");
+
+        // allows the object to access the field irrespective
+        // of the access specifier used with the field
+        field.setAccessible(true);
+
+        // takes object and the new value to be assigned
+        // to the field as arguments
+        field.set(obj, "JAVA");
+
+        // Creates object of desired method by providing the
+        // method name as argument to the getDeclaredMethod
+        Method methodcall2 = cls.getDeclaredMethod("method1");
+
+        // invokes the method at runtime
+        methodcall2.invoke(obj);
+
+        // Creates object of the desired method by providing
+        // the name of method as argument to the
+        // getDeclaredMethod method
+        Method methodcall3 = cls.getDeclaredMethod("method3");
+
+        // allows the object to access the method irrespective
+        // of the access specifier used with the method
+        methodcall3.setAccessible(true);
+
+        // invokes the method at runtime
+        methodcall3.invoke(obj);
+
+
+
+        System.out.println("-------------------");
+        // get the method 4
+        Method methodcall4 = cls.getDeclaredMethod("method4");
+        Annotation[] annotations = methodcall4.getDeclaredAnnotations();
+        for(Annotation annotation : annotations){
+            System.out.println(annotation.annotationType());
+        }
+
+
+    }
+
 }
-//creatingaprivatemethod
-privatevoidmethod3(){
-System.out.println("Privatemethodinvoked");
-}
-@Deprecated
-publicvoidmethod4(){
-System.out.println("inmethod4oftestclass");
-}
-}
-publicclassReflectionDemo{
-publicstaticvoidmain(Stringargs[])throwsException
-{
-//Creatingobjectwhosepropertyistobechecked
-Testobj=newTest();
-//Creatingclassobjectfromtheobjectusing
-//getclassmethod
-Classcls=obj.getClass();
-System.out.println("Thenameofclassis"+
-cls.getName());
-//Gettingtheconstructoroftheclassthroughthe
-//objectoftheclass
-Constructorconstructor=cls.getConstructor();
-System.out.println("Thenameofconstructoris"+
-constructor.getName());
-System.out.println("Thepublicmethodsofclassare:");
-//Gettingmethodsoftheclassthroughtheobject
-//oftheclassbyusinggetMethods
-Method[]methods=cls.getMethods();
-System.out.println("-------------------");
-//Printingmethodnames
-for(Methodmethod:methods)
-System.out.println(method.getName());
-System.out.println("-------------------");
-Method[]methods1=cls.getDeclaredMethods();
-System.out.println("-------------------");
-//Printingmethodnames
-for(Methodmethod:methods1)
-System.out.println(method.getName());
-System.out.println("-------------------");
-//createsobjectofdesiredmethodbyprovidingthe
-//methodnameandparameterclassasargumentsto
-//thegetDeclaredMethod
-Methodmethodcall2=cls.getDeclaredMethod("method2",
-int.class);
-//invokesthemethodatruntime
-methodcall2.invoke(obj,19);
-//createsobjectofthedesiredfieldbyproviding
-//thenameoffieldasargumenttothe
-//getDeclaredFieldmethod
-Fieldfield=cls.getDeclaredField("s");
-//allowstheobjecttoaccessthefieldirrespective
-//oftheaccessspecifierusedwiththefield
-field.setAccessible(true);
-//takesobjectandthenewvaluetobeassigned
-//tothefieldasarguments
-field.set(obj,"JAVA");
-//Createsobjectofdesiredmethodbyprovidingthe
-//methodnameasargumenttothegetDeclaredMethod
-Methodmethodcall1=cls.getDeclaredMethod("method1");
-//invokesthemethodatruntime
-methodcall1.invoke(obj);
-//Createsobjectofthedesiredmethodbyproviding
-//thenameofmethodasargumenttothe
-//getDeclaredMethodmethod
-Methodmethodcall3=cls.getDeclaredMethod("method3");
-//allowstheobjecttoaccessthemethodirrespective
-//oftheaccessspecifierusedwiththemethod
-methodcall3.setAccessible(true);
-//invokesthemethodatruntime
-methodcall3.invoke(obj);
-System.out.println("-------------------");
-//getthemethod4
-Methodmethodcall4=cls.getDeclaredMethod("method4");
-Annotation[]annotations=methodcall4.getDeclaredAnnotations();
-for(Annotationannotation:annotations){
-System.out.println(annotation.annotationType());
-}
-//@Enity,@Table,@Column....
+
 ```
 
 **normally**
