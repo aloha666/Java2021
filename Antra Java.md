@@ -2099,6 +2099,8 @@ class RunnableImplC implements Runnable {
 
 lock condition: control flow 
 
+怎么解决死锁？
+
 **Start():** NATIVE METHOD start0( ); writted in C language, will start/run a thread. thread.start();
 
 normally we cannot have a abstract method in a non-abstract class. BUT CAN HAVE A NATIVE METHOD.
