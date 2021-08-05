@@ -4704,17 +4704,29 @@ MyBatis .....
 
  defines the management of relational data in java application
 
+
+
 ### First Level Cache vs Second Level Cache (必考)
 
-First: open by default, session level, locally, if session closed, cache is gone
+**First**: **open by default, session level, locally, if session closed, cache is gone**
 
-Second: close by default, session factory level, globally, if seesion factory shut down, cache is gone
+每次查都先看看一级缓存里是否存在要查询的记录，如果没有再去数据库查询。可以通过在一个session中查询两次相同数据验证。
+
+![18](/Users/spikycrown/Desktop/Java2021/images/18.png)
+
+**Second**: close by default, session factory level, globally, if seesion factory shut down, cache is gone
+
+Second 现在基本不用， 被redis代替。
 
 流程： Query -> first level cache -> second level cache (need open mannually)-> database
 
 ### Mapping (必考)
 
 one to one 
+
+
+
+
 
 one to many
 
