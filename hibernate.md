@@ -1,4 +1,4 @@
-## The Problem
+## 1. The Problem
 
 - Mapping member variable to columns
 - Mapping relationships
@@ -7,7 +7,7 @@
 
 
 
-## Saving without Hibernate
+## 2. Saving without Hibernate
 
 - JDBC Datbase Configuration
 - The model object
@@ -17,7 +17,7 @@
 
 
 
-## The Hibernate way
+## 3. The Hibernate way
 
 - JDBC Datbase Configuration - Hibernate
 - The model object - Annotations
@@ -27,9 +27,79 @@
 
 
 
-## Writing the Model Class with Annotations
+## 4. Writing the Model Class with Annotations
 
 ```java
+//Employee Entity
+
+@Entity(name = "ForeignKeyAssoEEntity")
+@Table(name = "Employee", uniqueConstraints = {
+		@UniqueConstraint(columnNames = "ID"),
+		@UniqueConstraint(columnNames = "EMAIL") })
+public class EmployeeEntity implements Serializable {
+
+	private static final long serialVersionUID = -1798070786993154676L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID", unique = true, nullable = false)
+	private Integer employeeId;
+
+	@Column(name = "EMAIL", unique = true, nullable = false, length = 100)
+	private String email;
+
+	@Column(name = "FIRST_NAME", unique = false, nullable = false, length = 100)
+	private String firstName;
+
+	@Column(name = "LAST_NAME", unique = false, nullable = false, length = 100)
+	private String lastName;
+
+	@OneToMany(cascade=CascadeType.ALL) //cascade type
+	@JoinColumn(name="EMPLOYEE_ID") //set up key for the many 
+	private Set<AccountEntity> accounts; //@ElementCollection? 
+
+	public Integer getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public Set<AccountEntity> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(Set<AccountEntity> accounts) {
+		this.accounts = accounts;
+	}
+}
+
+//Account Entity
 //xml line
 
 //在xml中注册entity
@@ -52,7 +122,7 @@ public class AccountEntity implements Serializable //why serializable?
 	@Column(name = "ACC_NUMBER", unique = true, nullable = false, length = 100) //database laction, a column & name
 	private String accountNumber;
 	
-	@ManyToOne //mapping relation
+	@ManyToOne //mapping relation,no need for cascade type?
 	private EmployeeEntity employee;
 	
 	public Integer getAccountId() {
@@ -176,7 +246,7 @@ Other anotations:
 @Generatdvalue: help to auto-genrate data/id(int only?)
 ```
 
-## Embeded Object
+## 5. Embeded Object
 
 @Embeddable
 
@@ -187,4 +257,73 @@ make a class embeddable, the attributes of the object will be embedded into othe
 declare an object is embedded, the attributes of the object will be used as part of the database table (not the whole object), @EmbeddedID can be used to embed a pk.
 
 @AttributeOverride (name="desire object attribtue name",column =@Column(name="desire column name"))
+
+## 6. Proxy代理 Objects and Eager and Lazy Fetch拿取 Type
+
+ 主表和附表之间的互动，查询主表某个ID时，是不是需要主动查询出所有附表中含有此id的内容？有时需要，有时不需要，就需要进行设定。Hibernate default是不进行联动查询的。叫lazy iniitialaztion.
+
+lazy iniitialaztion/fetch: hibernate 初始设定，不对附表进行联动，查什么给什么。如果只需要查一个表的信息，这种方法很快。
+
+Eager fetch: 对附表进行联动，查主表时主动查附表
+
+```java
+@ElementCollection(fetch = FetchType.EAGER)
+//ElementCollection meaning?
+```
+
+
+
+？ proxy object:  Hibernate 自带方法。作用？ 给object做一个proxy，功能和object相同，但是直接对database进行操作 object -> proxy -> database。好处？
+
+
+
+## 7. Mapping
+
+One to One Mapping 一对一
+
+主表中加入一个附表ID， 附表不用进行操作。
+
+```java
+//in User.class
+@OnetoOne //use annotation to clarfy
+@JoinColumn(name="VEHICLE_ID") //在表中列名设为 VEHICLE_ID ？
+private Vehicle vehicle;
+
+//in test
+Vehicle v1 = new Vehicle();
+user.setVehicle(v1);
+
+```
+
+
+
+One to Many Mapping 一对多
+
+
+
+Many to Many Mapping 多对多
+
+
+
+## 8.Cascade Type
+
+## 9. Persist, Transient, and Detach
+
+## 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
