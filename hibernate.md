@@ -279,29 +279,213 @@ Eager fetch: 对附表进行联动，查主表时主动查附表
 
 ## 7. Mapping
 
-One to One Mapping 一对一
+One to One Mapping 一对一 
 
 主表中加入一个附表ID， 附表不用进行操作。
 
 ```java
-//in User.class
-@OnetoOne //use annotation to clarfy
-@JoinColumn(name="VEHICLE_ID") //在表中列名设为 VEHICLE_ID ？
-private Vehicle vehicle;
+//reference: https://www.jianshu.com/p/02ddc541d9ac Hibernate入门2-关联和映射
+@Entity
+public class Professor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "professor_id")
+    private Integer id;
 
-//in test
-Vehicle v1 = new Vehicle();
-user.setVehicle(v1);
+    private String name;
 
+    @OneToOne(targetEntity = Student.class)
+    // FOREIGN KEY (student_id) REFERENCES student_info (id);
+    @JoinColumn(name = "student_id", referencedColumnName = "id") 
+    private Student student;
+    
+    // getters and setters
+}
+
+//操作
+public static void addProfessor(Integer student_id) {
+    Configuration conf = new Configuration().configure();
+    StandardServiceRegistry registry = conf.getStandardServiceRegistryBuilder().build();
+    try (SessionFactory sessionFactory = conf.buildSessionFactory(registry); Session session = sessionFactory.openSession()) {
+        Transaction transaction = session.beginTransaction();
+
+        Professor professor = new Professor();
+        professor.setName("james lee");
+
+        Student student = session.get(Student.class, student_id);
+        professor.setStudent(student);
+
+        session.save(professor);
+        transaction.commit();
+    }
+}
+
+public static void main(String[] args) {
+    addProfessor(10);
+}
 ```
+
+也可做双向一对一
 
 
 
 One to Many Mapping 一对多
 
+```java
+//student java
+@Entity
+@Table(name = "student_info")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+
+    private int age;
+
+    @ManyToOne(targetEntity = Professor.class)
+    @JoinColumn(name = "professor_id", referencedColumnName = "professor_id", nullable = false) // remove unique=true!!!
+    @Cascade(org.hibernate.annotations.CascadeType.ALL) //指定映射的级联。如果没有这个注解，那我们就必须先save(professor)，才能save(student)。
+    private Professor professor;
+    
+    // getter and setters
+}
+
+//professor.java professor是没有任何外键的，student_info有一个外键，引用了professor.id。这就是对于关系映射N-1的情况下，我们应该设计的数据的样子
+@Entity
+public class Professor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "professor_id")
+    private Integer id;
+
+    private String name;
+}
+
+//HibernateTest.java
+public static void uniManyToOne() {
+    Configuration conf = new Configuration().configure();
+    StandardServiceRegistry registry = conf.getStandardServiceRegistryBuilder().build();
+    try (SessionFactory sessionFactory = conf.buildSessionFactory(registry); Session session = sessionFactory.openSession()) {
+        Transaction transaction = session.beginTransaction();
+
+        Professor professor = new Professor();
+        professor.setName("professor name one2one");
+
+        Student student = new Student();
+        student.setName("student name one2one");
+        student.setProfessor(professor);
+
+        Student student2 = new Student();
+        student2.setName("student2");;
+        student2.setProfessor(professor);
+
+        session.save(student2);
+
+        transaction.commit();
+    }
+}
+
+public static void main(String[] args) {
+    uniManyToOne();
+} 
+```
+
 
 
 Many to Many Mapping 多对多
+
+```java
+@Entity
+@Table(name = "student_info")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+
+    private int age;
+
+    @ManyToMany(targetEntity = Professor.class)
+    @JoinColumn(name = "professor_id", referencedColumnName = "professor_id", nullable = false)
+    private List<Professor> professorList = new ArrayList<>();
+}
+
+@Entity
+public class Professor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "professor_id")
+    private Integer id;
+
+    private String name;
+}
+
+Transaction transaction = session.beginTransaction();
+
+Professor professor = new Professor();
+professor.setName("professor1");
+session.save(professor);
+
+Professor professor2 = new Professor();
+professor2.setName("professor2");
+session.save(professor2);
+
+Student student = new Student();
+student.setName("student name one2one");
+student.getProfessorList().add(professor);
+student.getProfessorList().add(professor2);
+
+session.save(student);
+
+Student student2 = new Student();
+student2.setName("student2");
+student2.getProfessorList().add(professor);
+student2.getProfessorList().add(professor2);
+
+session.save(student2);
+
+transaction.commit();
+```
+
+双向many to many
+
+```java
+@Entity
+public class Professor {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "professor_id")
+    private Integer id;
+
+    private String name;
+
+    @ManyToMany(targetEntity = Student.class)
+    @JoinTable(joinColumns = @JoinColumn(name = "professor_id", referencedColumnName = "professor_id"))
+    private List<String> studentList;
+}
+
+@Entity
+@Table(name = "student_info")
+public class Student {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private String name;
+
+    private int age;
+
+    @ManyToMany(targetEntity = Professor.class)
+    @JoinTable(joinColumns = @JoinColumn(name = "id", referencedColumnName = "id"))
+//    @Column(name = "student_id")
+    private List<Professor> professorList = new ArrayList<>();
+    
+    //@JoinTable：指定用连接表来保存映射关系(像前面的student_info_Professor)。需要注意的是，里面的@JoinColumn，为什么这里和以前的不一样，以前的JoinColumn(name, referencedColumnName)都是不同的，而这里为什么不一样？JoinColumn的意思是，本段的name属性应用了另一个表的referencedColumnName。由于这里指定了@JoinTable，也就是指定了用一个连接表，那么另一个表指的就是连接表。我们当然应该表这个表中的name属性和连接表中的name属性映射起来。即A.a 映射到连接表AB.a， B.b映射到连接到AB.b。
+
+```
 
 
 
