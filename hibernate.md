@@ -258,26 +258,46 @@ declare an object is embedded, the attributes of the object will be used as part
 
 @AttributeOverride (name="desire object attribtue name",column =@Column(name="desire column name"))
 
-## 6. Proxy代理 Objects and Eager and Lazy Fetch拿取 Type
+
+
+## 6. Eager and Lazy Fetch拿取 Type 
 
  主表和附表之间的互动，查询主表某个ID时，是不是需要主动查询出所有附表中含有此id的内容？有时需要，有时不需要，就需要进行设定。Hibernate default是不进行联动查询的。叫lazy iniitialaztion.
 
-lazy iniitialaztion/fetch: hibernate 初始设定，不对附表进行联动，查什么给什么。如果只需要查一个表的信息，这种方法很快。
+**lazy iniitialaztion/fetch**: hibernate 初始设定，不对附表进行联动，查什么给什么。如果只需要查一个表的信息，这种方法很快。
 
-Eager fetch: 对附表进行联动，查主表时主动查附表
+**Eager fetch:** 对附表进行联动，查主表时主动查附表 
+
+如果是**EAGER**，那么表示取出这条数据时，它关联的数据也同时取出放入内存中 如果是**LAZY**，那么取出这条数据时，它关联的数据并不取出来，在同一个session中，什么时候要用，就什么时候取(再次访问数据库)。但是，在session外，就不能再取了。用EAGER时，因为在内存里，所以在session外也可以取。
 
 ```java
 @ElementCollection(fetch = FetchType.EAGER)
 //ElementCollection meaning?
 ```
 
+**Fetch vs Cascade?**
+
+The `CascadeType` in Hib. could be `REFRESH`, `MERGE`, ..., `ALL` you put it under the related entity and **it determines the behavior of the related entity** if the current entity is: refreshed, updated, deleted, e.t.c.. So whenever you entity is affected the `CascadeType` tells if the related entity should be affected as well.
+
+The `FetchType` could be only of 2: `EAGER` and `LAZY`. This one you as well put under the related entity and **it determines whether the related entity should be initialized right away when the current entity is initialized** (`EAGER`) **or only on demand** (`LAZY`).
+
+- **CascadeType** is a property used to define cascading in a relationship between a parent and a child.
+- **FetchType** is a property used to define fetching strategies which are used to optimize the Hibernate generated select statement, so that it can be as efficient as possible.
+
+ts simple :Consider two entities 1. Department and 2. Employee and they have one-to-many mappings.That is one department can have many employee **cascade=CascadeType.ALL** and it essentially means that any change happened on DepartmentEntity must cascade to EmployeeEntity as well. If you save an Department , then all associated Employee will also be saved into database. If you delete an Department then all Employee associated with that Department also be deleted.
+**Cascade-type all is combination of PERSIST, REMOVE ,MERGE and REFRESH cascade types.** [Example for Cascade type All](http://www.concretepage.com/hibernate/example-cascadetype-all-hibernate)
+
+Fetch type Eager is essentially the opposite of Lazy.Lazy which is the default fetch type for all Hibernate annotation relationships. When you use the Lazy fetch type, Hibernate won’t load the relationships for that particular object instance. **Eager will by default load ALL of the relationships** related to a particular object loaded by Hibernate.
 
 
-？ proxy object:  Hibernate 自带方法。作用？ 给object做一个proxy，功能和object相同，但是直接对database进行操作 object -> proxy -> database。好处？
+
+## 7. Proxy代理 Objects
+
+**？ proxy** object:  Hibernate 自带方法。作用？ 给object做一个proxy，功能和object相同，但是直接对database进行操作 object -> proxy -> database。好处？
 
 
 
-## 7. Mapping
+## 8. Mapping
 
 One to One Mapping 一对一 
 
@@ -489,15 +509,298 @@ public class Student {
 
 
 
-## 8.Cascade Type
+## 9.Cascade Type
 
-## 9. Persist, Transient, and Detach
+### CadcadeType.All
 
-## 
+*CascadeType.ALL* **propagates all operations — including Hibernate-specific ones — from a parent to a child entity.**
+
+```java
+@Entity
+public class Person {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    private String name;
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+    private List<Address> addresses;
+}
+
+@Entity
+public class Address {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    private String street;
+    private int houseNumber;
+    private String city;
+    private int zipCode;
+    @ManyToOne(fetch = FetchType.LAZY) //??
+    private Person person;
+}
+```
 
 
 
+### CadcadeType.Persist
 
+The persist operation makes a transient instance persistent. **Cascade Type \*PERSIST\* propagates the persist operation from a parent to a child entity.** When we save the *person* entity, the *address* entity will also get saved.
+
+```java
+@Test
+public void whenParentSavedThenChildSaved() {
+    Person person = new Person();
+    Address address = new Address();
+    address.setPerson(person);
+    person.setAddresses(Arrays.asList(address));
+    session.persist(person);
+    session.flush();
+    session.clear();
+}
+
+//followed SQL:
+Hibernate: insert into Person (name, id) values (?, ?)
+Hibernate: insert into Address (
+    city, houseNumber, person_id, street, zipCode, id) values (?, ?, ?, ?, ?, ?)
+
+```
+
+
+
+### CadcadeType.Merge
+
+The merge operation copies the state of the given object onto the persistent object with the same identifier. ***CascadeType.MERGE\* propagates the merge operation from a parent to a child entity.**
+
+```java
+@Test
+public void whenParentSavedThenMerged() {
+    int addressId;
+    Person person = buildPerson("devender");
+    Address address = buildAddress(person);
+    person.setAddresses(Arrays.asList(address));
+    session.persist(person);
+    session.flush();
+    addressId = address.getId();
+    session.clear();
+
+    Address savedAddressEntity = session.find(Address.class, addressId);
+    Person savedPersonEntity = savedAddressEntity.getPerson();
+    savedPersonEntity.setName("devender kumar");
+    savedAddressEntity.setHouseNumber(24);
+    session.merge(savedPersonEntity);
+    session.flush();
+}
+
+//followed SQL:
+Hibernate: select address0_.id as id1_0_0_, address0_.city as city2_0_0_, address0_.houseNumber as houseNum3_0_0_, address0_.person_id as person_i6_0_0_, address0_.street as street4_0_0_, address0_.zipCode as zipCode5_0_0_ from Address address0_ where address0_.id=?
+Hibernate: select person0_.id as id1_1_0_, person0_.name as name2_1_0_ from Person person0_ where person0_.id=?
+Hibernate: update Address set city=?, houseNumber=?, person_id=?, street=?, zipCode=? where id=?
+Hibernate: update Person set name=? where id=?
+    
+//Here, we can see that the merge operation first loads both address and person entities and then updates both as a result of CascadeType.MERGE.
+```
+
+
+
+### CadcadeType.Remove
+
+As the name suggests, the remove operation removes the row corresponding to the entity from the database and also from the persistent context.
+
+***CascadeType.REMOVE\* propagates the remove operation from parent to child entity.** **Similar to JPA's \*CascadeType.REMOVE\*, we have \*CascadeType.DELETE\*, which is specific to Hibernate.** There is no difference between the two.
+
+```java
+@Test
+public void whenParentRemovedThenChildRemoved() {
+    int personId;
+    Person person = buildPerson("devender");
+    Address address = buildAddress(person);
+    person.setAddresses(Arrays.asList(address));
+    session.persist(person);
+    session.flush();
+    personId = person.getId();
+    session.clear();
+
+    Person savedPersonEntity = session.find(Person.class, personId);
+    session.remove(savedPersonEntity);
+    session.flush();
+}
+
+//followed sql:
+Hibernate: delete from Address where id=?
+Hibernate: delete from Person where id=?
+//The address associated with the person also got removed as a result of CascadeType.REMOVE.
+
+
+```
+
+
+
+### CadcadeType.Detach
+
+The detach operation removes the entity from the persistent context. **When we use \*CascadeType.DETACH\*, the child entity will also get removed from the persistent context.**
+
+```java
+@Test
+public void whenParentDetachedThenChildDetached() {
+    Person person = buildPerson("devender");
+    Address address = buildAddress(person);
+    person.setAddresses(Arrays.asList(address));
+    session.persist(person);
+    session.flush();
+    
+    assertThat(session.contains(person)).isTrue();
+    assertThat(session.contains(address)).isTrue();
+
+    session.detach(person);
+    assertThat(session.contains(person)).isFalse();
+    assertThat(session.contains(address)).isFalse();
+}
+
+//Here, we can see that after detaching person, neither person nor address exists in the persistent context.
+```
+
+### CadcadeType.Lock
+
+**Unintuitively, \*CascadeType.LOCK\* reattaches the entity and its associated child entity with the persistent context again.**
+
+```java
+@Test
+public void whenDetachedAndLockedThenBothReattached() {
+    Person person = buildPerson("devender");
+    Address address = buildAddress(person);
+    person.setAddresses(Arrays.asList(address));
+    session.persist(person);
+    session.flush();
+    
+    assertThat(session.contains(person)).isTrue();
+    assertThat(session.contains(address)).isTrue();
+
+    session.detach(person);
+    assertThat(session.contains(person)).isFalse();
+    assertThat(session.contains(address)).isFalse();
+    session.unwrap(Session.class)
+      .buildLockRequest(new LockOptions(LockMode.NONE))
+      .lock(person);
+
+    assertThat(session.contains(person)).isTrue();
+    assertThat(session.contains(address)).isTrue();
+}
+
+//As we can see, when using CascadeType.LOCK, we attached the entity person and its associated address back to the persistent context.
+```
+
+### CadcadeType.REFRESH
+
+Refresh operations **reread the value of a given instance from the database.** In some cases, we may change an instance after persisting in the database, but later we need to undo those changes.
+
+In that kind of scenario, this may be useful. **When we use this operation with Cascade Type \*REFRESH\*, the child entity also gets reloaded from the database whenever the parent entity is refreshed.**
+
+```java
+@Test
+public void whenParentRefreshedThenChildRefreshed() {
+    Person person = buildPerson("devender");
+    Address address = buildAddress(person);
+    person.setAddresses(Arrays.asList(address));
+    session.persist(person);
+    session.flush();
+    person.setName("Devender Kumar");
+    address.setHouseNumber(24);
+    session.refresh(person);
+    
+    assertThat(person.getName()).isEqualTo("devender");
+    assertThat(address.getHouseNumber()).isEqualTo(23);
+}
+//Here, we made some changes in the saved entities person and address. When we refresh the person entity, the address also gets refreshed.
+```
+
+### CadcadeType.REPLICATE
+
+**The replicate operation is used when we have more than one data source and we want the data in sync.** With *CascadeType.REPLICATE*, a sync operation also propagates to child entities whenever performed on the parent entity.
+
+```java
+@Test
+public void whenParentReplicatedThenChildReplicated() {
+    Person person = buildPerson("devender");
+    person.setId(2);
+    Address address = buildAddress(person);
+    address.setId(2);
+    person.setAddresses(Arrays.asList(address));
+    session.unwrap(Session.class).replicate(person, ReplicationMode.OVERWRITE);
+    session.flush();
+    
+    assertThat(person.getId()).isEqualTo(2);
+    assertThat(address.getId()).isEqualTo(2);
+}
+//Because of CascadeType.REPLICATE, when we replicate the person entity, its associated address also gets replicated with the identifier we set.
+```
+
+CadcadeType.SAVE_UPDATE
+
+*CascadeType.SAVE_UPDATE* propagates the same operation to the associated child entity. It's useful when we use **Hibernate-specific operations like \*save\*, \*update\* and \*saveOrUpdate\*.** 
+
+```java
+@Test
+public void whenParentSavedThenChildSaved() {
+    Person person = buildPerson("devender");
+    Address address = buildAddress(person);
+    person.setAddresses(Arrays.asList(address));
+    session.saveOrUpdate(person);
+    session.flush();
+}
+
+//followed sql
+Hibernate: insert into Person (name, id) values (?, ?)
+Hibernate: insert into Address (
+    city, houseNumber, person_id, street, zipCode, id) values (?, ?, ?, ?, ?, ?)
+
+//Because of CascadeType.SAVE_UPDATE, when we run the above test case, we can see that the person and address both got saved.
+
+```
+
+
+
+## 10. Persist, Transient, and Detached Object
+
+
+
+### Transient Object
+
+A `new` instance of a persistent class which is not associated with a `Session`, has no representation in the database and no identifier value is considered ***transient\*** by Hibernate:
+
+```java
+Person person = new Person();
+person.setName("Foobar");
+// person is in a transient state
+```
+
+### Persist Object
+
+A ***persistent\*** instance has a representation in the database, an identifier value and is associated with a `Session`. You can make a transient instance ***persistent\*** by associating it with a `Session`:
+
+```java
+Long id = (Long) session.save(person);
+// person is now in a persistent state
+```
+
+### Detached Object
+
+Now, if we `close` the Hibernate `Session`, the persistent instance will become a ***detached\*** instance: it isn't attached to a `Session` anymore (but can still be modified and reattached to a new `Session` later though).
+
+
+
+### Other Explanation:
+
+**Transient** - Objects instantiated using the new operator are called transient objects.
+
+An object is transient if it has just been instantiated using the new operator, and it is not associated with a Hibernate Session. It has no persistent representation in the database and no identifier value has been assigned. Transient instances will be destroyed by the garbage collector if the application does not hold a reference anymore.
+
+**Persistent** - An object that has a database identity associated with it is called a persistent object.
+
+A persistent instance has a representation in the database and an identifier value. It might just have been saved or loaded; however, it is by definition in the scope of a Session. Hibernate will detect any changes made to an object in persistent state and synchronize the state with the database when the unit of work completes.
+
+**Detached** - A detached instance is an object that has been persistent, but its Session has been closed.
+
+A detached instance can be reattached to a new Session at a later point in time, making it persistent again. This feature enables a programming model for long running units of work that require user think-time. We call them application transactions, i.e., a unit of work from the point of view of the user.
 
 
 
