@@ -4726,10 +4726,6 @@ Second 现在基本不用， 被redis代替。
 
 one to one 
 
-
-
-
-
 one to many
 
 many to many 需要中间表
