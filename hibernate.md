@@ -299,9 +299,78 @@ Fetch type Eager is essentially the opposite of Lazy.Lazy which is the default f
 
 ## 8. Mapping
 
-One to One Mapping 一对一 
+### JoinColumn
+
+The annotation *javax.persistence.JoinColumn* marks a column for as a join column for an entity association or an element collection. 用来设置外键？
+
+### One to One Mapping 一对一 
 
 主表中加入一个附表ID， 附表不用进行操作。
+
+**实现方法：**
+
+1. ForeighKeyAsso
+
+   通过mappedby 和 join column 实现，双向
+
+   ```java
+   //account entity
+   @OneToOne(mappedBy="account", optional=false)
+   private EmployeeEntity employee;
+   
+   //employee entity
+   @OneToOne(optional=false)
+   @JoinColumn(name="ACCOUNT_ID", unique=true, nullable=false, updatable=false)
+   private AccountEntity account;
+   ```
+
+   
+
+2. JoinTable
+
+   怎么实现？Jointable+joincolumn 单向？
+
+   ```java
+   //account entity 
+   //no employee entity referred
+   
+   //employee entity
+   @OneToOne(cascade = CascadeType.ALL)
+   @JoinTable(name="EMPLOYEE_ACCCOUNT", joinColumns = @JoinColumn(name="EMPLOYEE_ID"), inverseJoinColumns = @JoinColumn(name="ACCOUNT_ID"))
+   private AccountEntity account;
+   ```
+
+   
+
+3. mapsByID
+
+   怎么实现？通过MapsID  单向
+
+   ```java
+   //account entity
+   //no employee entity referred
+   //employee entity
+   @OneToOne 
+   @MapsId
+   private AccountEntity account;
+   ```
+
+   
+
+4. sharedPrimaryKey
+
+   通过mappedby 和 primarykeyjoincolumn 实现，双向?
+
+   ```java
+   //account entity
+   @OneToOne(mappedBy="account", cascade=CascadeType.ALL)
+   private EmployeeEntity employee; 
+   
+   //employee entity
+   @OneToOne(cascade = CascadeType.ALL)
+   @PrimaryKeyJoinColumn
+   private AccountEntity account;
+   ```
 
 ```java
 //reference: https://www.jianshu.com/p/02ddc541d9ac Hibernate入门2-关联和映射
@@ -316,7 +385,7 @@ public class Professor {
 
     @OneToOne(targetEntity = Student.class)
     // FOREIGN KEY (student_id) REFERENCES student_info (id);
-    @JoinColumn(name = "student_id", referencedColumnName = "id") 
+    @JoinColumn(name = "student_id", referencedColumnName = "id")  //设置外键 studdent, column name = student_id
     private Student student;
     
     // getters and setters
