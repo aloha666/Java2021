@@ -350,7 +350,7 @@ The annotation *javax.persistence.JoinColumn* marks a column for as a join colum
 
 2. JoinTable
 
-   怎么实现？Jointable+joincolumn 单向？jointable:连接表，真实创建还是只存在在hibernate里？
+   怎么实现？Jointable+joincolumn 单向？jointable:连接表，真实创建还是只存在在hibernate里？会新建一个连接表
 
    @JoinTable 属性
 
@@ -563,10 +563,10 @@ public static void main(String[] args) {
 @ManyToMany(cascade=CascadeType.ALL)
 @JoinTable(name="READER_SUBSCRIPTIONS", joinColumns={@JoinColumn(referencedColumnName="ID")}
 										, inverseJoinColumns={@JoinColumn(referencedColumnName="ID")})	
-private Set<SubscriptionEntity> subscriptions;
+private Set<SubscriptionEntity> subscriptions; //新建一个READER_SUBSCRIPTIONS表
 
 //subscription entity
-@ManyToMany(mappedBy="subscriptions") //有mappedby,只在reader表中建立？
+@ManyToMany(mappedBy="subscriptions") //有mappedby,只在READER_SUBSCRIPTIONS表中显示？
 private Set<ReaderEntity> readers;
 ```
 
