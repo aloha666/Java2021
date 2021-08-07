@@ -1,3 +1,7 @@
+
+
+
+
 ## 1. The Problem
 
 - Mapping member variable to columns
@@ -324,11 +328,36 @@ The annotation *javax.persistence.JoinColumn* marks a column for as a join colum
    private AccountEntity account;
    ```
 
+   @JoinColumn 属性
+
+   | `columnDefinition`     |      | 默认值：空 `String`。JPA 使用最少量 SQL 创建一个数据库表列。如果需要使用更多指定选项创建列，请将 `columnDefinition` 设置为在针对列生成 DDL 时希望 JPA 使用的 `String` SQL 片断。 |
+   | ---------------------- | :--- | ------------------------------------------------------------ |
+   | `insertable`           |      | 默认值：`true`。默认情况下，JPA 持续性提供程序假设它可以插入到所有表列中。如果该列为只读，请将 `insertable` 设置为 `false`。 |
+   | `name`                 |      | 默认值：如果使用一个连接列，则 JPA 持续性提供程序假设外键列的名称是以下名称的连接：引用关系属性的名称 +“_”+ 被引用的主键列的名称。引用实体的字段名称 +“_”+ 被引用的主键列的名称。如果实体中没有这样的引用关系属性或字段（请参阅 [@JoinTable](http://www.oracle.com/technology/global/cn/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html#JoinTable)），则连接列名称格式化为以下名称的连接：实体名称 +“_”+ 被引用的主键列的名称。这是外键列的名称。如果连接针对“一对一”或“多对一”实体关系，则该列位于源实体的表中。如果连接针对“多对多”实体关系，则该列位于连接表（请参阅 [@JoinTable](http://www.oracle.com/technology/global/cn/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html#JoinTable)）中。如果连接列名难于处理、是一个保留字、与预先存在的数据模型不兼容或作为数据库中的列名无效，请将 `name` 设置为所需的 `String` 列名。 |
+   | `nullable`             |      | 默认值：`true`。默认情况下，JPA 持续性提供程序假设允许所有列包含空值。如果不允许该列包含空值，请将 `nullable` 设置为 `false`。 |
+   | `referencedColumnName` |      | 默认值：如果使用一个连接列，则 JPA 持续性提供程序假设在实体关系中，被引用的列名是被引用的主键列的名称。如果在连接表（请参阅 [@JoinTable](http://www.oracle.com/technology/global/cn/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html#JoinTable)）中使用，则被引用的键列位于拥有实体（如果连接是反向连接定义的一部分，则为反向实体）的实体表中。要指定其他列名，请将 `referencedColumnName` 设置为所需的 `String` 列名。 |
+   | `table`                |      | 默认值：JPA 持续性提供程序假设实体的所有持久字段存储到一个名称为实体类名称的数据库表中（请参阅 [@Table](http://www.oracle.com/technology/global/cn/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html#Table)）。如果该列与辅助表关联（请参阅 [@SecondaryTable](http://www.oracle.com/technology/global/cn/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html#SecondaryTable)），请将 `name` 设置为相应辅助表名称的 `String`名称，如[示例 1-8](http://www.oracle.com/technology/global/cn/products/ias/toplink/jpa/resources/toplink-jpa-annotations.html#CHDCEHDA) 所示。 |
+   | `unique`               |      | 默认值：`false`。默认情况下，JPA 持续性提供程序假设允许所有列包含重复值。如果不允许该列包含重复值，请将 `unique` 设置为 `true`。 |
+   | `updatable`            |      | 默认值：`true`。默认情况下，JPA 持续性提供程序假设它可以更新所有表列。如果该列为只读，则将 `updatable` 设置为 `false` |
+
    
 
 2. JoinTable
 
-   怎么实现？Jointable+joincolumn 单向？
+   怎么实现？Jointable+joincolumn 单向？jointable:连接表，真实创建还是只存在在hibernate里？
+
+   @JoinTable 属性
+
+   |        属性        | 是否必须 | 说明                                                         |
+   | :----------------: | :------: | :----------------------------------------------------------- |
+   |        name        |    否    | 指定该连接表的表名                                           |
+   |    JoinColumns     |    否    | 该属性值可接受多个`@JoinColumn`，用于配置`连接表`中外键列的信息，这些外键列参照`当前实体对应表`的主键列 |
+   | inverseJoinColumns |    否    | 该属性值可接受多个`@JoinColumn`，用于配置`连接表`中外键列的信息，这些外键列参照当前实体的`关联实体对应表`的主键列 |
+   |    targetEntity    |    否    | 该属性指定`关联实体`的类名。在默认情况下，Hibernate将通过反射来判断关联实体的类名 |
+   |      catalog       |    否    | 设置将该连接表放入指定的catalog中。如果没有指定该属性，连接表将放入默认的catalog |
+   |       schema       |    否    | 设置将该连接表放入指定的schema中。如果没有指定该属性，连接表将放入默认的schema |
+   | uniqueConstraints  |    否    | 该属性用于为`连接表`增加唯一约束                             |
+   |      indexes       |    否    | 该属性值为`@Index`注解数组，用于为该连接表定义多个索引       |
 
    ```java
    //account entity 
@@ -372,7 +401,10 @@ The annotation *javax.persistence.JoinColumn* marks a column for as a join colum
    private AccountEntity account;
    ```
 
+其他例子
+
 ```java
+
 //reference: https://www.jianshu.com/p/02ddc541d9ac Hibernate入门2-关联和映射
 @Entity
 public class Professor {
@@ -411,14 +443,12 @@ public static void addProfessor(Integer student_id) {
 
 public static void main(String[] args) {
     addProfessor(10);
-}
+}也可做双向一对一
 ```
 
-也可做双向一对一
 
 
-
-One to Many Mapping 一对多
+### One to Many Mapping 一对多
 
 ```java
 //student java
