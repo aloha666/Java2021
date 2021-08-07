@@ -293,7 +293,11 @@ ts simple :Consider two entities 1. Department and 2. Employee and they have one
 
 Fetch type Eager is essentially the opposite of Lazy.Lazy which is the default fetch type for all Hibernate annotation relationships. When you use the Lazy fetch type, Hibernate won’t load the relationships for that particular object instance. **Eager will by default load ALL of the relationships** related to a particular object loaded by Hibernate.
 
+### Default Fetech vs Default Cascade
 
+By default, the JPA @ManyToOne and @OneToOne annotations are fetched EAGERly, while the @OneToMany and @ManyToMany relationships are considered LAZY. This is the default strategy, and Hibernate doesn’t magically optimize your object retrieval, it only does what is instructed to do.
+
+No default cascade for mapping, if not setting up, no cascading will done.
 
 ## 7. Proxy代理 Objects
 
@@ -320,6 +324,8 @@ The annotation *javax.persistence.JoinColumn* marks a column for as a join colum
    ```java
    //account entity
    @OneToOne(mappedBy="account", optional=false)
+   //注意此处mappedBy, use MappedBy to tell Hibernate, we have chosen the other entity to dictate the mapping of the relationship between the two entities.
+   //所以只有employee表中有account ID, 而accout表中没有emplyeeID
    private EmployeeEntity employee;
    
    //employee entity
@@ -450,6 +456,41 @@ public static void main(String[] args) {
 
 ### One to Many Mapping 一对多
 
+1. ForeighKeyAsso
+
+通过 join column 实现
+
+```java
+//acount entity
+@ManyToOne
+private EmployeeEntity employee; //注意此处比onetoone少了mappedby，所以会有employee column
+
+//employee entity
+ @OneToMany(cascade=CascadeType.ALL)
+ @JoinColumn(name="EMPLOYEE_employeeID") //会在account表中建立一个名为EMPLOYEE_employeeID的column 按照ID对应生成
+ private Set<AccountEntity> accounts;
+
+```
+
+
+
+2. JoinTable
+
+   
+
+```java
+//acount entity
+
+//employee entity
+ @OneToMany(cascade=CascadeType.ALL)
+@JoinTable(name="EMPLOYEE_ACCOUNT", joinColumns={@JoinColumn(name="EMPLOYEE_ID", referencedColumnName="ID")}, inverseJoinColumns={@JoinColumn(name="ACCOUNT_ID", referencedColumnName="ID")})	
+private Set<AccountEntity> accounts;
+```
+
+
+
+其他例子
+
 ```java
 //student java
 @Entity
@@ -513,7 +554,23 @@ public static void main(String[] args) {
 
 
 
-Many to Many Mapping 多对多
+### Many to Many Mapping 多对多
+
+1. JoinTable 实现
+
+```java
+//reader entity
+@ManyToMany(cascade=CascadeType.ALL)
+@JoinTable(name="READER_SUBSCRIPTIONS", joinColumns={@JoinColumn(referencedColumnName="ID")}
+										, inverseJoinColumns={@JoinColumn(referencedColumnName="ID")})	
+private Set<SubscriptionEntity> subscriptions;
+
+//subscription entity
+@ManyToMany(mappedBy="subscriptions") //有mappedby,只在reader表中建立？
+private Set<ReaderEntity> readers;
+```
+
+其他例子
 
 ```java
 @Entity
@@ -634,7 +691,7 @@ public class Address {
     private int houseNumber;
     private String city;
     private int zipCode;
-    @ManyToOne(fetch = FetchType.LAZY) //??
+    @ManyToOne(fetch = FetchType.LAZY) //?? 查询address时 不着急查person信息，如果需要查询，则需多一次sql query
     private Person person;
 }
 ```
@@ -833,7 +890,7 @@ public void whenParentReplicatedThenChildReplicated() {
 //Because of CascadeType.REPLICATE, when we replicate the person entity, its associated address also gets replicated with the identifier we set.
 ```
 
-CadcadeType.SAVE_UPDATE
+### CadcadeType.SAVE_UPDATE
 
 *CascadeType.SAVE_UPDATE* propagates the same operation to the associated child entity. It's useful when we use **Hibernate-specific operations like \*save\*, \*update\* and \*saveOrUpdate\*.** 
 
