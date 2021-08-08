@@ -5149,10 +5149,14 @@ public class ReflectionDemo {
 
 ## HTTP method revisit
 
-​	GET is used to retrieve remote data. query database.
-​	POST is used to insert/update remote data. update database.
+GET is used to retrieve remote data. query database.
+POST 添加is used to insert remote data. update database. **POST means "create new**" as in "Here is the input for creating a user, create it for me". PUT 更新means "insert, replace if already exists" as in "Here is the data for user 5".
 
-## HTTP Status code  revisit 
+**Idempotency**. Idempotence is an important concept in the HTTP specification that states idempotent HTTP requests will result in the same state on the server no matter how many times that same request is executed. GET , HEAD , PUT , and DELETE all have this attribute, but **POST does not**.
+
+一个HTTP方法是**幂等**的，指的是同样的请求被执行一次与连续执行多次的效果是一样的，服务器的状态也是一样的。换句话说就是，幂等方法不应该具有副作用（统计用途除外）。在正确实现的条件下， [`GET`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/GET) ， [`HEAD`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/HEAD) ， [`PUT`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/PUT) 和 [`DELETE`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/DELETE) 等方法都是**幂等**的，而 [`POST`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST) 方法不是。
+
+## ?HTTP Status code  revisit 
 
 ​	200  
 ​	300
