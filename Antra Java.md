@@ -5031,12 +5031,13 @@ public class ReflectionDemo {
         // creates object of desired method by providing the
         // method name and parameter class as arguments to
         // the getDeclaredMethod
-        obj.method1();
+        obj.method1();    /* Output: The string is 123456789 */
+      
         Method methodcall1 = cls.getDeclaredMethod("method2",
                 int.class);
 
         // invokes the method at runtime
-        methodcall1.invoke(obj, 19);
+        methodcall1.invoke(obj, 19);    /* Output: The number is 19 */
 
         // creates object of the desired field by providing
         // the name of field as argument to the
@@ -5049,7 +5050,7 @@ public class ReflectionDemo {
 
         // takes object and the new value to be assigned
         // to the field as arguments
-        field.set(obj, "JAVA");
+        field.set(obj, "JAVA");    /* Output:	The string is JAVA	*/
 
         // Creates object of desired method by providing the
         // method name as argument to the getDeclaredMethod
@@ -5068,13 +5069,7 @@ public class ReflectionDemo {
         methodcall3.setAccessible(true);
 
         // invokes the method at runtime
-        methodcall3.invoke(obj);
-			
-        /* Output: The string is 123456789
-											The number is 19
-											The string is JAVA
-											Private method invoked
-				*/
+        methodcall3.invoke(obj);  /* Output:	Private method invoked */
 
         System.out.println("-------------------");
         // get the method 4
