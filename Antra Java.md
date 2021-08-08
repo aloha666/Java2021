@@ -4905,7 +4905,7 @@ Usage for Singleton
 //D: check if instance is exist or not, if not then sychornaze the class. Also use volatile for the instance () to make the implement of the creating new instance in order.
 
 public class SingletonD {
-	private static volatile SingletonD instance= null;
+	private static volatile SingletonD instance= null; //voltile keyword can make sure the instace is created before it is referenced & return
 	private SingletonD(){}
 
     public static SingletonD getInstance(){
@@ -4928,19 +4928,61 @@ public class SingletonD {
  Possible: 1->3 instance is not null->2
  use voltile can prevent CPU instruction reorder and to aviod the possible situation.
  */
+
+
 ```
 
-
+```
+保证一个类仅有一个实例，并提供一个访问它的全局访问点。
+优点：
+         a.在内存里只有一个实例，减少了内存的开销，尤其是频繁的创建和销毁实例，
+         b.避免对资源的多重占用（比如写文件操作）
+      缺点：
+         a.与单一职责原则冲突，一个类应该只关心内部逻辑，而不关心外面怎么样来实例化；
+      使用场景：
+         a.全局唯一id、web页面计数器
+```
 
 ### Builder
 
 builder is a creational design pattern that lets you construct complex objects step by step
 
+Instead of declare different type of constructors, the builder pattern can build the object with input features.
+
+```
+将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。
+优点：
+         a.建造者独立，易扩展
+         b.便于控制细节风险
+      缺点：
+         a.产品必须有共同点，范围有限制。
+         b.如内部变化复杂，会有很多的建造类。
+ 使用场景：
+ 需要生成的产品对象有复杂的内部结构，这些产品对象通常包含多个成员属性。
+需要生成的产品对象的属性相互依赖，需要指定其生成顺序。
+隔离复杂对象的创建和使用，并使得相同的创建过程可以创建不同的产品。
+```
+
 ### Factory Design Pattern 
 
 we create objects without exposing the creation logic to the client and refer to newly created objects using a common interface.
 
-### Proxy Design pattern: 
+创建好产品/类，根据需求调用， factory类提供接口，由client决定需要什么。
+
+```
+定义一个用于创建对象的接口，让子类决定实例化哪一个类，工厂方法使一个类的实例化延迟到其子类。
+优点：
+         a.一个调用者想创建一个对象，只要知道其名称就可以了
+         b.扩展性高，如果想增加一个产品，只要扩展一个工厂类就可以
+         c.屏蔽产品的具体实现，调用者只关心产品的接口
+      缺点：
+         a.每次增加一个产品时，都需要增加一个具体类和修改对象实现工厂，使得系统中类的个数成倍增加，在一定程度上增加了系统的复杂度，同时也增加了系统具体类的依赖。这并不是什么好事。
+         
+使用场景：
+1、您需要一辆汽车，可以直接从工厂里面提货，而不用去管这辆汽车是怎么做出来的，以及这个汽车里面的具体实现。 2、Hibernate 换数据库只需换方言和驱动就可以。
+```
+
+### Proxy Design (Static&Dynamic) pattern: 
 
 • provide substitute for another object 
 
@@ -4948,12 +4990,85 @@ we create objects without exposing the creation logic to the client and refer to
 
 • perform some operations before and after request/response
 
+```
+Static:提前创建好，client直接用
+Dynamic: Dynamic proxy is essentially the proxy design pattern, in which the proxy object is created dynamically during runtime.在运行时根据client输入的method call来创建代理，此处用到InvocationHandler.
+
+
+为其他对象提供一种代理以控制对这个对象的访问
+
+优点：1）代理模式能将代理对象与真正被调用的对象分离，在一定程度上降低了系统的耦合度。2）代理模式在客户端和目标对象之间起到一个中介作用，这样可以起到保护目标对象的作用。代理对象也可以对目标对象调用之前进行其他操作。
+
+缺点：1）在客户端和目标对象增加一个代理对象，会造成请求处理速度变慢。2）增加了系统的复杂度
+
+
+使用场景：
+
+远程代理: 为一个位于不同的地址空间的对象提供一个本地 的代理对象，这个不同的地址空间可以是在同一台主机中，也可是在 另一台主机中
+安全代理: 控制对一个对象的访问，可以给不同的用户提供不同级别的使用权限
+智能代理: 当一个对象被引用时，提供一些额外的操作，如将此对象被调用的次数记录下来等
+虚拟代理: 如果需要创建一个资源消耗较大的对象，先创建一个消耗相对较小的对象来表示，真实对象只在需要时才会被真正创建。
+```
+
 
 
 ## Reflection
 
 Reflection is an API which is used to examine or modify the behavior of methods, classes, interfaces
-at the run time
+at the run time. (是不是不利于encapsulation)
+
+Java反射机制主要提供了以下功能：
+
+l 在运行时判断任意一个对象所属的类 - Class；
+
+l 在运行时构造任意一个类的对象；
+
+l 在运行时判断任意一个类所具有的成员变量和方法 - Field and Method；
+
+l 在运行时调用任意一个对象的方法；
+
+l 生成动态代理。
+
+常用方法：
+
+```java
+Class 常用反射API
+  
+getClass():获得类
+getName()：获得类的完整名字。
+getFields()：获得类的public类型的属性。
+getDeclaredFields()：获得类的所有属性。
+getMethods()：获得类的public类型的方法。
+getDeclaredMethods()：获得类的所有方法。
+getMethod(String name, Class[] parameterTypes)：获得类的特定方法，name参数指定方法的名字，parameterTypes参数指定方法的参数类型。
+getConstrutors()：获得类的public类型的构造方法。
+getConstrutor(Class[] parameterTypes)：获得类的特定构造方法，parameterTypes参数指定构造方法的参数类型。
+newInstance()：通过类的不带参数的构造方法创建这个类的一个对象。
+
+Method常用反射API
+  
+exp: Method methodcall1 = cls.getDeclaredMethod("method2", int.class);
+  
+1.Method.invoke()，方法自己调用自己，方法调用必须通过object.method()方式，method对象本身是无法调用自己的。
+
+2.Method.getParameterTypes()获得参数类型
+
+3.Method.getReturnType()获得返回值类型
+
+4.Method.getParameterCount()获得方法的参数个数
+
+5.Method.getName()获得方法名称
+
+6.Method.getExceptionTypes()获得方法抛出哪些异常
+
+7.method.getAnnotation()获得注解
+  
+Field常用反射API
+
+1.field.getAnnotations()返回属性的注解
+```
+
+
 
 ```java
 package com.antra.reflection;
@@ -5050,14 +5165,14 @@ public class ReflectionDemo {
 
         // takes object and the new value to be assigned
         // to the field as arguments
-        field.set(obj, "JAVA");    /* Output:	The string is JAVA	*/
+        field.set(obj, "JAVA");    // set s as "JAVA"
 
         // Creates object of desired method by providing the
         // method name as argument to the getDeclaredMethod
         Method methodcall2 = cls.getDeclaredMethod("method1");
 
         // invokes the method at runtime
-        methodcall2.invoke(obj);
+        methodcall2.invoke(obj); /* Output:	The string is JAVA	*/
 
         // Creates object of the desired method by providing
         // the name of method as argument to the
@@ -5097,6 +5212,24 @@ public class ReflectionDemo {
 •compile
 •run
 •modify the code with reflection
+
+### dosent-reflection-api-break-the-very-purpose-of-data-encapsulation?
+
+Yes and no.
+
+- Yes, some uses of the reflection API *can* break data encapsulation.
+- No, not all uses of the reflection API *do* break data encapsulation. Indeed, a wise programmer only breaks encapsulation via the reflection API when there is a good reason to do so.
+- No, reflection API does not change the *purpose* of data encapsulation. The *purpose* of data encapsulation remains the same ... even if it someone wilfully breaks it.
+
+> Why do we have to use Reflection API?
+
+There are **many** uses of reflection that **DO NOT** break encapsulation; e.g. using reflection to find out what super types a class has, what annotations it has, what members it has, to invoke accessible methods and constructors, read and update accessible fields and so on.
+
+And there are situations where is is acceptable (to varying degrees) to use the encapsulation breaking varieties of reflection:
+
+- You might need to look inside an encapsulated type (e.g. access / modify private fields) as the simplest way (or only way) to implement certain unit tests.
+- Some forms of Dependency Injection (aka IoC), Serialization and Persistence entail accessing and/or updating private fields.
+- Very occasionally, you need to break encapsulation to work around a bug in some class that you cannot fix.
 
 # Lecture 13
 
@@ -5147,7 +5280,7 @@ public class ReflectionDemo {
 ​			doGet()
 ​			doPost()
 
-## HTTP method revisit
+## HTTP method revisit （Idempotency）
 
 GET is used to retrieve remote data. query database.
 POST 添加is used to insert remote data. update database. **POST means "create new**" as in "Here is the input for creating a user, create it for me". PUT 更新means "insert, replace if already exists" as in "Here is the data for user 5".
@@ -5156,11 +5289,17 @@ POST 添加is used to insert remote data. update database. **POST means "create 
 
 一个HTTP方法是**幂等**的，指的是同样的请求被执行一次与连续执行多次的效果是一样的，服务器的状态也是一样的。换句话说就是，幂等方法不应该具有副作用（统计用途除外）。在正确实现的条件下， [`GET`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/GET) ， [`HEAD`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/HEAD) ， [`PUT`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/PUT) 和 [`DELETE`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/DELETE) 等方法都是**幂等**的，而 [`POST`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST) 方法不是。
 
-## ?HTTP Status code  revisit 
+## HTTP Status code  revisit 
 
-​	200  
-​	300
-​	400	
+​	200  请求成功
+
+​	300  重定向，需要进一步的操作以完成请求
+
+​	400  客户端错误，请求包含语法错误或无法完成请求
+
+​	500  服务器错误，服务器在处理请求的过程中发生了错误
+
+
 
 ## HTTPSevlet
 
