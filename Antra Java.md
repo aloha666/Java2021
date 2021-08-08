@@ -4891,6 +4891,7 @@ Total 23 design patterns.
 ### Singleton Design pattern（优缺点？）
 
 • only one single object been created
+
 Usage for Singleton
 • logger
 • drivers objects
@@ -4937,9 +4938,7 @@ builder is a creational design pattern that lets you construct complex objects s
 
 ### Factory Design Pattern 
 
-we create objects without exposing the creation logic to the client and refer to newly created objectsusing a common interface
-
-
+we create objects without exposing the creation logic to the client and refer to newly created objects using a common interface.
 
 ### Proxy Design pattern: 
 
@@ -5007,13 +5006,13 @@ public class ReflectionDemo {
         // getclass method
         Class cls = obj.getClass();
         System.out.println("The name of class is " +
-                cls.getName());
+                cls.getName()); //Output:The name of class is com.antra.reflection.Test
 
         // Getting the constructor of the class through the
         // object of the class
         Constructor constructor = cls.getConstructor();
         System.out.println("The name of constructor is " +
-                constructor.getName());
+                constructor.getName()); //Output:The name of constructor is com.antra.reflection.Test
 
         System.out.println("The public methods of class are : ");
 
@@ -5070,15 +5069,20 @@ public class ReflectionDemo {
 
         // invokes the method at runtime
         methodcall3.invoke(obj);
-
-
+			
+        /* Output: The string is 123456789
+											The number is 19
+											The string is JAVA
+											Private method invoked
+				*/
 
         System.out.println("-------------------");
         // get the method 4
         Method methodcall4 = cls.getDeclaredMethod("method4");
         Annotation[] annotations = methodcall4.getDeclaredAnnotations();
         for(Annotation annotation : annotations){
-            System.out.println(annotation.annotationType());
+            System.out.println(annotation.annotationType()); // Output:interface java.lang.Deprecated
+
         }
 
 
@@ -5099,5 +5103,74 @@ public class ReflectionDemo {
 •run
 •modify the code with reflection
 
+# Lecture 13
 
+## HTTP 
 
+​	protocol/ HTTPS
+​	HTTP methods
+​	HTTP status codes
+
+## TCP	
+
+​	Three-way handshake connection
+​		SYN -> SYN + ACK -> ACK
+​	Four-way handshake disconnection
+​		FIN -> ACK -> FIN -> ACK
+​	package loss/disorder 
+
+## Java Web Application
+
+​	Client && Server
+​		request && response
+​	Web Resources
+​	Web Server
+​	Tomcat Architecture
+​		bin, conf, lib, logs, temp, webapps, work	
+​	Tomcat CMD 
+​		startup, shutdown, Catalina run 
+​	Tomcat Version
+​		related to Servlet/JSP, JavaEE, Runtime
+​	Tomcat Config 
+​		port 
+​		config file 
+​		
+
+## Servlet LifeCycle
+
+​	constructor	
+​	init	
+​	service
+​	destroy
+
+## Servlet
+
+​	inheritance architecture
+​		Servlet interface 
+​		GenericServlet abstract class
+​		HttpServlet abstract class
+​			doGet()
+​			doPost()
+
+## HTTP method revisit
+
+​	GET is used to retrieve remote data. query database.
+​	POST is used to insert/update remote data. update database.
+
+## HTTP Status code  revisit 
+
+​	200  
+​	300
+​	400	
+
+## HTTPSevlet
+
+​	ServletConfig
+​	ServletContext
+​	HttpRequest v.s. HttpResponse
+
+## Relative path v.s. Absolute path
+
+## Forward v.s. Redirection
+
+##   Session v.s. Cookie
