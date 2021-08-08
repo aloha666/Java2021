@@ -4712,15 +4712,31 @@ MyBatis .....
 
 **First**: **open by default, session level, locally, if session closed, cache is gone**
 
+save、update、saveOrupdate、load、list、iterate、lock会向一级缓存存放数据；
+
 每次查都先看看一级缓存里是否存在要查询的记录，如果没有再去数据库查询。可以通过在一个session中查询两次相同数据验证。
 
 ![18](/Users/spikycrown/Desktop/Java2021/images/18.png)
 
-**Second**: close by default, session factory level, globally, if seesion factory shut down, cache is gone
+**Second**: **close by default,** session factory level, globally, if seesion factory shut down, cache is gone
 
 Second 现在基本不用， 被redis代替。
 
 流程： Query -> first level cache -> second level cache (need open mannually)-> database
+
+什么样的数据适合二级缓存？
+
+\1) 很少被修改的数据 
+
+\2) 不是很重要的数据，允许出现偶尔并发的数据 
+
+\3) 不会被并发访问的数据 
+
+\4) 参考数据,指的是供应用参考的常量数据，它的实例数目有限，它的实例会被许多其他类的实例引用，实例极少或者从来不会被修改。
+
+
+
+
 
 ### Mapping (必考)
 
@@ -4736,13 +4752,9 @@ Fetch type : lazy loading, eager loading;
 
 ### Fetch Type (必考)
 
-lazy = false:最多sql查询
+Lazy: 不与child table 联动
 
-lazy = true: 默认开启，减少sql查询次数
-
-lazy = extra:比true更加智能
-
-Eager?
+Eager: 与child table联动
 
 
 
