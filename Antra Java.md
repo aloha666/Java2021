@@ -4556,9 +4556,9 @@ JDBC (java database connectivity) Driver : software component that enables java 
 
 ### steps for building JDBC -> database
 
-1. allocate a connection object
+1. allocate 分配a connection object
 2. allocate a statement
-3. write sql quey and execute the query
+3. write sql quey and execute the query 
 4. process the query result
 5. close the statement, connection object
 
@@ -4572,6 +4572,13 @@ Statement stmt = conn.createStatement(); ResultSet resultSet = stmt.executeQuery
 ```
 
 ### Try with resources
+
+The try -with-resources statement is a try **statement that declares one or more resources**. A resource is an object that must be closed after the program is finished with it. The try -with-resources statement ensures that each resource is closed at the end of the statement. Any object that implements java
+
+可以理解为是一个声明一个或多个资源的 try语句（用分号隔开），
+ 一个资源作为一个对象，并且这个资源必须要在执行完关闭的，
+ try-with-resources语句确保在语句执行完毕后，每个资源都被自动关闭 。
+ 任何实现了** java.lang.AutoCloseable**的对象, 包括所有实现了 **java.io.Closeable** 的对象
 
 ```java
 try(
@@ -4643,7 +4650,15 @@ ResultSet object is associated with a header (called meta data), which contains 
 
 ### sql injection?
 
+黑客手段 在sql语句中注入查询语句，获得database信息 -Retriving hidden data
 
+SQL injection is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database. It generally allows an attacker to view data that they are not normally able to retrieve. This might include data belonging to other users, or any other data that the application itself is able to access. In many cases, an attacker can modify or delete this data, causing persistent changes to the application's content or behavior.
+
+How to prevent?
+
+Most instances of SQL injection can be prevented by using parameterized queries (also known as prepared statements) instead of string concatenation within the query.
+
+只能插入特定值，不能自己构造语句。
 
 ### PreparedStatement
 
@@ -4658,10 +4673,6 @@ PreparedStatement pstmt = conn.prepareStatement(
                         "insert into books values (?, ?, ?)"
                 );
 ```
-
-
-
-
 
 ### batch processing
 
@@ -4692,6 +4703,8 @@ connect the java program to sql database, based on JDBC, slower but easier to us
 
 ### ORM (object relational mapping )
 
+is the approach of taking object-oriented data and mapping to a relational data store (e.g. tables in an RDBMS)
+
 Hibernate: -->. easy orm 
 
 Sequelize. ->. good for node.js 
@@ -4704,7 +4717,29 @@ MyBatis .....
 
 ### JPA: Java persistence API
 
- defines the management of relational data in java application
+defines the management of relational data in java application
+
+JPA is the specification, Hibernate is the implementation using ORM techniques.
+
+```java
+/* Hibernate vs ORM vs JPA
+
+1. ORM is the approach of taking object-oriented data and mapping to a relational data store (e.g. tables in an RDBMS)
+
+2. Hibernate is an implementation of JPA and uses ORM techniques.
+
+3. JPA is the EE standard specification for ORM in Java EE.
+
+4. The reference implementation for JPA is EclipseLink. If you don't explictly configure a provider, EclipseLink is used under the covers.
+
+5. Hibernate is another implementation of the JPA specification, in that you can use the standard JPA APIs and configure your application to use Hibernate as the provider of the spec under the covers.
+
+6.Hibernate also provides a superset of the ORM features beyond what is specified in the JPA spec. Meaning, that while it provides an implementation of the JPA API, it also provides more features beyond what JPA specifies.
+```
+
+
+
+
 
 
 
