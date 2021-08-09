@@ -1,4 +1,4 @@
-# Lecture 1
+# Lecture 1 Basic Java I
 
 ## Maven
 
@@ -536,7 +536,7 @@ Project4:Mission Control
 
 The map is sorted according to the natural ordering of its keys, or by a Comparator provided at map creation time, depending on which constructor is used.
 
-# Lecture 2
+# Lecture 2 Basic Java II
 
 ## JVM runtime map overview + example 
 
@@ -795,7 +795,7 @@ The **Old Generation** is used to store long surviving objects. Typically, a thr
 
 **Metaspace** is native memory grows automatically by default. 
 
-# Lecture 3
+# Lecture 3 Core Java I
 
 ## stackoverflow vs out of memory
 
@@ -1050,7 +1050,7 @@ BufferStream: BufferedInputStream, BufferedOutputStream, BufferedReader, Buffere
 
 The *Java* *BufferedInputStream* class, java.io.BufferedInputStream, provides transparent reading of **chunks of bytes** and buffering for a [Java InputStream](http://tutorials.jenkov.com/java-io/inputstream.html), including any subclasses of InputStream. **Reading larger chunks of bytes and buffering them can speed up IO quite a bit.** Rather than read one byte at a time from the network or disk, the BufferedInputStream reads **a larger block at a time into an internal buffer.** When you read a byte from the Java BufferedInputStream you are therefore reading it from its internal buffer. When the buffer is fully read, the BufferedInputStream reads another larger block of data into the buffer. This is typically much faster than reading a single byte at a time from an InputStream, especially for disk access and larger data amounts.
 
-# Lecture 4
+# Lecture 4 Core Java II
 
 ## IO Stream Continue
 
@@ -1670,7 +1670,7 @@ forEach: c
 
 
 
-# Lecture 5
+# Lecture 5 Core Java III (Optional Function & Multi Threading)
 
 
 
@@ -2426,7 +2426,7 @@ normalization: eliminate redundant data and ensure the data is stored logically
 
 
 
-# Lecture 7 
+# Lecture 7  Non-relations Database
 
 ## Non-relational Databse
 
@@ -2783,7 +2783,7 @@ Redis cluster 支撑 N 个 Redis master node，每个master node都可以挂载�
    ```
 
 
-# Lecture 8
+# Lecture 8 Sql and no-sql
 
 
 
@@ -3047,7 +3047,7 @@ output(r, s)
 
 ```
 
-# Lecture 9
+# Lecture 9 Transactions
 
 ## Transaction / ACID / Rollback / Commit
 
@@ -3063,7 +3063,7 @@ is an action or a series of actions, carried out by a single user or application
 •Consistency 
 	○transactions take the database from one consistent state into another
 •Isolation 一个事务单元需要提交之后才会被其他事务可见；
-	○The effects of atranaction are not visible to other transactions until it has completed
+	○The effects of a tranaction are not visible to other transactions until it has completed
 •Durablility 事务提交后即持久化到磁盘不会丢失。
 	○Once a transaction has completed, its changes are made permanent
 
@@ -3172,7 +3172,13 @@ Deadlock detection -> wait for graph (cycle in graph means deadlock)
 
 **prevent the dead lock (methods?)**
 
-​		• Conservative 2PL 
+​		• Conservative 2PL：**two-phase locking** (**2PL**) is a [concurrency control](https://en.wikipedia.org/wiki/Concurrency_control) method that guarantees [serializability](https://en.wikipedia.org/wiki/Serializability).
+
+```java
+Expanding phase: locks are acquired and no locks are released.
+Shrinking phase: locks are released and no locks are acquired
+```
+
 ​		• wait-die or wound-wait
 ​		• ....
 
@@ -3298,7 +3304,7 @@ Saga: 干了再说，干不下去了就回滚到原来状态。
 
 
 
-# lecture 10
+# Lecture 10 Mysql Operations
 
 ## Mysql Operations
 
@@ -4548,7 +4554,7 @@ SELECT NOW() FROM table_name;
 
 
 
-# lecture 11 JDBC & Hiebernate
+# Lecture 11 JDBC & Hiebernate
 
 ## JDBC
 
@@ -4910,7 +4916,35 @@ Hibernate supports three additional Cascade Types along with those specified by 
 
 Total 23 design patterns.
 
+### SOLID原则
+
+**Single Responsibility Principle**
+
+一个类应该只有一个发生变化的原因。
+
+**Open Closed Principle** **开闭原则**
+
+一个软件实体，如类、模块和函数应该**对扩展开放，对修改关闭**。
+
+**Liskov Substitution Principle**
+
+所有引用基类的地方必须能透明地使用其子类的对象。
+
+**Interface Segregation Principle**
+
+1、客户端不应该依赖它不需要的接口。
+2、类间的依赖关系应该建立在最小的接口上。
+
+**Dependence Inversion Principle**
+
+1、上层模块不应该依赖底层模块，它们都应该依赖于抽象。
+2、抽象不应该依赖于细节，细节应该依赖于抽象。
+
+
+
 ### creational patterns: hiding the creation logic
+
+对类的实例化过程进行了抽象，能够将软件模块中**对象的创建**和对象的使用分离。
 
 ○ Singleton Pattern
 ○ Factory Pattern
@@ -4920,6 +4954,8 @@ Total 23 design patterns.
 
 ###  structural patterns: concern class and object compositions
 
+关注于对象的组成以及对象之间的依赖关系，描述如何将类或者对象结合在一起形成更大的结构，就像**搭积木**，可以通过简单积木的组合形成复杂的、功能更为强大的结构。
+
 ○ Proxy Pattern (static / dynamic)
 ○ Adapter Pattern
 ○ Decorator Pattern
@@ -4927,6 +4963,8 @@ Total 23 design patterns.
 ○ .....
 
 ### behavioral patterns: concerned with communication between objects
+
+关注于对象的行为问题，是对在不同的对象之间划分责任和算法的抽象化；不仅仅关注类和对象的结构，而且重点关注它们之间的**相互作用**
 
 ○ Observer Pattern
 ○ Interpreter Pattern
@@ -5278,7 +5316,7 @@ And there are situations where is is acceptable (to varying degrees) to use the 
 - Some forms of Dependency Injection (aka IoC), Serialization and Persistence entail accessing and/or updating private fields.
 - Very occasionally, you need to break encapsulation to work around a bug in some class that you cannot fix.
 
-# Lecture 13
+# Lecture 13 HTTP & Serverlet
 
 ## HTTP 
 
