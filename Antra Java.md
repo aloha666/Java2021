@@ -5397,3 +5397,18 @@ POST 添加is used to insert remote data. update database. **POST means "create 
 ## Forward v.s. Redirection
 
 ##   Session v.s. Cookie
+
+# Lecture 14
+
+## HTTP
+
+### HTTP features
+
+### HTTP request methods
+
+### Status Code (  小抄)
+
+## Serverlet
+
+servlet is not thread safe by default.
+
