@@ -5569,7 +5569,7 @@ Cookie指某些网站为了辨别用户身份而储存在用户本地终端（Cl
 
 ### 
 
-## Serverlet
+## Servlet
 
 servlet is not thread safe by default.
 
@@ -5580,4 +5580,20 @@ servlet is not thread safe by default.
 ### Service layer/logic layer
 
 ### Data Access Object (DAO) layer
+
+# Lecture 15
+
+## Spring
+
+spring will scan annotations to create objects when initialized. If no annotation provide, no object create.
+
+annotations: @component, @service, @Controller, @Repository
+
+## Dependency Injection / Inverse of  Control
+
+
+
+
+
+
 
