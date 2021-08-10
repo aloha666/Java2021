@@ -5320,17 +5320,179 @@ And there are situations where is is acceptable (to varying degrees) to use the 
 
 ## HTTP 
 
-​	protocol/ HTTPS
-​	HTTP methods
-​	HTTP status codes
+### HTTP特点
+
+1、支持客户/服务器模式；client/server, request/response
+
+2、简单快速；客户向服务器请求服务时，只需传送请求方法和路径。请求方法常用的有GET、HEAD、POST。每种方法规定了客户与服务器联系的类型不同。由于HTTP协议简单，使得HTTP服务器的程序规模小，因而通信速度很快。
+
+3、灵活；HTTP允许传输任意类型的数据对象。正在传输的类型由Content-Type（Content-Type是HTTP包中用来表示内容类型的标识）加以标记。
+
+**4、无连接；**每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输
+
+**5、无状态**。**无状态**是指协议对于事务处理没有记忆能力，服务器不知道客户端是什么状态。即我们给服务器发送 HTTP 请求之后，服务器根据请求，会给我们发送数据过来，但是，发送完，不会记录任何信息。
+
+HTTP is a [stateless protocol](https://en.wikipedia.org/wiki/Stateless_protocol). A stateless protocol does not require the [HTTP server](https://en.wikipedia.org/wiki/HTTP_server) to retain information or status about each user for the duration of multiple requests. However, some [web applications](https://en.wikipedia.org/wiki/Web_application) implement states or [server side sessions](https://en.wikipedia.org/wiki/Session_(computer_science)) using for instance [HTTP cookies](https://en.wikipedia.org/wiki/HTTP_cookie) or hidden [variables](https://en.wikipedia.org/wiki/Variable_(computer_science)) within [web forms](https://en.wikipedia.org/wiki/Form_(web)).
+
+### Protocol/ HTTPS
+
+HTTPS 协议（HyperText Transfer Protocol over Secure Socket Layer）：一般理解为HTTP+SSL/TLS，通过 SSL证书来验证服务器的身份，并为浏览器和服务器之间的通信进行加密。
+
+In HTTPS, the [communication protocol](https://en.wikipedia.org/wiki/Communication_protocol) is encrypted using [Transport Layer Security](https://en.wikipedia.org/wiki/Transport_Layer_Security) (TLS) or, formerly, Secure Sockets Layer (SSL). The protocol is therefore also referred to as **HTTP over TLS**,[[3\]](https://en.wikipedia.org/wiki/HTTPS#cite_note-3) or **HTTP over SSL**.
+
+The principal motivations for HTTPS are [authentication](https://en.wikipedia.org/wiki/Authentication) of the accessed [website](https://en.wikipedia.org/wiki/Website), and protection of the [privacy](https://en.wikipedia.org/wiki/Information_privacy) and [integrity](https://en.wikipedia.org/wiki/Data_integrity) of the exchanged data while in transit. 
+
+### HTTP请求 (来自Browser)
+
+- 请求方法URI协议/版本
+
+- 请求头(Request Header)
+
+- 请求正文
+
+  ```http
+  GET/sample.jspHTTP/1.1               // 请求方法 URI协议/版本
+  Accept:image/gif.image/jpeg,*/*			// Request Header
+  Accept-Language:zh-cn
+  Connection:Keep-Alive
+  Host:localhost
+  User-Agent:Mozila/4.0(compatible;MSIE5.01;Window NT5.0)
+  Accept-Encoding:gzip,deflate
+  
+  username=jinqiao&password=1234       //Request body
+  ```
+
+
+
+### HTTP响应 (来自Server)
+
+- 状态行
+- 响应头(Response Header)
+- 响应正文
+
+```http
+HTTP/1.1 200 OK                                 //状态行
+Date: Sat, 31 Dec 2005 23:59:59 GMT							//响应头
+Content-Type: text/html;charset=ISO-8859-1
+Content-Length: 122
+
+＜html＞                                        //响应正文
+＜head＞
+＜title＞http＜/title＞
+＜/head＞
+＜body＞
+＜!-- body goes here --＞
+＜/body＞
+＜/html＞
+```
+
+
+
+### HTTP methods
+
+GET is used to retrieve remote data. query database.
+POST 添加is used to insert remote data. update database. **POST means "create new**" as in "Here is the input for creating a user, create it for me". PUT 更新means "insert, replace if already exists" as in "Here is the data for user 5".
+
+**Idempotency**. Idempotence is an important concept in the HTTP specification that states idempotent HTTP requests will result in the same state on the server no matter how many times that same request is executed. GET , HEAD , PUT , and DELETE all have this attribute, but **POST does not**.
+
+一个HTTP方法是**幂等**的，指的是同样的请求被执行一次与连续执行多次的效果是一样的，服务器的状态也是一样的。换句话说就是，幂等方法不应该具有副作用（统计用途除外）。在正确实现的条件下， [`GET`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/GET) ， [`HEAD`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/HEAD) ， [`PUT`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/PUT) 和 [`DELETE`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/DELETE) 等方法都是**幂等**的，而 [`POST`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST) 方法不是。
+
+### HTTP status codes
+
+100 信息类(Information),表示收到Web浏览器请求，正在进一步的处理中 informational response
+
+200  请求成功 Success
+
+- 200 OK成功  The response that is returned is dependent on the request. For example, **for a GET request, the response will be included in the message body. For a PUT/POST request, the response will include the resource that contains the result of the action.**
+- 201 This is the status code that confirms that the request was successful and, as a result, **a new resource was created**. Typically, this is the status code that is sent after a POST/PUT request.
+- 204 This status code confirms that the server has fulfilled the request but does not need to return information. Examples of this status code include delete requests or if a request was sent via a form and the response should not cause the form to be refreshed or for a new page to load.
+
+300  重定向，需要进一步的操作以完成请求 Redirection
+
+- 301：Moved Permanently，客户请求的文档在其他地方，新的URL在Location头中给出，浏览器应该自动地访问新的URL。
+
+- 304：The is status code used for browser caching. If the response has not been modified, the client/user can continue to use the same response/cached version. For example, a browser can request if a resource has been modified since a specific time. If it hasn’t, the status code 304 is sent. If it has been modified, a status code 200 is sent, along with the resource.  Not Modified 客户端有缓冲的文档并发出了一个条件性的请求（一般是提供If-Modified-Since头表示客户只想比指定日期更新的文档）。服务器告 诉客户，原来缓冲的文档还可以继续使用。
+
+400  客户端错误，请求包含语法错误或无法完成请求 Client errors
+
+- 404 NOT Found，意味着请求中所引用的文档不存在。The server cannot understand and process a request due to a client error. Missing data, domain validation, and invalid formatting are some examples that cause the status code 400 to be sent.
+- 401  This status code request occurs when **authentication is required** but has failed or not been provided.
+- 403  Very similar to status code 401, a status code 403 happens when a valid request was sent, but the server refuses to accept it. **This happens if a client/user requires the necessary permission or they may need an account to access the resource.** Unlike a status code 401, authentication will not apply here.
+- 409 A status code 409 is sent when a request **conflicts with the current state of the resource**. This is usually an issue with simultaneous updates, or versions, that conflict with one another.
+- 410 Resource requested is no longer available and will not be available again.
+
+500  服务器错误，服务器在处理请求的过程中发生了错误 Server errors
+
+- 503 Service Unavailable 服务器由于维护或者负载过重未能应答。
+
+  
+
+```java
+// what is HTML?
+// HTML is a Language while HTTP is a Protocol.
+
+//HTML (Hypertext Markup Language) is a language for marking the normal text so that it gets converted into hypertext. Again, not so clear. Basically, HTML tags (e.g. “<head>”, “<body>” etc.) are used to tag or mark normal text so that it becomes hypertext and several hypertext pages can be interlinked with each other resulting in the Web. 
+
+//HTTP (Hypertext Transfer Protocol) is a protocol for transferring the hypertext pages from Web Server to Web Browser. For exchanging web pages between Server and Browser, an HTTP session is setup using protocol methods (e.g. GET, POST etc.). This would be explained in another post.
+
+
+```
+
+```java
+/*从输入 URL 到页面展示到底发生了什么?
+
+//https://zhuanlan.zhihu.com/p/133906695
+
+1、输入地址
+
+2、浏览器查找域名的 IP 地址 (Domain Name System -> IP)
+
+3、浏览器向 web 服务器发送一个 HTTP 请求 (浏览器和服务器建立了TCP连接之后，发起一个http请求。)
+ 
+4、服务器的永久重定向响应
+6、服务器处理请求
+7、服务器返回一个 HTTP 响应
+8、浏览器显示 HTML
+9、浏览器发送请求获取嵌入在 HTML 中的资源（如图片、音频、视频、CSS、JS等等）
+
+```
+
+
 
 ## TCP	
 
-​	Three-way handshake connection
+​	Three-way handshake connection 三次握手
 ​		SYN -> SYN + ACK -> ACK
-​	Four-way handshake disconnection
+
+```java
+/**第一次握手：**客户端A将标志位SYN置为1,随机产生一个值为seq=J（J的取值范围为=1234567）的数据包到服务器，客户端A进入SYN_SENT状态，等待服务端B确认；
+
+**第二次握手：**服务端B收到数据包后由标志位SYN=1知道客户端A请求建立连接，服务端B将标志位SYN和ACK都置为1，ack=J+1，随机产生一个值seq=K，并将该数据包发送给客户端A以确认连接请求，服务端B进入SYN_RCVD状态。
+
+**第三次握手：**客户端A收到确认后，检查ack是否为J+1，ACK是否为1，如果正确则将标志位ACK置为1，ack=K+1，并将该数据包发送给服务端B，服务端B检查ack是否为K+1，ACK是否为1，如果正确则连接建立成功，客户端A和服务端B进入ESTABLISHED状态，完成三次握手，随后客户端A与服务端B之间可以开始传输数据了。
+```
+
+​	Four-way handshake disconnection 四次挥手
 ​		FIN -> ACK -> FIN -> ACK
+
+![img](https://pic4.zhimg.com/80/v2-a1956234c6575bad2c2ea5297a6fe38f_720w.jpg)
+
+```java
+/*第一次挥手： Client发送一个FIN，用来关闭Client到Server的数据传送，Client进入FIN_WAIT_1状态。
+
+第二次挥手： Server收到FIN后，发送一个ACK给Client，确认序号为收到序号+1（与- SYN相同，一个FIN占用一个序号），Server进入CLOSE_WAIT状态。
+
+第三次挥手： Server发送一个FIN，用来关闭Server到Client的数据传送，Server进入LAST_ACK状态。
+
+第四次挥手： Client收到FIN后，Client进入TIME_WAIT状态，接着发送一个ACK给Server，确认序号为收到序号+1，Server进入CLOSED状态，完成四次挥手。
+
+//.为什么建立连接是三次握手，而关闭连接却是四次挥手呢？
+//这是因为服务端在LISTEN状态下，收到建立连接请求的SYN报文后，把ACK和SYN放在一个报文里发送给客户端。而关闭连接时，当收到对方的FIN报文时，仅仅表示对方不再发送数据了但是还能接收数据，己方也未必全部数据都发送给对方了，所以己方可以立即close，也可以发送一些数据给对方后，再发送FIN报文给对方来表示同意现在关闭连接，因此，己方ACK和FIN一般都会分开发送。
+```
+
 ​	package loss/disorder 
+
+
 
 ## Java Web Application
 
@@ -5349,6 +5511,24 @@ And there are situations where is is acceptable (to varying degrees) to use the 
 ​		config file 
 ​		
 
+## Tomcat vs Servlet
+
+Tomcat是一个免费的开放源代码的Servlet容器。
+
+Tomcat服务器接受客户请求并做出响应的过程如下，与上图类似：
+
+1）客户端（通常都是浏览器）访问Web服务器，发送HTTP请求。
+2）Web服务器接收到请求后，传递给Servlet容器。
+3）Servlet容器加载Servlet，产生Servlet实例后，向其传递表示请求和响应的对象。
+4）Servlet实例使用请求对象得到客户端的请求信息，然后进行相应的处理。
+5）Servlet实例将处理结果通过响应对象发送回客户端，容器负责确保响应正确送出，同时将控制返回给Web服务器。
+
+Servlet容器也叫做Servlet引擎，是Web服务器或应用程序服务器的一部分，用于在发送的请求和响应之上提供网络服务，解码基于 MIME的请求，格式化基于MIME的响应。Servlet没有main方法，不能独立运行，它必须被部署到Servlet容器中，由容器来实例化和调用 Servlet的方法（如doGet()和doPost()），Servlet容器在Servlet的生命周期内包容和管理Servlet。在JSP技术 推出后，管理和运行Servlet/JSP的容器也称为Web容器。
+
+## SpringMVC vs Servlet
+
+
+
 ## Servlet LifeCycle
 
 ​	constructor	
@@ -5365,26 +5545,7 @@ And there are situations where is is acceptable (to varying degrees) to use the 
 ​			doGet()
 ​			doPost()
 
-## HTTP method revisit （Idempotency）
-
-GET is used to retrieve remote data. query database.
-POST 添加is used to insert remote data. update database. **POST means "create new**" as in "Here is the input for creating a user, create it for me". PUT 更新means "insert, replace if already exists" as in "Here is the data for user 5".
-
-**Idempotency**. Idempotence is an important concept in the HTTP specification that states idempotent HTTP requests will result in the same state on the server no matter how many times that same request is executed. GET , HEAD , PUT , and DELETE all have this attribute, but **POST does not**.
-
-一个HTTP方法是**幂等**的，指的是同样的请求被执行一次与连续执行多次的效果是一样的，服务器的状态也是一样的。换句话说就是，幂等方法不应该具有副作用（统计用途除外）。在正确实现的条件下， [`GET`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/GET) ， [`HEAD`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/HEAD) ， [`PUT`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/PUT) 和 [`DELETE`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/DELETE) 等方法都是**幂等**的，而 [`POST`](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Methods/POST) 方法不是。
-
-## HTTP Status code  revisit 
-
-​	200  请求成功
-
-​	300  重定向，需要进一步的操作以完成请求
-
-​	400  客户端错误，请求包含语法错误或无法完成请求
-
-​	500  服务器错误，服务器在处理请求的过程中发生了错误
-
-
+​	
 
 ## HTTPSevlet
 
@@ -5397,6 +5558,10 @@ POST 添加is used to insert remote data. update database. **POST means "create 
 ## Forward v.s. Redirection
 
 ##   Session v.s. Cookie
+
+Cookie指某些网站为了辨别用户身份而储存在用户本地终端（Client Side）上的数据（通常经过[加密](https://zh.wikipedia.org/wiki/加密).）Cookie就是用来绕开HTTP的无状态性的“额外手段”之一
+
+**Cookie是检查用户身上的”通行证“来确认用户的身份，Session就是通过检查服务器上的”客户明细表“来确认用户的身份的。Session相当于在服务器中建立了一份“客户明细表”**。
 
 # Lecture 14
 
