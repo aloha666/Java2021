@@ -5318,7 +5318,7 @@ And there are situations where is is acceptable (to varying degrees) to use the 
 - Some forms of Dependency Injection (aka IoC), Serialization and Persistence entail accessing and/or updating private fields.
 - Very occasionally, you need to break encapsulation to work around a bug in some class that you cannot fix.
 
-# Lecture 13 HTTP & Serverlet
+# Lecture 14 HTTP & Serverlet
 
 ## HTTP 
 
@@ -5565,7 +5565,7 @@ Cookie指某些网站为了辨别用户身份而储存在用户本地终端（Cl
 
 **Cookie是检查用户身上的”通行证“来确认用户的身份，Session就是通过检查服务器上的”客户明细表“来确认用户的身份的。Session相当于在服务器中建立了一份“客户明细表”**。
 
-# Lecture 14
+# Lecture 15
 
 ### 
 
@@ -5581,17 +5581,43 @@ servlet is not thread safe by default.
 
 ### Data Access Object (DAO) layer
 
-# Lecture 15
+Between layers, using interface instead of concrete class. Q: how can you instance an interface in Spring？
+
+# Lecture 16
+
+## Loose Coupling
+
+A want B, No need to create the object, just ask for it from the container. 
 
 ## Spring
 
-spring will scan annotations to create objects when initialized. If no annotation provide, no object create.
+### Process：
 
-annotations: @component, @service, @Controller, @Repository
+1. spring will start with creating application context,there is a bean factory in application context
+
+2. bean factory will scan all class with annotations to create objects. If no annotation provide, no object create.
+
+   **annotations: @component, @service, @Controller, @Repository** 每个是什么意思？
+
+3. Put created objects in application context, there is a bean factory in application context. object name is the lowercase of class name by default.
+
+
+
+### What **application context** do?
+
+it has some other functions. such as ApplicationEventListener()
+
+
+
+**java name convention?**
+
+![img](https://pic4.zhimg.com/80/v2-59c4d62185a8ff082bf331e361f51c2f_720w.jpg)
 
 ## Dependency Injection / Inverse of  Control
 
+bean factory will send the object needed, the class just call it instead of create the object, this tis dependency injection.
 
+getbean(): get the object
 
 
 
