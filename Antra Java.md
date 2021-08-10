@@ -5613,11 +5613,15 @@ it has some other functions. such as ApplicationEventListener()
 
 ![img](https://pic4.zhimg.com/80/v2-59c4d62185a8ff082bf331e361f51c2f_720w.jpg)
 
-## Dependency Injection / Inverse of  Control
+## Dependency Injection / Inverse of  Control (必考)
 
 bean factory will send the object needed, the class just call it instead of create the object, this tis dependency injection.
 
 getbean(): get the object
+
+
+
+## Factory Design Pattern & Reflection API & Class Loader
 
 
 
