@@ -5404,7 +5404,7 @@ POST 添加is used to insert remote data. update database. **POST means "create 
 200  请求成功 Success
 
 - 200 OK成功  The response that is returned is dependent on the request. For example, **for a GET request, the response will be included in the message body. For a PUT/POST request, the response will include the resource that contains the result of the action.**
-- 201 This is the status code that confirms that the request was successful and, as a result, **a new resource was created**. Typically, this is the status code that is sent after a POST/PUT request.
+- 201 This is the status code that confirms that the request was successful and, as a result, **a new resource was created**. Typically, this is the status code that is sent after a POST/PUT request.(200 vs 201?)
 - 204 This status code confirms that the server has fulfilled the request but does not need to return information. Examples of this status code include delete requests or if a request was sent via a form and the response should not cause the form to be refreshed or for a new page to load.
 
 300  重定向，需要进一步的操作以完成请求 Redirection
@@ -5565,15 +5565,17 @@ Cookie指某些网站为了辨别用户身份而储存在用户本地终端（Cl
 
 # Lecture 14
 
-## HTTP
-
-### HTTP features
-
-### HTTP request methods
-
-### Status Code (  小抄)
+### 
 
 ## Serverlet
 
 servlet is not thread safe by default.
+
+## 3-layer
+
+### Web layer/presentation layer
+
+### Service layer/logic layer
+
+### Data Access Object (DAO) layer
 
