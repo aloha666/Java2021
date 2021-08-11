@@ -5591,7 +5591,11 @@ servlet is not thread safe by default.
 
 ### Data Access Object (DAO) layer
 
-Between layers, using interface instead of concrete class. Q: how can you instance an interface in Spring？
+Between layers, using interface instead of concrete class. 
+
+Q: how can you instance an interface in Spring？
+
+The interface is not instanced, it is autowired. 
 
 # Lecture 16
 
@@ -5607,11 +5611,29 @@ A want B, No need to create the object, just ask for it from the container.
 
 2. bean factory will scan all class with annotations to create objects. If no annotation provide, no object create. 默认每个类会生成一个object。
 
-   **annotations: @component, @service, @Controller, @Repository** 每个是什么意思？
+   **annotations:**
+
+   **@component** Indicates that an annotated class is a “component”. Such classes are considered as candidates for auto-detection when using annotation-based configuration and classpath scanning.
 
    
 
-   **@Autowired**是什么意思？向factory要bean？
+   **@service,** Indicates that an annotated class is a “Service”. This annotation serves as a specialization of @Component, allowing for implementation classes to be autodetected through classpath scanning.
+
+   
+
+   **@Controller,** The @Controller annotation is used to indicate the class is a Spring controller. This annotation can be used to identify controllers for Spring MVC or Spring WebFlux.
+
+   
+
+   **@Repository**** Indicates that an annotated class is a “Repository”. This annotation serves as a specialization of @Component and advisable to use with [DAO](https://www.journaldev.com/16813/dao-design-pattern) classes.
+
+   
+
+   **@Autowired**是什么意思？向factory要bean？[Spring @Autowired annotation](https://www.journaldev.com/2623/spring-autowired-annotation) is used for automatic injection of beans. Spring @Qualifier annotation is used in conjunction with Autowired to avoid confusion when we have two of more bean configured for same type.
+
+   
+
+   **@Configuration** Used to indicate that a class declares one or more `@Bean` methods. These classes are processed by the Spring container to generate bean definitions and service requests for those beans at runtime.
 
    **@Bean**是什么意思？use on method,  执行后产生一个bean放入factory。 为什么要用bean？have no control of source code/class, such as "String class ". 
 
@@ -5636,7 +5658,7 @@ A want B, No need to create the object, just ask for it from the container.
 
    **@Qualifer** used under @Autowired, to specify which one to use
 
-   **@Configuration** 不产生bean, 用来干啥的？自动run？  
+   
 
 3. Put created objects in application context, there is a bean factory in application context. object name is the lowercase of class name by default.
 
@@ -5644,15 +5666,21 @@ A want B, No need to create the object, just ask for it from the container.
 
 ### What **application context** do?
 
-it has some other functions. such as ApplicationEventListener()
+The Application Context is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
 
-
+ It adds more enterprise-specific functionality such as the ability to resolve textual messages from a properties file and the ability to publish application events to interested event listeners.
 
 **java name convention?**
 
 ![img](https://pic4.zhimg.com/80/v2-59c4d62185a8ff082bf331e361f51c2f_720w.jpg)
 
+
+
 ## Dependency Injection / Inverse of  Control (必考)
+
+Inversion of control is a design principle which helps to invert the control of object creation. nstead of the programmer controlling the flow of a program, the external sources (framework, services, other components) take control of it. 
+
+Dependency Injection is a design pattern which implements IOC principle. Dependency injection is basically providing the objects that an object needs (its dependencies) instead of having it construct them itself.
 
 bean factory will send the object needed, the class just call it instead of create the object, this tis dependency injection.
 
@@ -5666,13 +5694,25 @@ pros and cons?
 
 **Field Injection** throw everything in field-normal used, use @Autowired
 
+Pro: Easy to use, no constructors or setters required.Can be easily combined with the constructor and/or setter approach
+
+Con: Less control over object instantiation. A number of dependencies can reach dozens until you notice that something went wrong in your design. No immutability — the same as for setter injection.
+
+
+
 **Constructor Injection** use a constructor to inject objects,@Autowired can be omitted. (recommended)
 
-why recommaned? 1.easy for test; 2.can add check lines since it's method (same as setter injection)  
+Pro: 1.**easy for test**; 2.can add check lines since it's method (same as setter injection)  
 
-Con: may have cycle situation A->B->C->A, can not create any object if autowire in constructor.
+Con: may have **cycle situation** A->B->C->A, can not create any object if autowire in constructor.
+
+
 
 **Setter Injection** use@Autowired and setter
+
+Pro: Flexibility in dependency resolution or object reconfiguration, it can be done anytime. Plus, this freedom solves the circular dependency issue of constructor injection.
+
+Con:Null checks are required, because dependencies may not be set at the moment. more error-prone and less secure than constructor injection due to the possibility of overriding dependencies.
 
 ```java
 //field injection
@@ -5693,10 +5733,6 @@ public void setaDAO(DemoDAO aDAO){
 
  
 
-
-
-
-
 ## Factory Design Pattern & Reflection API & Class Loader
 
 Bean factory - factory design pattern
@@ -5711,8 +5747,16 @@ is a singleton scope. Only one object of each class is created in the begining o
 
 ### Prototype Scope
 
-everytime @autoawired a new object.
+If the scope is set to prototype, the Spring IoC container creates a new bean instance of the object every time a request for that specific bean is made.
 
 ### Session?
 
+This scopes a bean definition to an HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.
+
 ### Global Session?
+
+This scopes a bean definition to a global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.
+
+
+
+## EntityManagerFactory (for JDBC)
