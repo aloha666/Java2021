@@ -1857,7 +1857,9 @@ callable can thorw an exception
 
 **sleep vs wait**: wait will release lock, while sleep will not
 
+A thread goes to wait state once it calls `wait()` on an Object. This is called **Waiting** State. Once a thread reaches waiting state, it will need to wait till some other thread calls `notify()` or `notifyAll()` on the object.
 
+Once this thread is notified, it will not be runnable. It might be that other threads are also notified (using `notifyAll()`) or the first thread has not finished his work, so it is still blocked till it gets its chance. This is called **Blocked** State. A Blocked state will occur whenever a thread tries to acquire lock on object and some other thread is already holding the lock.
 
 ### **thread.join()** 用法
 
@@ -2238,19 +2240,6 @@ public class SemphoreTest {
 
 
 
-## Thread Pool
-
-Threads are objects. It takes memory and consumes computation power. To reduce the cost of creating and destroying new threads, and also to confine the memory usage. On the server side applications, we use thread pool to pre-populate certiain number of threads to be reused by different tasks.
-
-A thread pool is used to aviod cosuming resources: repetively using existing thread which could reduce the cost of new and GC threads increase response time: Once the task is ready to be executed, we do not need to wait for the thread creation, which improve multi-thread management.
-
-线程池顾名思义就是事先创建若干个可执行的线程放入一个池中，需要的时候就从池中获取线程不用自行创建，使用完毕不用销毁线程而是放回池中，从而减少创建和销毁线程对象的开销。
-
-### ExexcutorService
-
-FixedThreadPool: a pool with a fixed size
-
-CachedThreadPool: a pool with a dynamic size
 
 ```java
 //callable can return. runnable do not return value
@@ -2268,6 +2257,36 @@ String result = future.get();
 es.shutdown(); //close pool;
 
 ```
+
+
+
+### Thread Pool
+
+Threads are objects. It takes memory and consumes computation power. To reduce the cost of creating and destroying new threads, and also to confine the memory usage. On the server side applications, we use thread pool to pre-populate certiain number of threads to be reused by different tasks.
+
+A thread pool is used to aviod cosuming resources: repetively using existing thread which could reduce the cost of new and GC threads increase response time: Once the task is ready to be executed, we do not need to wait for the thread creation, which improve multi-thread management.
+
+线程池顾名思义就是事先创建若干个可执行的线程放入一个池中，需要的时候就从池中获取线程不用自行创建，使用完毕不用销毁线程而是放回池中，从而减少创建和销毁线程对象的开销。
+
+**Executor** The \*Executor\* interface has a single \*execute\* method to submit \*Runnable\* instances for execution.
+
+```java
+Executor executor = Executors.newSingleThreadExecutor();
+executor.execute(() -> System.out.println("Hello World"));
+```
+
+**ExecutorService\*** The *ExecutorService* interface contains a large number of methods to **control the progress of the tasks and manage the termination of the service.** 
+
+```java
+ExecutorService executorService = Executors.newFixedThreadPool(10);
+Future<String> future = executorService.submit(() -> "Hello World");
+// some operations
+String result = future.get();
+```
+
+FixedThreadPool: a pool with a fixed size
+
+CachedThreadPool: a pool with a dynamic size
 
 
 
