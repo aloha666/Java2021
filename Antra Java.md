@@ -1793,7 +1793,17 @@ One CPU: do threads concurrently, may be not parallelly, (jump from 1 to 2, then
 
 multi CPU: do threads concreeemtly and parellelly
 
+### Multithread vs concurrency
 
+Concurrency is the ability of your program to deal (not doing) with many things at once and is achieved through multithreading. Do not confuse concurrency with parallelism which is about doing many things at once.
+
+![img](http://tutorials.jenkov.com/images/java-concurrency/concurrency-vs-parallelism-1.png)
+
+***Concurrency*** means that an application is making progress on more than one task - at the same time or at least seemingly at the same time (concurrently).
+
+![img](http://tutorials.jenkov.com/images/java-concurrency/concurrency-vs-parallelism-2.png)
+
+**Parallel** execution is when a computer has more than one CPU or CPU core, and makes progress on more than one task simultaneously.
 
 ### Thread Creation
 
@@ -5595,9 +5605,38 @@ A want B, No need to create the object, just ask for it from the container.
 
 1. spring will start with creating application context,there is a bean factory in application context
 
-2. bean factory will scan all class with annotations to create objects. If no annotation provide, no object create.
+2. bean factory will scan all class with annotations to create objects. If no annotation provide, no object create. 默认每个类会生成一个object。
 
    **annotations: @component, @service, @Controller, @Repository** 每个是什么意思？
+
+   
+
+   **@Autowired**是什么意思？向factory要bean？
+
+   **@Bean**是什么意思？use on method,  执行后产生一个bean放入factory。 为什么要用bean？have no control of source code/class, such as "String class ". 
+
+   ```java
+   @Bean(name="myString")
+   public String getAString(){
+     return "hello"; //will create a String Bean, name="myString", value = "hello";
+   }
+   
+   @Bean(name="myString2")
+   @Primary
+   public String getAString2(){
+     return "hi"; 
+   }
+   
+   @Autowired
+   @Quilifier("myString")
+   private String message;
+   ```
+
+   **@Primary** 相同种类bean，如果不specify，Spring will assign the one with @Primary annotation
+
+   **@Qualifer** used under @Autowired, to specify which one to use
+
+   **@Configuration** 不产生bean, 用来干啥的？自动run？  
 
 3. Put created objects in application context, there is a bean factory in application context. object name is the lowercase of class name by default.
 
@@ -5621,9 +5660,59 @@ getbean(): get the object
 
 
 
+### DI Types(必考)
+
+pros and cons?
+
+**Field Injection** throw everything in field-normal used, use @Autowired
+
+**Constructor Injection** use a constructor to inject objects,@Autowired can be omitted. (recommended)
+
+why recommaned? 1.easy for test; 2.can add check lines since it's method (same as setter injection)  
+
+Con: may have cycle situation A->B->C->A, can not create any object if autowire in constructor.
+
+**Setter Injection** use@Autowired and setter
+
+```java
+//field injection
+@Autowired
+DemoDAO aDAO;
+
+//constructor injection
+@Autowired //can omit
+public void setd(DemoDAO d){
+  aDAO = d; 
+}
+//setter injection
+@Autowired
+public void setaDAO(DemoDAO aDAO){
+  this.aDAO = aDAO;
+}
+```
+
+ 
+
+
+
+
+
 ## Factory Design Pattern & Reflection API & Class Loader
 
+Bean factory - factory design pattern
 
+  
 
+## Bean Scope
 
+### Singleton Scope
 
+is a singleton scope. Only one object of each class is created in the begining of Spring by default. unless manually create more than one object. (getString() and getString2() create 2 String objects.)
+
+### Prototype Scope
+
+everytime @autoawired a new object.
+
+### Session?
+
+### Global Session?
