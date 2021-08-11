@@ -5616,7 +5616,7 @@ Q: how can you instance an interface in Spring？
 
 The interface is not instanced, it is autowired. 
 
-# Lecture 16
+# Lecture 16 Spring Basic
 
 ## Loose Coupling
 
@@ -5779,3 +5779,88 @@ This scopes a bean definition to a global HTTP session. Only valid in the contex
 
 
 ## EntityManagerFactory (for JDBC)
+
+
+
+# Lec17
+
+## AOP
+
+### what is AOP?
+
+A called B, we inject some code between A and B. In order to use AOP, all the objects should in the bean container. If create a object outside container, AOP will not kick in.
+
+### how to implement AOP?
+
+对method执行进行monitor if method with certain keyword is execute, the AOP code will execute.
+
+### why we need AOP?
+
+
+
+### 特点
+
+very generic, if we don't know AOP is implement, its hard to track the execution and easy to get confused. Slow.
+
+### 跟proxy关系？
+
+AOP实际上是A call B 的proxy时发生的， a calls b's proxy, then aspect kicks in.
+
+### what is @Aspect?
+
+solve cross cutting concerns.
+
+### 种类：pointcut, advice, jointpoint
+
+
+
+## MovieExmaple
+
+### Additional Annotations (必考)
+
+**@transactional  (必考)**
+
+means to start a new transaction and commit or rollback if runtime exception happen (check exception will be handled)
+
+@transactional(readOnly=true) read only transaction
+
+exception? will rollback runtime exception happen
+
+isolation? default is what? 有几种， 啥意思？
+
+propagation? required by default 有几种， 啥意思？
+
+**@Cacheable**
+
+Spring use A ConcurrentHashmap(?) to save all cache data.
+
+
+
+## SpringMVC
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
