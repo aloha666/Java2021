@@ -5788,13 +5788,25 @@ This scopes a bean definition to a global HTTP session. Only valid in the contex
 
 ### what is AOP?
 
+Aspect-Oriented Programming entails breaking down program logic into distinct parts called concerns. The functions that span multiple points of an application are called **cross-cutting concerns** and these cross-cutting concerns are conceptually separate from the application's business logic. 
+
+Dependency Injection helps you **decouple your application objects** from each other and AOP helps you **decouple cross-cutting concerns** from the objects that they affect.
+
+自己理解：
+
 A called B, we inject some code between A and B. In order to use AOP, all the objects should in the bean container. If create a object outside container, AOP will not kick in.
+
+spring用**代理类**包裹切面，把他们织入到Spring管理的bean中。也就是说代理类伪装成目标类，它会截取对目标类中方法的调用，让调用者对目标类的调用都先变成调用伪装类，伪装类中就先执行了切面（aspect injection?），再把调用转发给真正的目标bean。
 
 ### how to implement AOP?
 
 对method执行进行monitor if method with certain keyword is execute, the AOP code will execute.
 
 ### why we need AOP?
+
+1就是为了方便，看一个国外很有名的大师说，编程的人都是“懒人”，因为他把自己做的事情都让程序做了。用了aop能让你少写很多代码，这点就够充分了吧
+
+2就是为了更清晰的逻辑，可以让你的业务逻辑去关注自己本身的业务，而不去想一些其他的事情，这些其他的事情包括：安全，事物，日志等。
 
 
 
@@ -5806,11 +5818,35 @@ very generic, if we don't know AOP is implement, its hard to track the execution
 
 AOP实际上是A call B 的proxy时发生的， a calls b's proxy, then aspect kicks in.
 
-### what is @Aspect?
+
+
+### keywords 关键字
 
 solve cross cutting concerns.
 
-### 种类：pointcut, advice, jointpoint
+**Advice** 通知 想要的功能 This is the actual action to be taken either before or after the method execution.This is **an actual piece of code** that is invoked during the program execution by Spring AOP framework.
+
+**jointpoint**  连接点 spring允许你使用通知的地方 This represents a point in your application where you can plug-in the AOP aspect. 
+
+**pointcut,** 切入点 This is a set of one or more join points where an advice should be executed.（连接点的集合？） You can specify pointcuts using expressions or patterns as we will see in our AOP examples.
+
+**Aspect** 切面是通知和切入点的结合。This is a module which has a set of APIs providing cross-cutting requirements.
+
+**target** 目标 The object being advised by one or more aspects. This object will always be a proxied object, also referred to as the advised object.
+
+**Weaving** Weaving is the process of linking aspects with other application types or objects to create an advised object. This can be done at compile time, load time, or at runtime.
+
+### **Type of Advice**
+
+**before** Run advice before the a method execution.
+
+**after** Run advice after the method execution, regardless of its outcome.
+
+**after-returning** Run advice after the a method execution only if method completes successfully.
+
+**after-throwing** Run advice after the a method execution only if method exits by throwing an exception.
+
+**around** Run advice before and after the advised method is invoked.
 
 
 
@@ -5822,13 +5858,32 @@ solve cross cutting concerns.
 
 means to start a new transaction and commit or rollback if runtime exception happen (check exception will be handled)
 
-@transactional(readOnly=true) read only transaction
+![Spring @Transactional原理及使用2](https://res-static.hc-cdn.cn/fms/img/dc9535dea4a39751c8610585dd1fd26f1603795225464.jpg)
 
-exception? will rollback runtime exception happen
+**exception?** will rollback runtime exception happen
 
-isolation? default is what? 有几种， 啥意思？
+Spring事务管理器回滚一个事务的推荐方法是在当前事务的上下文内抛出异常。Spring事务管理器会捕捉任何未处理的异常，然后依据规则决定是否回滚抛出异常的事务。
+默认配置下，Spring只有在抛出的异常为运行时unchecked异常时才回滚该事务，也就是抛出的异常为RuntimeException的子类(Errors也会导致事务回滚)。而抛出checked异常则不会导致事务回滚。
 
-propagation? required by default 有几种， 啥意思？
+**isolation?** default is what? 有几种， 啥意思？
+
+| 事务隔离级别                                                 | 说明                                                |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| @Transactional(isolation = Isolation.READ_UNCOMMITTED)       | 读取未提交数据(会出现脏读， 不可重复读)，基本不使用 |
+| @Transactional(isolation = Isolation.READ_COMMITTED)(SQLSERVER默认) | 读取已提交数据(会出现不可重复读和幻读)              |
+| @Transactional(isolation = Isolation.REPEATABLE_READ)        | 可重复读(会出现幻读)                                |
+| @Transactional(isolation = Isolation.SERIALIZABLE)           | 串行化                                              |
+
+**propagation?** required by default 有几种， 啥意思？
+
+| 事务传播行为                                          | 说明                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------ |
+| @Transactional(propagation=Propagation.REQUIRED)      | 如果有事务， 那么加入事务， 没有的话新建一个(默认情况)       |
+| @Transactional(propagation=Propagation.NOT_SUPPORTED) | 容器不为这个方法开启事务                                     |
+| @Transactional(propagation=Propagation.REQUIRES_NEW)  | 不管是否存在事务，都创建一个新的事务，原来的挂起，新的执行完毕，继续执行老的事务 |
+| @Transactional(propagation=Propagation.MANDATORY)     | 必须在一个已有的事务中执行，否则抛出异常                     |
+| @Transactional(propagation=Propagation.NEVER)         | 必须在一个没有的事务中执行，否则抛出异常(与Propagation.MANDATORY相反) |
+| @Transactional(propagation=Propagation.SUPPORTS)      | 如果其他bean调用这个方法，在其他bean中声明事务，那就用事务。如果其他bean没有声明事务，那就不用事务 |
 
 **@Cacheable**
 
@@ -5837,6 +5892,14 @@ Spring use A ConcurrentHashmap(?) to save all cache data.
 
 
 ## SpringMVC
+
+### FrontController / DispatchedSevlert
+
+used to Connect HTTP & Spring Controllers
+
+### HandlerMapping
+
+@RequestMapping 
 
 
 
