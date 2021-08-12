@@ -5806,7 +5806,7 @@ Seesion 和 Global session有什么不同？
 
 
 
-# Lec17 AOP & Spring MVC
+# Lecture17 AOP & Spring MVC
 
 ## AOP
 
@@ -5945,15 +5945,33 @@ used to Connect HTTP & Spring Controllers
 
 
 
+# Lecture18
+
+## Spring Restful Web Service
+
+### what is a Restful API?
+
+A RESTful API is an architectural style for an application program interface ([API](https://searchapparchitecture.techtarget.com/definition/application-program-interface-API)) that uses HTTP requests to access and use data. That data can be used to GET, PUT, POST and DELETE data types, which refers to the reading, updating, creating and deleting of operations concerning resources.
 
 
 
+###  what is an URI?
 
- 
+A **Uniform Resource Identifier** (URI) is a generic term for the names of all resources connected to the World Wide Web. URIs enable the protocols over the internet to conduct the interactions between and among resources.
+
+1. A **URI is an **identifier** of a specific resource. Like a page, or book, or a document.
+2. A **URL** is special type of identifier that also tells you how to access it, such as `HTTPs`, `FTP`, etc.—like **https://**www.google.com.
+3. If the protocol (`https`, `ftp`, etc.) is either present or implied for a domain, **you should call it a \**URL\****—even though it’s also a **URI**.
 
 
 
+### what is the different between Post & Put?
 
+Post is not idempotent. Mostly used for create.
+
+Put is idempotent. Mostly used for update.
+
+### what is a pagination?
 
 
 
