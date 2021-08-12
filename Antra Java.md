@@ -5798,7 +5798,7 @@ Seesion 和 Global session有什么不同？
 
 
 
-# Lec17
+# Lec17 AOP & Spring MVC
 
 ## AOP
 
@@ -5842,9 +5842,11 @@ Aspect is in IOC container. AOP实际上是A call B 的proxy时发生的(proxy d
 
 
 
-### keywords 关键字
+### keywords 关键字（必考）
 
-solve cross cutting concerns.
+ solve **cross cutting concerns.**
+
+what is cross cutting concerns？such as security, transaction, cache, auditing, log. Not the main business logics, but have a lot side effect and extra features to help us manage the program.
 
 <img src="https://www.baeldung.com/wp-content/uploads/2017/11/Program_Execution-300x180.jpg" alt="img" style="zoom:150%;" />
 
@@ -5856,6 +5858,10 @@ solve cross cutting concerns.
 
 ```java
 @Around("execution(* *.save*(..))") // exectute when method have "save" in the name,advice + pointcut 
+
+@Around("@annotation(Cache)") //can also use annotation as pointcut,location: @Cache
+
+//annotation example : @Transactional
 ```
 
 **Aspect** 切面是通知和切入点的结合。This is a module which has a set of APIs providing cross-cutting requirements.
@@ -5880,13 +5886,15 @@ solve cross cutting concerns.
 
 
 
-## **@transactional  (必考)**
+## **@transactional  (必考)** 
 
-means to start a new transaction and commit or rollback if runtime exception happen (check exception will be handled)
+how is transaction AOP? The annotation will tell Spring to start a transaction before the method run and then close it after the method finished.
+
+It can start a new transaction and commit or rollback if runtime exception happen (check exception will be handled)
 
 ![Spring @Transactional原理及使用2](https://res-static.hc-cdn.cn/fms/img/dc9535dea4a39751c8610585dd1fd26f1603795225464.jpg)
 
-**exception?** will rollback runtime exception happen
+**exception?** will rollback runtime exception/error happen, will not automatically rollback for checked exception.
 
 Spring事务管理器回滚一个事务的推荐方法是在当前事务的上下文内抛出异常。Spring事务管理器会捕捉任何未处理的异常，然后依据规则决定是否回滚抛出异常的事务。
 默认配置下，Spring只有在抛出的异常为运行时unchecked异常时才回滚该事务，也就是抛出的异常为RuntimeException的子类(Errors也会导致事务回滚)。而抛出checked异常则不会导致事务回滚。
@@ -5900,7 +5908,7 @@ Spring事务管理器回滚一个事务的推荐方法是在当前事务的上�
 | @Transactional(isolation = Isolation.REPEATABLE_READ)        | 可重复读(会出现幻读)                                |
 | @Transactional(isolation = Isolation.SERIALIZABLE)           | 串行化                                              |
 
-**propagation?** required by default 有几种， 啥意思？
+**propagation?** required by default 有几种， 啥意思？(不必记，知道require即可)
 
 | 事务传播行为                                          | 说明                                                         |
 | ----------------------------------------------------- | ------------------------------------------------------------ |
