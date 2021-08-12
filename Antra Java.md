@@ -2372,7 +2372,7 @@ public class ForkJoinCalculator implements Calculator {
 
 **File System**: a way of arranging files in a storage medium like the hard disk
 
-![4.png](https://github.com/aloha666/Java2021/blob/main/4.png?raw=true)
+![4.png](https://github.com/aloha666/Java2021/blob/main/images/4.png?raw=true)
 
 
 
@@ -2398,7 +2398,7 @@ ideas ->high level design -> relational database schema -> relational DBMS
 
 ​					**derived attribute**: dynamic and derived from another attributes
 
-**-Relationship:** degree of relationship: the number of entity participating the relationship
+**-Relationship:** degree of relationship: the number of attributes participating the relationship
 
 ​					**Unary relationship**: Only one entity in the whole model
 
@@ -2488,7 +2488,7 @@ Divide data into groups/colmns, one column family is one topic/ID.
 
 ### 3. Key/value data stores
 
-essentially a large hash table, hash value is opaque to data store
+essentially a large hash table, hash value is opaque不透明 to data store
 
 代表：**Redis**, riak
 
@@ -5687,7 +5687,7 @@ A want B, No need to create the object, just ask for it from the container.
 
 The Application Context is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
 
- It adds more enterprise-specific functionality such as the ability to resolve textual messages from a properties file and the ability to publish application events to interested event listeners.
+ It adds more enterprise-specific functionality such as the ability to resolve textual messages from a properties file and the ability to publish application events to interested **event listener**s.
 
 **java name convention?**
 
@@ -5697,7 +5697,7 @@ The Application Context is Spring's advanced container. Similar to BeanFactory, 
 
 ## Dependency Injection / Inverse of  Control (必考)
 
-Inversion of control is a design principle which helps to invert the control of object creation. nstead of the programmer controlling the flow of a program, the external sources (framework, services, other components) take control of it. 
+Inversion of control is a design principle which helps to invert the control of object creation. instead of the programmer controlling the flow of a program, the external sources (framework, services, other components) take control of it. 
 
 Dependency Injection is a design pattern which implements IOC principle. Dependency injection is basically providing the objects that an object needs (its dependencies) instead of having it construct them itself.
 
