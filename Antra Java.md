@@ -5816,7 +5816,7 @@ spring用**代理类**包裹切面，把他们织入到Spring管理的bean中。
 
 ### how to implement AOP?
 
-对method执行进行monitor if method with certain keyword is execute, the AOP code will execute.
+对method执行/annotation 进行monitor if method with certain keyword is execute, the AOP code will execute.
 
 ### why we need AOP?
 
@@ -5874,7 +5874,7 @@ what is cross cutting concerns？such as security, transaction, cache, auditing,
 
 ### **Type of Advice**(实操？)
 
-**before** Run advice before the a method execution.
+**before** Run advice before the a method execution. 在 join point 前被执行的 advice. 虽然 before advice 是在 join point 前被执行, 但是它并不能够阻止 join point 的执行, 除非发生了异常(即我们在 before advice 代码中, 不能人为地决定是否继续执行 join point 中的代码)
 
 **after** Run advice after the method execution, regardless of its outcome.
 
@@ -5882,7 +5882,9 @@ what is cross cutting concerns？such as security, transaction, cache, auditing,
 
 **after-throwing** Run advice after the a method execution only if method exits by throwing an exception.
 
-**around** Run advice before and after the advised method is invoked.
+**around** Run advice before and after the advised method is invoked. run两次？
+
+**Around advice** runs "around" a matched method execution. It has the opportunity to do work both before and after the method executes, and to determine when, how, and even if, the method actually gets to execute at all. Around advice is often used if you need to **share state before and after a method execution** in a thread-safe manner (starting and stopping a timer for example).
 
 
 
@@ -5890,11 +5892,9 @@ what is cross cutting concerns？such as security, transaction, cache, auditing,
 
 how is transaction AOP? The annotation will tell Spring to start a transaction before the method run and then close it after the method finished.
 
-It can start a new transaction and commit or rollback if runtime exception happen (check exception will be handled)
+It can start a new transaction and commit or rollback if runtime exception/error happen (check exception will be handled), will not automatically rollback for checked exception.
 
 ![Spring @Transactional原理及使用2](https://res-static.hc-cdn.cn/fms/img/dc9535dea4a39751c8610585dd1fd26f1603795225464.jpg)
-
-**exception?** will rollback runtime exception/error happen, will not automatically rollback for checked exception.
 
 Spring事务管理器回滚一个事务的推荐方法是在当前事务的上下文内抛出异常。Spring事务管理器会捕捉任何未处理的异常，然后依据规则决定是否回滚抛出异常的事务。
 默认配置下，Spring只有在抛出的异常为运行时unchecked异常时才回滚该事务，也就是抛出的异常为RuntimeException的子类(Errors也会导致事务回滚)。而抛出checked异常则不会导致事务回滚。
