@@ -2472,6 +2472,12 @@ Two filelds:
 
 代表：**MongoDB** , CouchDB
 
+Documents are addressed in the database via a unique ***key*** that represents that document. This key is a simple [identifier](https://en.wikipedia.org/wiki/Identifier) (or ID), typically a [string](https://en.wikipedia.org/wiki/String_(computer_science)), a [URI](https://en.wikipedia.org/wiki/URI), or a [path](https://en.wikipedia.org/wiki/Path_(computing)). The key can be used to retrieve the document from the database. Typically the database retains an [index](https://en.wikipedia.org/wiki/Database_index) on the key to speed up document retrieval, and in some cases the key is required to create or insert the document into the database.
+
+### Relationship to key-value stores
+
+A document-oriented database is a specialized [key-value store](https://en.wikipedia.org/wiki/Key-value_database), which itself is another NoSQL database category. In a simple key-value store, the document content is opaque. A document-oriented database provides APIs or a query/update language that exposes the ability to query or update based on the internal structure in the *document*.
+
 
 
 ### 2. columnar data stores or column family 
