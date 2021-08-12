@@ -3243,6 +3243,8 @@ Java synchronized 就属于悲观锁的一种实现，每次线程要修改数�
 
 **分布式事务是为了解决微服务架构（形式都是分布式系统）中不同节点之间的数据一致性问题。这个一致性问题本质上解决的也是传统事务需要解决的问题，即一个请求在多个微服务调用链中，所有服务的数据处理要么全部成功，要么全部回滚**
 
+A distributed transaction is **a set of operations on data that is performed across two or more data repositories** (especially databases). It is typically coordinated across separate nodes connected by a network, but may also span multiple databases on a single server.
+
 ### 2PC
 
 **2 phase commitment: prepare and commit**
