@@ -5740,7 +5740,7 @@ DemoDAO aDAO;
 
 //constructor injection
 @Autowired //can omit
-public void setd(DemoDAO d){
+public setd(DemoDAO d){
   aDAO = d; 
 }
 //setter injection
@@ -5776,6 +5776,22 @@ This scopes a bean definition to an HTTP session. Only valid in the context of a
 
 This scopes a bean definition to a global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.
 
+Seesion 和 Global session有什么不同？
+
+## Component vs Bean
+
+| @Component                                                   | @Bean.                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| service based class                                          | Factory more tailor made objects                             |
+| Preferable for component scanning and automatic wiring.      | Sometimes automatic configuration is not an option. **When?** Let's imagine that you want to wire components from 3rd-party libraries (you don't have the source code so you can't annotate its classes with @Component), so automatic configuration is not possible. |
+|                                                              | The **@Bean** annotation **returns an object** that spring should register as bean in application context. The **body of the method** bears the logic responsible for creating the instance. |
+| **does not decouple** the declaration of the bean from the class definition | **decouples** the declaration of the bean from the class definition. |
+| **auto detects** and configures the beans using classpath scanning | **explicitly declares** a single bean, rather than letting Spring do it automatically. |
+| a **class level annotation**                                 | a **method level annotation** and name of the method serves as the bean name |
+| **need not to be used with the @Configuration** annotation   | has to be **used within the class which is annotated with @Configuration** |
+| **cannot create a bean** of a class using @Component, if the class is outside spring container | **can create a bean** of a class using @Bean even if the class is present **outside the spring container** |
+| has **different specializations** like @Controller, @Repository and @Service | has **no specializations**                                   |
+
 
 
 ## EntityManagerFactory (for JDBC)
@@ -5804,19 +5820,25 @@ spring用**代理类**包裹切面，把他们织入到Spring管理的bean中。
 
 ### why we need AOP?
 
-1就是为了方便，看一个国外很有名的大师说，编程的人都是“懒人”，因为他把自己做的事情都让程序做了。用了aop能让你少写很多代码，这点就够充分了吧
+1. some code we want to run in a lot of different places.
 
-2就是为了更清晰的逻辑，可以让你的业务逻辑去关注自己本身的业务，而不去想一些其他的事情，这些其他的事情包括：安全，事物，日志等。
+就是为了方便，看一个国外很有名的大师说，编程的人都是“懒人”，因为他把自己做的事情都让程序做了。用了aop能让你少写很多代码，这点就够充分了吧
 
+2. dont want to increate the caller burden to call all the classes, let the caller focus on their logic and task
 
+就是为了更清晰的逻辑，可以让你的业务逻辑去关注自己本身的业务，而不去想一些其他的事情，这些其他的事情包括：安全，事物，日志等。
 
 ### 特点
 
 very generic, if we don't know AOP is implement, its hard to track the execution and easy to get confused. Slow.
 
+Is AOP also de-coulping?
+
 ### 跟proxy关系？
 
-AOP实际上是A call B 的proxy时发生的， a calls b's proxy, then aspect kicks in.
+Aspect is in IOC container. AOP实际上是A call B 的proxy时发生的(proxy design pattern used, dynamic proxy)， a calls b's proxy, then aspect kicks in.
+
+如果call发生在一个bean内部，AOP不会执行，因为proxy在bean的外部。
 
 
 
@@ -5824,11 +5846,17 @@ AOP实际上是A call B 的proxy时发生的， a calls b's proxy, then aspect k
 
 solve cross cutting concerns.
 
-**Advice** 通知 想要的功能 This is the actual action to be taken either before or after the method execution.This is **an actual piece of code** that is invoked during the program execution by Spring AOP framework.
+<img src="https://www.baeldung.com/wp-content/uploads/2017/11/Program_Execution-300x180.jpg" alt="img" style="zoom:150%;" />
 
-**jointpoint**  连接点 spring允许你使用通知的地方 This represents a point in your application where you can plug-in the AOP aspect. 
+**Advice** 通知  This is the actual action to be taken either before or after the method execution.This is **an actual piece of code** that is invoked during the program execution by Spring AOP framework. 什么时候发生？
 
-**pointcut,** 切入点 This is a set of one or more join points where an advice should be executed.（连接点的集合？） You can specify pointcuts using expressions or patterns as we will see in our AOP examples.
+**jointpoint**  连接点 **runtime concept, not real code,**  This represents a point in your application where you can plug-in the AOP aspect. 在哪里发生？(code location)  
+
+**pointcut,** 切入点 This is a set of one or more join points where an advice should be executed.（连接点的集合？） You can specify pointcuts using expressions or patterns as we will see in our AOP examples. 发生在谁身上？
+
+```java
+@Around("execution(* *.save*(..))") // exectute when method have "save" in the name,advice + pointcut 
+```
 
 **Aspect** 切面是通知和切入点的结合。This is a module which has a set of APIs providing cross-cutting requirements.
 
@@ -5836,7 +5864,9 @@ solve cross cutting concerns.
 
 **Weaving** Weaving is the process of linking aspects with other application types or objects to create an advised object. This can be done at compile time, load time, or at runtime.
 
-### **Type of Advice**
+
+
+### **Type of Advice**(实操？)
 
 **before** Run advice before the a method execution.
 
@@ -5850,11 +5880,7 @@ solve cross cutting concerns.
 
 
 
-## MovieExmaple
-
-### Additional Annotations (必考)
-
-**@transactional  (必考)**
+## **@transactional  (必考)**
 
 means to start a new transaction and commit or rollback if runtime exception happen (check exception will be handled)
 
