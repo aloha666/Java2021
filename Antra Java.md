@@ -5945,7 +5945,7 @@ used to Connect HTTP & Spring Controllers
 
 
 
-# Lecture18
+# Lecture18 Rest
 
 ## Spring Restful Web Service
 
@@ -5965,13 +5965,35 @@ A **Uniform Resource Identifier** (URI) is a generic term for the names of all r
 
 
 
+### http://www.antra.com:80/user/123?id=1&sex=male
+
+**http**: protocol
+
+**www.antra.com:** domain
+
+**80**: port number, 80 for http, 443 for https
+
+**user/123**: path variable (Controller handle start here)
+
+**id =1&sex=male**: query parameters
+
+**#tab**: used for UI only
+
+HTTP -> dispatched servlet -> controller -> DB -> controller -(user obj) -> dispachted servlet - (json file) response body -> HTTP
+
+
+
 ### what is the different between Post & Put?
 
 Post is not idempotent. Mostly used for create.
 
 Put is idempotent. Mostly used for update.
 
-### what is a pagination?
+
+
+### what is a pagination?(必考)
+
+按page返回结果，分批返回（例子：浏览Amazon）
 
 
 
@@ -5979,7 +6001,101 @@ Put is idempotent. Mostly used for update.
 
 
 
+## Spring Restful Annotations
 
+**@RestController** = @Controller + @ResponseBody
+
+When you annotate a controller class with @RestController it does two purposes, first, it says that the controller class is handling a request for REST APIs and second you don't need to annotate each method with the @ResposneBody annotation to signal that the response will be converted into a Resource using various HttpMessageConverers.
+
+**@Controller** 
+
+This annotation is used to make a class as a web controller, which can handle client requests and send a response back to the client.
+
+**@GetMapping("/user/{id}")** = @RequestMapping(value="/user/{id}", method = RequestMethod.GET)
+
+**@RequestMapping("/api")**
+
+It's a method level annotation that is specified over a handler method.
+
+**@PathVariable** 
+
+is used to retrieve data from the URL,his annotation enables the controller to handle a request for parameterized URLs like URLs that have variable input as part of their path
+
+```java
+http://localhost:8080/books/900083838
+
+@RequestMapping(value="/books/{ISBN}",
+                        method= RequestMethod.GET)
+public String showBookDetails(@PathVariable("ISBN") String id,
+Model model){
+   model.addAttribute("ISBN", id);
+   return "bookDetails";
+}
+```
+
+
+
+**@RequestParam**
+
+is used to bind HTTP parameters into method arguments of handler methods.
+
+```java
+http://localhost:8080/books?ISBN=900083838
+
+@RequestMapping("/book") 
+public String showBookDetails( @RequestParam("ISBN") String ISBN, Model model){ 		
+  											model.addAttribute("ISBN", ISBN); return "bookDetails"; 
+											}
+```
+
+
+
+**@RequestBody**
+
+This annotation can convert inbound HTTP data into Java objects passed into the controller's handler method.
+
+```java
+@RequestMapping(method=RequestMethod.POST, consumers= "application/json") 
+public @ResponseBody Course saveCourse(@RequestBody Course aCourse){
+  								return courseRepository.save(aCourse); 
+						}
+
+```
+
+
+
+**@ResponseBody**
+
+is used to transform a Java object returned from he a controller to a resource representation requested by a [REST client](https://javarevisited.blogspot.com/2017/02/how-to-consume-json-from-restful-web-services-Spring-RESTTemplate-Example.html). It can completely bypass the view resolution part.
+
+```java
+@RequestMapping(method=RequestMethod.POST,consumers= "application/json") 
+public @ResponseBody Course saveCourse(@RequestBody Course aCourse){ 
+  							return courseRepository.save(aCourse); 
+							}
+```
+
+
+
+@RequestHeader
+
+@ExceptionHandler (AOP?)
+
+
+
+@Valid
+
+ResponseEntity? can be used to change header and so on
+
+**自己拓展**
+
+**@SprinbBootApplication**
+
+This is a relatively new annotation but very useful if you are using Spring Boot for creating Java web application with Spring. This single annotation combines three annotations like @Configuration, @EnableAutoConfiguration, and @ComponentScan. If you use [Spring Boot](http://www.java67.com/2018/06/5-best-courses-to-learn-spring-boot-in.html), then you can run your application without deploying it into a web server, as it comes with an embedded Tomcat server.
+
+## Swagger Tool
+
+api test tool
 
 
 
