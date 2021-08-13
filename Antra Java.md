@@ -5089,7 +5089,7 @@ Instead of declare different type of constructors, the builder pattern can build
 
 ### Factory Design Pattern 
 
-we create objects without exposing the creation logic to the client and refer to newly created objects using a common interface.
+``
 
 创建好产品/类，根据需求调用， factory类提供接口，由client决定需要什么。
 
