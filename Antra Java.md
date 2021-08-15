@@ -5462,7 +5462,9 @@ POST 添加is used to insert remote data. update database. **POST means "create 
 
 500  服务器错误，服务器在处理请求的过程中发生了错误 Server errors
 
-- 503 Service Unavailable 服务器由于维护或者负载过重未能应答。
+- 503 
+
+- 
 
   
 
@@ -5512,7 +5514,7 @@ POST 添加is used to insert remote data. update database. **POST means "create 
 ```
 
 ​	Four-way handshake disconnection 四次挥手
-​		FIN -> ACK -> FIN -> ACK
+​			FIN -> FIN & ACK -> ACK
 
 ![img](https://pic4.zhimg.com/80/v2-a1956234c6575bad2c2ea5297a6fe38f_720w.jpg)
 
