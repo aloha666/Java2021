@@ -5949,7 +5949,7 @@ used to Connect HTTP & Spring Controllers
 
 ## Spring Restful Web Service
 
-### what is a Restful API?
+### what is a Restful API?（必考）
 
 A RESTful API is an architectural style for an application program interface ([API](https://searchapparchitecture.techtarget.com/definition/application-program-interface-API)) that uses HTTP requests to access and use data. That data can be used to GET, PUT, POST and DELETE data types, which refers to the reading, updating, creating and deleting of operations concerning resources.
 
@@ -5965,7 +5965,7 @@ A **Uniform Resource Identifier** (URI) is a generic term for the names of all r
 
 
 
-### http://www.antra.com:80/user/123?id=1&sex=male
+### 分析http://www.antra.com:80/user/123?id=1&sex=male
 
 **http**: protocol
 
@@ -5995,7 +5995,11 @@ Put is idempotent. Mostly used for update.
 
 按page返回结果，分批返回（例子：浏览Amazon）
 
+read whole database -> slice
 
+read a slice from database -> return
+
+read from cache -> return
 
 
 
@@ -6003,7 +6007,7 @@ Put is idempotent. Mostly used for update.
 
 ## Spring Restful Annotations
 
-**@RestController** = @Controller + @ResponseBody
+**@RestController** = @Controller + @ResponseBody  is singleton
 
 When you annotate a controller class with @RestController it does two purposes, first, it says that the controller class is handling a request for REST APIs and second you don't need to annotate each method with the @ResposneBody annotation to signal that the response will be converted into a Resource using various HttpMessageConverers.
 
@@ -6017,7 +6021,7 @@ This annotation is used to make a class as a web controller, which can handle cl
 
 It's a method level annotation that is specified over a handler method.
 
-**@PathVariable** 
+**@PathVariable**  **写在method argument里
 
 is used to retrieve data from the URL,his annotation enables the controller to handle a request for parameterized URLs like URLs that have variable input as part of their path
 
@@ -6035,7 +6039,7 @@ Model model){
 
 
 
-**@RequestParam**
+**@RequestParam **写在method argument里
 
 is used to bind HTTP parameters into method arguments of handler methods.
 
@@ -6079,19 +6083,22 @@ public @ResponseBody Course saveCourse(@RequestBody Course aCourse){
 
 @RequestHeader
 
-@ExceptionHandler (AOP?)
 
 
+### ResponseEntity? 
 
-@Valid
+ResponseEntity represents the whole HTTP response: status code, headers, and body. As a result, we can use it **to fully configure the HTTP response**. If we want to use it, we have to return it from the endpoint; Spring takes care of the rest.
 
-ResponseEntity? can be used to change header and so on
+```java
+ @RequestMapping("/handle")
+ public ResponseEntity<String> handle() {
+   HttpHeaders responseHeaders = new HttpHeaders();
+   responseHeaders.set("MyResponseHeader", "MyValue");
+   return new ResponseEntity<String>("Hello World", responseHeaders, HttpStatus.CREATED);
+ }
+```
 
-**自己拓展**
 
-**@SprinbBootApplication**
-
-This is a relatively new annotation but very useful if you are using Spring Boot for creating Java web application with Spring. This single annotation combines three annotations like @Configuration, @EnableAutoConfiguration, and @ComponentScan. If you use [Spring Boot](http://www.java67.com/2018/06/5-best-courses-to-learn-spring-boot-in.html), then you can run your application without deploying it into a web server, as it comes with an embedded Tomcat server.
 
 ## Swagger Tool
 
@@ -6099,7 +6106,260 @@ api test tool
 
 
 
+## Spring操作总结
+
+### Message?
+
+```java
+	Constants messages;
+
+	@Autowired
+	public UserRestController(UserService userService,Constants messages) {
+		this.userService = userService;
+		this.messages = messages;
+	}
+
+//@Component
+public class Constants {
+    private Map<String, String> messages;
+
+    @Autowired
+    LookupRepository lookupRepo;
+
+    @PostConstruct
+    public void init() {
+       messages = new HashMap<>();
+       List<LookupEntity> userMessages = lookupRepo.findByType("USER_MESSAGE");
+       userMessages.forEach(m -> messages.put(m.getName(), m.getValue()));
+    }
+
+    public String getMessage(String msgName) {
+       return messages.get(msgName);
+    }
+}
+```
 
 
 
 
+
+### validate
+
+验证传入数据是否有效,embeded in Spring MVC. From Hibernate Validator.
+
+Hibernate validator has nothong to do with ORM, it validate the objects inside the projects (meaning?).
+
+```java
+/** create a user **/
+//use @Validate to check User
+	@ApiOperation(value = "create a user")
+	@RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json")
+	public ResponseEntity<ResponseMessage> createUser(@Validated @RequestBody User user, UriComponentsBuilder ucBuilder) {
+		User savedUser = userService.saveUser(user);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(ucBuilder.path("/api/user/{id}").buildAndExpand(user.getId()).toUri());
+		return new ResponseEntity<ResponseMessage>(new ResponseMessage(messages.getMessage("USER_CREATED"),savedUser), headers, HttpStatus.CREATED);
+	}
+
+//validate in user class
+
+public class User{
+	
+	private Long id;
+
+		@NotNull //validate name not null
+    private String name; 
+     @Max(100) //validate age max 100
+	 	@Min(10) //validate age min 10
+    private Integer age;
+     
+    private Double salary;
+
+    public User() {
+    	
+    }
+
+	}
+```
+
+### ExceptionHandler (AOP)
+
+```java
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> exceptionHandlerUserNotFound(Exception ex) {
+        ErrorResponse error = new ErrorResponse();
+        error.setErrorCode(HttpStatus.NOT_FOUND.value());
+        error.setMessage(ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+}
+
+```
+
+
+
+### Logging
+
+**slf4j: **Simple Logging Facade for Java 抽象层
+
+**SpringBoot** 默认选择的是 **SLF4J** + **Logback** 的组合
+
+```java
+private static Logger logger = LoggerFactory.getLogger(UserRestController.class);
+```
+
+
+
+### Pagnation
+
+List findAll（Sort sort）            返回所有实体，按照指定顺序排序返回
+
+List findAll（Pageable pageable）  返回实体列表，实体的offset和limit通过pageable来指定
+
+Pageable接口用于构造翻页查询，PageRequest是其实现类，
+
+```java
+//可以通过提供的工厂方法创建PageRequest：
+public static PageRequest of(int page, int size)
+  
+//也可以在PageRequest中加入排序：
+public static PageRequest of(int page, int size, Sort sort)
+  
+ //exmaple
+ Page<UserEntity> page1 = userRepo.findAll(PageRequest.of(page, size, sort)); // return only one page
+```
+
+**方法中的参数，page总是从0开始，表示查询页，size指每页的期望行数**。
+
+### Cache
+
+**@EnableCaching：**在启动类注解@EnableCaching开启缓存
+
+```java
+@SpringBootApplication
+@EnableCaching  //开启缓存
+public class DemoApplication{
+ 
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+ 
+}
+```
+
+**@Cacheable：**配置了findByName函数的返回值将被加入缓存。同时在查询时，会先从缓存中获取，若不存在才再发起对数据库的访问。
+
+value、cacheNames：两个等同的参数（cacheNames为Spring 4新增，作为value的别名），用于指定缓存存储的集合名。由于Spring 4中新增了@CacheConfig，因此在Spring 3中原本必须有的value属性，也成为非必需项了
+
+key：缓存对象存储在Map集合中的key值，非必需，缺省按照函数的所有参数组合作为key值，若自己配置需使用SpEL表达式，比如：@Cacheable(key = “#p0”)：使用函数第一个参数作为缓存的key值
+
+condition：缓存对象的条件，非必需，也需使用SpEL表达式，只有满足表达式条件的内容才会被缓存，比如：@Cacheable(key = “#p0”, condition = “#p0.length() < 3”)，表示只有当第一个参数的长度小于3的时候才会被缓存
+
+unless：另外一个缓存条件参数，非必需，需使用SpEL表达式。它不同于condition参数的地方在于它的判断时机，该条件是在函数被调用之后才做判断的，所以它可以通过对result进行判断。
+
+keyGenerator：用于指定key生成器，非必需。若需要指定一个自定义的key生成器，我们需要去实现org.springframework.cache.interceptor.KeyGenerator接口，并使用该参数来指定。需要注意的是：该参数与key是互斥的
+
+cacheManager：用于指定使用哪个缓存管理器，非必需。只有当有多个时才需要使用
+
+cacheResolver：用于指定使用那个缓存解析器，非必需。需通过org.springframework.cache.interceptor.CacheResolver接口来实现自己的缓存解析器，并用该参数指定。
+
+```java
+
+public class BotRelationServiceImpl implements BotRelationService {
+    @Override
+    @Cacheable(value = {"newJob"},key = "#p0")
+    public List<NewJob> findAllLimit(int num) {
+        return botRelationRepository.findAllLimit(num);
+    }
+    .....
+}
+
+
+```
+
+**@CachePut：**主要针对方法配置，能够根据方法的请求参数对其结果进行缓存，和 @Cacheable 不同的是，它每次都会触发真实方法的调用 。简单来说就是用户更新缓存数据。但需要注意的是该注解的value 和 key 必须与要更新的缓存相同，也就是与@Cacheable 相同。示例：
+
+```java
+
+    @CachePut(value = "newJob", key = "#p0")  //按条件更新缓存
+    public NewJob updata(NewJob job) {
+        NewJob newJob = newJobDao.findAllById(job.getId());
+        newJob.updata(job);
+        return job;
+    }
+```
+
+**@CacheEvict：**配置于函数上，通常用在删除方法上，用来从缓存中移除相应数据。除了同@Cacheable一样的参数之外，它还有下面两个参数：
+
+allEntries：非必需，默认为false。当为true时，会移除所有数据。如：@CachEvict(value=”testcache”,allEntries=true)
+
+beforeInvocation：非必需，默认为false，会在调用方法之后移除数据。当为true时，会在调用方法之前移除数据。 如：@CachEvict(value=”testcache”，beforeInvocation=true)
+
+```java
+
+@Cacheable(value = "emp",key = "#p0.id")
+    public NewJob save(NewJob job) {
+        newJobDao.save(job);
+        return job;
+    }
+ 
+    //清除一条缓存，key为要清空的数据
+    @CacheEvict(value="emp",key="#id")
+    public void delect(int id) {
+        newJobDao.deleteAllById(id);
+    }
+ 
+    //方法调用后清空所有缓存
+    @CacheEvict(value="accountCache",allEntries=true)
+    public void delectAll() {
+        newJobDao.deleteAll();
+    }
+ 
+    //方法调用前清空所有缓存
+    @CacheEvict(value="accountCache",beforeInvocation=true)
+    public void delectAll() {
+        newJobDao.deleteAll();
+    }
+```
+
+**@CacheConfig：** 统一配置本类的缓存注解的属性，在类上面统一定义缓存的名字，方法上面就不用标注了，当标记在一个类上时则表示该类所有的方法都是支持缓存的
+
+```java
+@CacheConfig(cacheNames = {"myCache"})
+public class BotRelationServiceImpl implements BotRelationService {
+    @Override
+    @Cacheable(key = "targetClass + methodName +#p0")//此处没写value
+    public List<BotRelation> findAllLimit(int num) {
+        return botRelationRepository.findAllLimit(num);
+    }
+    .....
+}
+```
+
+
+
+### Multithreading
+
+Spring MVC do not garatuee thread safe. Multi-threading safe need to be implmented in code.
+
+# Lecture 19 SpringBoot
+
+what is slf4j？
+
+to write logs in Spring.
+
+why use log? what is the different between logger and system.out.print()?
+
+how to decide thread-safe or not?
+
+
+
+How to solve theard-safe/concurrency  issue?
+
+**@SprinbBootApplication**
+
+This is a relatively new annotation but very useful if you are using Spring Boot for creating Java web application with Spring. This single annotation combines three annotations like @Configuration, @EnableAutoConfiguration, and @ComponentScan. If you use [Spring Boot](http://www.java67.com/2018/06/5-best-courses-to-learn-spring-boot-in.html), then you can run your application without deploying it into a web server, as it comes with an embedded Tomcat server.
