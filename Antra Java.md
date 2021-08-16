@@ -5941,6 +5941,8 @@ Spring use A ConcurrentHashmap(?) to save all cache data.
 
 used to Connect HTTP & Spring Controllers
 
+**web request -> TOMCAT -> DispatchedSevlert ->Spring MVC Controller**
+
 ### HandlerMapping
 
 @RequestMapping 
@@ -6350,6 +6352,14 @@ Spring MVC do not garatuee thread safe. Multi-threading safe need to be implment
 
 # Lecture 19 SpringBoot
 
+## FeignClient & Assessment
+
+
+
+## SpringBoot
+
+### what is SpringBoot?
+
 what is slf4j？
 
 to write logs in Spring.
@@ -6358,10 +6368,10 @@ why use log? what is the different between logger and system.out.print()?
 
 how to decide thread-safe or not?
 
-
-
 How to solve theard-safe/concurrency  issue?
 
 **@SprinbBootApplication**
 
 This is a relatively new annotation but very useful if you are using Spring Boot for creating Java web application with Spring. This single annotation combines three annotations like @Configuration, @EnableAutoConfiguration, and @ComponentScan. If you use [Spring Boot](http://www.java67.com/2018/06/5-best-courses-to-learn-spring-boot-in.html), then you can run your application without deploying it into a web server, as it comes with an embedded Tomcat server.
+
+### what is the advantage of SpringBoot?
