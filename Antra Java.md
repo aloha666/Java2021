@@ -472,7 +472,7 @@ put操作：
 
 Maintain the insertion order of the key-value pairs. This implementation differs from HashMap in that it maintains a doubly-linked list running through all of its entries. This linked list defines the iteration ordering, which is normally the order in which keys were inserted into the map (insertion-order). Note that insertion order is not affected if a key is re-inserted into the map.
 
-我们构建一个空间占用敏感的资源池，希望可 以自动将最不常被访问的对象释放掉，这就可以利用 LinkedHashMap 提供的机制来实现。**LRU类似**
+我们构建一个空间占用敏感的资源池，希望可 以自动将最不常被访问的对象释放掉，这就可以利用 LinkedHashMap 提供的机制来实现。**LRU类似(但是修改查询不改变位置)**
 
 ```java
 package LinkedHashMap;
@@ -6375,3 +6375,37 @@ How to solve theard-safe/concurrency  issue?
 This is a relatively new annotation but very useful if you are using Spring Boot for creating Java web application with Spring. This single annotation combines three annotations like @Configuration, @EnableAutoConfiguration, and @ComponentScan. If you use [Spring Boot](http://www.java67.com/2018/06/5-best-courses-to-learn-spring-boot-in.html), then you can run your application without deploying it into a web server, as it comes with an embedded Tomcat server.
 
 ### what is the advantage of SpringBoot?
+
+
+
+# Lec 20 Security
+
+
+
+## Encryption
+
+## Hashing
+
+signature purpose
+
+## Encode
+
+### URL Encoder
+
+### File Encoder
+
+Base64?
+
+## Client Side Encryption
+
+xss, csrf,cors
+
+## Authentication
+
+valid of user, username&password
+
+## Authorization授权
+
+has Rule or not 授权？
+
+## JWT token
