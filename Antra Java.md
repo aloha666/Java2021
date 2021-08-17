@@ -6376,6 +6376,16 @@ This is a relatively new annotation but very useful if you are using Spring Boot
 
 ### what is the advantage of SpringBoot?
 
+Auto configuration.
+
+starter - dependecies
+
+self-execuation -jar/war
+
+embeded tomcat/jetty server
+
+externalized configuration (application properties)
+
 
 
 # Lec 20 Security
