@@ -6426,3 +6426,22 @@ OAuth2
 
 ## JWT token (必考？)
 
+
+
+# Lec21 Message & MicroService
+
+## Message
+
+## Microservice
+
+### Monolithic
+
+
+
+### Distributed
+
+
+
+### Disadvantage/Challenges
+
+complex
