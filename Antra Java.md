@@ -6390,8 +6390,6 @@ externalized configuration (application properties)
 
 # Lec 20 Security
 
-
-
 ## Encryption
 
 ## Hashing
@@ -6412,8 +6410,19 @@ xss, csrf,cors
 
 ## Authentication
 
+
+
+valid of user, username&password 
+
+LDAP
+
+
+
 ## Authorization授权
 
 has Rule or not 授权？
 
-## JWT token
+OAuth2
+
+## JWT token (必考？)
+
