@@ -6412,8 +6412,6 @@ xss, csrf,cors
 
 ## Authentication
 
-valid of user, username&password
-
 ## Authorization授权
 
 has Rule or not 授权？
