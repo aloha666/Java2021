@@ -6432,16 +6432,59 @@ OAuth2
 
 ## Message
 
-## Microservice
-
-### Monolithic
+### queue
 
 
 
-### Distributed
+## Monolithic
 
+Single sever, do everything.
 
+Advantage: one stop, easy to understand and maintain.
+
+Disadvantage: slow, **not scalable.**
+
+## Distributed
+
+### ESB(不用记)
+
+The **Enterprise Service Bus** (ESB) is a software architecture which connects all the services together over a bus like infrastructure. It acts as communication center in the SOA by allowing linking multiple systems, applications and data and connects multiple systems with no disruption.(like motherboard)
+
+### MicroService
+
+MS is a **service-oriented architecture** (SOA) structural style, it arranges an application as a collection of [loosely-coupled](https://en.wikipedia.org/wiki/Loose_coupling) services. 
+
+Microservices are **an architectural approach to building applications**. As an architectural framework, microservices are distributed and loosely coupled, so one team's changes won't break the entire app.
+
+dynamic, elastic, and resilient.
+
+flexible, parallel, scalable(horizontally, add more servers).
 
 ### Disadvantage/Challenges
 
-complex
+complex, hard to maintain. complicate arch, design, database, transaction, deploy.
+
+
+
+## Spring Cloud
+
+### When A service called B service, how to determine which B server/IP  to go to?
+
+HardCode (not applicable)
+
+Server-side Load balancer (applicable but if LB is down, all the B servers are down，signle point failure)
+
+LB decide which B address to call(包办).
+
+**client-side load balancer**
+
+Let service A knows all the B service address and the pick one(选妃). Acheived by service discovery, not signle point failure.
+
+### Eurka
+
+**Service Discovery** (Eurka Server): remember all IP addresses
+
+**Eurka Client**: both A&B
+
+A call B : **Ribbon** will do this call for A, so A can get all B service addresses. **Ribbon is the client side load balancer.**
+
