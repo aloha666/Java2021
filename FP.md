@@ -467,10 +467,31 @@ Spring supports 5 default log levels, ERROR , WARN , INFO , DEBUG , and TRACE , 
 
 ## 1. embedded tomcat
 
+For example, for a Spring Boot Application, you can generate an **application jar** which contains Embedded Tomcat. You can run a web application as a normal Java application! Embedded server implies that our deployable unit contains the binaries for the server (example, tomcat. jar).
+
+**Spring Boot** has a complete **Tomcat** inside. It builds a so-called fat-jar with everything needed inside. You don't need **Tomcat** installed in your system. BTW: **Spring Boot** also supports other application servers like Jetty
+
+
+
 ## 2. main method => start application
 
-## 3. actuator 
+A Spring Boot application's main class is a class that contains a **public static void main() method** that starts up the Spring ApplicationContext. By default, if the main class isn't explicitly specified, Spring will search for one in the classpath at compile time and fail to start if none or multiple of them are found.
+
+## ?3. actuator 
+
+Spring Boot Actuator module **helps you monitor and manage your Spring Boot application by providing production-ready features like health check-up, auditing, metrics gathering, HTTP tracing etc**. ... Actuator uses Micrometer, an application metrics facade to integrate with these external application monitoring systems.
+
+In a Spring Boot application, we expose a REST API endpoint by using **the @RequestMapping annotation in the controller class**. For getting these endpoints, there are three options: an event listener, Spring Boot Actuator, or the Swagger library.
 
 ## 4. application.properties
 
+Properties files are used **to keep 'N' number of properties in a single file** to run the application in a different environment. In Spring Boot, properties are kept in the application. properties file under the classpath. The application.properties file is located in the src/main/resources directory.
+
 ## 5. autoconfiguration -> spring.factories
+
+Spring Boot auto-configuration **attempts to automatically configure your Spring application based on the jar dependencies that you have added**. For example, If HSQLDB is on your classpath, and you have not manually configured any database connection beans, then we will auto-configure an in-memory database.
+
+The apparent purpose of **@EnableAutoConfiguration** is to enable automatic configuration features of the Spring Boot application, which automatically configures things if certain classes are present in classpath
+
+ @SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan .
+
