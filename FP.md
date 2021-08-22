@@ -64,38 +64,115 @@ When you use Hibernate with JPA you are actually using the Hibernate JPA impleme
 
 ## 3. session vs entitymanager 
 
-## 4. spring data jpa + dynamic proxy SimpleJpaRepository.class 
+The Session object is **lightweight and designed to be instantiated each time an interaction is needed with the database**. Persistent objects are saved and retrieved through a Session object.
 
-## 5. lazy initialization exception 
+`Session` is a hibernate-specific API, `EntityManager` is a standardized API for JPA. You can think of the `EntityManager` as an adapter class that wraps `Session` (you can even get the `Session` object from an `EntityManager` object via the `getDelegate()` function).
+
+This is not dissimilar to other Java APIs around (for example, JDBC is a standard API, each vendor adapts its product to the API via a driver that implements the standard functions).
+
+## ?4. spring data jpa + dynamic proxy & 
+
+## SimpleJpaRepository.class 
+
+Spring Data JPA aims to **significantly improve the implementation of data access layers** by reducing the effort to the amount that's actually needed. As a developer you write your repository interfaces, including custom finder methods, and Spring will provide the implementation automatically.
+
+A dynamic proxy class is **a class that implements a list of interfaces specified at runtime** such that a method invocation through one of the interfaces on an instance of the class will be encoded and dispatched to another object through a uniform interface.
+
+The SimpleJpaRepository is **the default implementation of Spring Data JPA repository interfaces**. ... We can create a custom base repository class by following these steps: Create a BaseRepositoryImpl class that has two type parameters: The T type parameter is the type of the managed entity.
+
+## ?5. lazy initialization exception 
+
+Hibernate throws the *LazyInitializationException* when it needs to initialize a lazily fetched association to another entity without an active session context. That’s usually the case if you try to use an uninitialized association in your client application or web layer. 在读取数据的时候，Session已经关闭
 
 ## 6. @transactional 
 
+how is transaction AOP? The annotation will tell Spring to start a transaction before the method run and then close it after the method finished.
+
+It can start a new transaction and commit or rollback if runtime exception/error happen (check exception will be handled), will not automatically rollback for checked exception.
+
+![Spring @Transactional原理及使用2](https://res-static.hc-cdn.cn/fms/img/dc9535dea4a39751c8610585dd1fd26f1603795225464.jpg)
+
+Spring事务管理器回滚一个事务的推荐方法是在当前事务的上下文内抛出异常。Spring事务管理器会捕捉任何未处理的异常，然后依据规则决定是否回滚抛出异常的事务。
+默认配置下，Spring只有在抛出的异常为运行时unchecked异常时才回滚该事务，也就是抛出的异常为RuntimeException的子类(Errors也会导致事务回滚)。而抛出checked异常则不会导致事务回滚。
+
+**isolation?** default is what? 有几种， 啥意思？
+
+| 事务隔离级别                                                 | 说明                                                |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| @Transactional(isolation = Isolation.READ_UNCOMMITTED)       | 读取未提交数据(会出现脏读， 不可重复读)，基本不使用 |
+| @Transactional(isolation = Isolation.READ_COMMITTED)(SQLSERVER默认) | 读取已提交数据(会出现不可重复读和幻读)              |
+| @Transactional(isolation = Isolation.REPEATABLE_READ)        | 可重复读(会出现幻读)                                |
+| @Transactional(isolation = Isolation.SERIALIZABLE)           | 串行化                                              |
+
+**propagation?** required by default 有几种， 啥意思？(不必记，知道require即可)
+
+| 事务传播行为                                          | 说明                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------ |
+| @Transactional(propagation=Propagation.REQUIRED)      | 如果有事务， 那么加入事务， 没有的话新建一个(默认情况)       |
+| @Transactional(propagation=Propagation.NOT_SUPPORTED) | 容器不为这个方法开启事务                                     |
+| @Transactional(propagation=Propagation.REQUIRES_NEW)  | 不管是否存在事务，都创建一个新的事务，原来的挂起，新的执行完毕，继续执行老的事务 |
+| @Transactional(propagation=Propagation.MANDATORY)     | 必须在一个已有的事务中执行，否则抛出异常                     |
+| @Transactional(propagation=Propagation.NEVER)         | 必须在一个没有的事务中执行，否则抛出异常(与Propagation.MANDATORY相反) |
+| @Transactional(propagation=Propagation.SUPPORTS)      | 如果其他bean调用这个方法，在其他bean中声明事务，那就用事务。如果其他bean没有声明事务，那就不用事务 |
+
 ## 7.  Entity
 
+Entities in JPA are nothing but **POJOs representing data that can be persisted to the database**. An entity represents a table stored in a database. Every instance of an entity represents a row in the table.
 
 
 
 
 
+# Rest api 
+
+## 1. http + status + http method  
+
+ http:  
+
+stateless  header  
+
+ /student/{pathVariable}?requestParam=xxx&..
+
+## 2. stateless vs stateful(sticky session) 
+
+## 3. status code   
+
+200 OK, 201 Created, 204 OK with no content  400 bad request, 401 unauthenticated , 403 unauthroized, 404 not found  500 internal error 
 
 
 
+## 4. post create, put patch update, get, head(no response body), delete.. 
 
+## 5. security 
 
+authentication  
 
+authorization (jwt header.payload.signature) 
 
+https = http + ssl / tls  
 
+private(server) + public key(everyone) -> symmetric key 
 
+csrf 
 
+sql injection 
 
+password -> char[] 
 
+## 6. encoding ->base64 -> ascii 1 - 255 ,1 - 127 7bits  
 
+1 byte = 8bits
 
+## 7.spring mvc   
 
+@RestController, 
 
+@RequestParam, 
 
+@PathVariable, 
 
+@Get..  
 
+@ExceptionHandler 
 
-
-Rest api 1. http + status + http method   http:  stateless  header   /student/{pathVariable}?requestParam=xxx&.. 2. stateless vs stateful(sticky session) 3. status code   200 OK, 201 Created, 204 OK with no content  400 bad request, 401 unauthenticated , 403 unauthroized, 404 not found  500 internal error 4. post create, put patch update, get, head(no response body), delete.. 5. security authentication  authorization (jwt header.payload.signature) https = http + ssl / tls  private(server) + public key(everyone) -> symmetric key csrf sql injection password -> char[] 6. encoding ->base64 -> ascii 1 - 255 ,1 - 127 7bits  1 byte = 8bits 7. spring mvc   @RestController, @RequestParam, @PathVariable, @Get..  @ExceptionHandler 8. documentation -> swagger
+## 8. documentation -> swagger

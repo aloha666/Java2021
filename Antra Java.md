@@ -1,4 +1,4 @@
-# Lecture 1 Basic Java I
+#  Lecture 1 Basic Java I
 
 ## Maven
 
@@ -6442,11 +6442,11 @@ Single sever, do everything.
 
 Advantage: one stop, easy to understand and maintain.
 
-Disadvantage: slow, **not scalable.**
+Disadvantage: slow, **not scalable.** low resilence 
 
 ## Distributed
 
-### ESB(不用记)
+###  ESB(不用记)
 
 The **Enterprise Service Bus** (ESB) is a software architecture which connects all the services together over a bus like infrastructure. It acts as communication center in the SOA by allowing linking multiple systems, applications and data and connects multiple systems with no disruption.(like motherboard)
 
