@@ -283,3 +283,194 @@ works at the @Controller level. The @ExceptionHandler annotated method is only a
 ## 8. documentation -> swagger
 
 Swagger is a set of open-source tools built around the OpenAPI Specification that can **help you design, build, document and consume REST APIs**. The major Swagger tools include: Swagger Editor – browser-based editor where you can write OpenAPI specs. Swagger UI – renders OpenAPI specs as interactive API documentation.
+
+
+
+# Spring 
+
+## 1. IOC + AOP  
+
+IOC: Inversion of control is a design principle which helps to invert the control of object creation. instead of the programmer controlling the flow of a program, the external sources (framework, services, other components) take control of it. 
+
+AOP: Aspect-Oriented Programming entails包含 breaking down program logic into distinct parts called concerns. The functions that span multiple points of an application are called **cross-cutting concerns** and these cross-cutting concerns are conceptually separate from the application's business logic. 
+
+Dependency Injection helps you **decouple your application objects** from each other and AOP helps you **decouple cross-cutting concerns** from the objects that they affect.
+
+## 2. dependency injection, application context 
+
+DI:**Dependency Injection** is a design pattern which implements IOC principle. Dependency injection is basically providing the objects that an object needs (its dependencies) instead of having it construct them itself.
+
+**bean factory** will send the object needed, the class just call it instead of create the object, this tis dependency injection.
+
+The **Application Context** is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
+
+ It adds more enterprise-specific functionality such as the ability to resolve textual messages from a properties file and the ability to publish application events to interested **event listener**s.
+
+## 3.@Autowired
+
+### field + setter + constructor injection 
+
+```
+**Field Injection** throw everything in field-normal used, use @Autowired
+
+Pro: Easy to use, no constructors or setters required.Can be easily combined with the constructor and/or setter approach
+
+Con: Less control over object instantiation. A number of dependencies can reach dozens until you notice that something went wrong in your design. No immutability — the same as for setter injection.
+
+
+
+**Constructor Injection** use a constructor to inject objects,@Autowired can be omitted. (recommended)
+
+Pro: 1.**easy for test**; 2.can add check lines since it's method (same as setter injection)  
+
+Con: may have **cycle situation** A->B->C->A, can not create any object if autowire in constructor.
+
+
+
+**Setter Injection** use@Autowired and setter
+
+Pro: Flexibility in dependency resolution or object reconfiguration, it can be done anytime. Plus, this freedom solves the circular dependency issue of constructor injection.
+
+Con:Null checks are required, because dependencies may not be set at the moment. more error-prone and less secure than constructor injection due to the possibility of overriding dependencies.
+```
+
+
+
+### constructor : final + null + eager 
+
+he *@Autowired* annotation can also be used on constructors. In the below example, when the annotation is used on a constructor, an instance of *FooFormatter* is injected as an argument to the constructor when *FooService* is created:
+
+```java
+@Component("fooFormatter")
+public class FooFormatter {
+ 
+    public String format() {
+        return "foo";
+    }
+}
+```
+
+```java
+public class FooService {
+ 
+    private FooFormatter fooFormatter;
+ 
+    @Autowired //can omit
+    public FooService(FooFormatter fooFormatter) {
+        this.fooFormatter = fooFormatter;
+    }
+}
+```
+
+### setter : lazy   
+
+**By default, Spring creates all singleton beans eagerly at the startup/bootstrapping of the application context.** The reason behind this is simple: to avoid and detect all possible errors immediately rather than at runtime.
+
+However, there're cases when we need to create a bean, not at the application context startup, but when we request it.
+
+When we put @Lazy annotation over the @Configuration class, it indicates that all the methods with @Bean annotation should be loaded lazily
+
+### @Autowired + @Qualifier
+
+```java
+@Bean
+//use on method,  执行后产生一个bean放入factory。 为什么要用bean？have no control of source code/class, such as "String class ". 
+@Primary 
+//相同种类bean，如果不specify，Spring will assign the one with @Primary annotation, use with @Bean together
+@Qualifer 
+//used under @Autowired, to specify which one to use by name, use with @Autowired together
+```
+
+
+
+## 4.ByName + ByType 
+
+The difference between byType and byName autowiring is as follows : **Autowire byType will search for a bean in configuration file**, whose id match with the property type to be wired whereas **autowire byName will search for a bean whose id is matching with the property name to be wired**.
+
+## 5. Annotations
+
+### @Component + @Service + @Repository + @Controller + @Bean  
+
+```java
+@component
+//Indicates that an annotated class is a “component”. Such classes are considered as candidates for auto-detection when using annotation-based configuration and classpath scanning.
+
+@service
+//Indicates that an annotated class is a “Service”. This annotation serves as a specialization of @Component, allowing for implementation classes to be autodetected through classpath scanning.
+
+@Controller
+// The @Controller annotation is used to indicate the class is a Spring controller. This annotation can be used to identify controllers for Spring MVC or Spring WebFlux.
+
+@Repository 
+//Indicates that an annotated class is a “Repository”. This annotation serves as a specialization of @Component and advisable to use with [DAO]
+
+@Autowired
+// is used for automatic injection of beans. Spring @Qualifier annotation is used in conjunction with Autowired to avoid confusion when we have two of more bean configured for same type.
+
+@Configuration 
+// Used to indicate that a class declares one or more `@Bean` methods. These classes are processed by the Spring container to generate bean definitions and service requests for those beans at runtime.
+```
+
+### scope of a bean
+
+singleton, prototype, request, session, global session 
+
+```
+### Singleton Scope
+
+is a singleton scope. Only one object of each class is created in the begining of Spring by default. unless manually create more than one object. (getString() and getString2() create 2 String objects.)
+
+### Prototype Scope
+
+If the scope is set to prototype, the Spring IoC container creates a new bean instance of the object every time a request for that specific bean is made.
+
+### request
+
+This scopes a bean definition to an HTTP request. Only valid in the context of a web-aware Spring ApplicationContext.
+
+### Session?
+
+This scopes a bean definition to an HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.
+
+### Global Session?
+
+This scopes a bean definition to a global HTTP session. Only valid in the context of a web-aware Spring ApplicationContext.
+
+Seesion 和 Global session有什么不同？
+```
+
+## 6.Proxy and handler
+
+AOP + dynamic proxy 
+
+AOP proxy: **an object created by the AOP framework in order to implement the aspect contracts** (advise method executions and so on). In the Spring Framework, an AOP proxy will be a JDK dynamic proxy or a CGLIB proxy. 
+
+Static proxy, proxy class need to write their own code. ... **Dynamic Proxy dynamically generates proxy class through Proxy**, but it also specifies an implementation class of InvocationHandler. The purpose of proxy pattern is to enhance the function of existing code.
+
+?instance = Proxy.newInstance(classloader + interface(get) + handler) 
+
+?instance.get() -> invoke() in handler 
+
+## ？7. log 
+
+Spring Boot uses [Commons Logging](https://commons.apache.org/logging) for all internal logging but leaves the underlying log implementation open. Default configurations are provided for [Java Util Logging](https://docs.oracle.com/javase/8/docs/api//java/util/logging/package-summary.html), [Log4J2](https://logging.apache.org/log4j/2.x/), and [Logback](https://logback.qos.ch/). In each case, loggers are pre-configured to use console output with optional file output also available.
+
+SLF4J and Apache Commons Logging APIs allow us the flexibility to change our logging framework with no impact on our code.
+
+And we can **use Lombok's \*@Slf4j\* and \*@CommonsLog\* annotations** to add the right logger instance into our class: *org.slf4j.Logger* for SLF4J and *org.apache.commons.logging.Log* for Apache Commons Logging.
+
+Log levels:
+
+Spring supports 5 default log levels, ERROR , WARN , INFO , DEBUG , and TRACE , with INFO being the default log level configuration.理解？
+
+# Spring boot
+
+## 1. embedded tomcat
+
+## 2. main method => start application
+
+## 3. actuator 
+
+## 4. application.properties
+
+## 5. autoconfiguration -> spring.factories
