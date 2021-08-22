@@ -127,37 +127,115 @@ Entities in JPA are nothing but **POJOs representing data that can be persisted 
 
 ## 1. http + status + http method  
 
- http:  
+ **http**:  HTTP stands for Hypertext Transfer Protocol, as a request-response protocol, HTTP gives users a way to interact with web resources such as HTML files by transmitting hypertext messages between clients and servers.
 
-stateless  header  
+**stateless**: HTTP is a [stateless protocol]. A stateless protocol does not require the [HTTP server] to retain information or status about each user for the duration of multiple requests. However, some [web applications] implement states or [server side sessions] using for instance [HTTP cookies] or hidden [variables] within [web forms].
 
- /student/{pathVariable}?requestParam=xxx&..
+ **header**:  The HTTP Header **contains information about the HTTP Body and the Request/Response**. 
+
+- [Request headers](https://developer.mozilla.org/en-US/docs/Glossary/Request_header) contain more information about the resource to be fetched, or about the client requesting the resource.
+- [Response headers](https://developer.mozilla.org/en-US/docs/Glossary/Response_header) hold additional information about the response, like its location or about the server providing it.
+- [Representation headers](https://developer.mozilla.org/en-US/docs/Glossary/Representation_header) contain information about the body of the resource, like its [MIME type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types), or encoding/compression applied.
+- [Payload headers](https://developer.mozilla.org/en-US/docs/Glossary/Payload_header) contain representation-independent information about payload data, including content length and the encoding used for transport.
+
+​				request: request method + protocol version, request header, request body
+​				response: response status + protocol version, response header, response body
+
+ **/student/{pathVariable}?requestParam=xxx&..**
+
+how to pass the varibale and prarameters in URL?
 
 ## 2. stateless vs stateful(sticky session) 
+
+In Stateless, server is not needed to keep the server information or session details to itself. In stateful, **a server is required to maintain the current state and session information**. In stateless, server and client are loosely coupled and can act independently. In stateful, server and client are tightly bound.
+
+With sticky sessions, **a load balancer assigns an identifying attribute to a user, typically by** issuing a cookie or by tracking their IP details. Then, according to the tracking ID, a load balancer can start routing all of the requests of this user to a specific server for the duration of the session.
 
 ## 3. status code   
 
 200 OK, 201 Created, 204 OK with no content  400 bad request, 401 unauthenticated , 403 unauthroized, 404 not found  500 internal error 
 
+```
+100-informational response 收到Web浏览器请求，正在进一步的处理中
+200-请求成功 Success The response that is returned is dependent on the request
+201-This is the status code that confirms that the request was successful and, as a result, **a 		new resource was created**. (POST)
+204-This status code confirms that the server has fulfilled the request but does not need to 			return information.
+300- 重定向，需要进一步的操作以完成请求 Redirection
+301- Moved Permanently，客户请求的文档在其他地方，新的URL在Location头中给出，浏览器应该自动地访问新的URL。
+304-  A 304 Not Modified response code indicates that the requested resource has not been 					modified since the previous transmission. This typically means there is no need to 						retransmit the requested resource to the client, and a cached version can be used, 						instead.
+400- client side errors
+401- This status code request occurs when **authentication is required** but has failed or not 			been provided.
+404- NOT Found，意味着请求中所引用的文档不存在。
+403- need accout/necessay permission, different from 401, no authentication apply.
+409-  a request **conflicts with the current state of the resource**. This is usually an issue 			with simultaneous updates, or versions, that conflict with one another.
+410- Resource requested is no longer available and will not be available again.
+500- server side error
+503- Service Unavailable 服务器由于维护或者负载过重未能应答。
+```
+
 
 
 ## 4. post create, put patch update, get, head(no response body), delete.. 
 
+GET: to retreive data
+POST: to create new data, not idempotent
+PUT: to update existing data, can also use to create
+DELETE: to delete date
+
+PATCH: used to make changes to **part of** the resource at a location 与put区别：only part of, not whole resource
+
+HEAD: 与get方法类似，但不返回message body内容，仅仅是获得获取资源的部分信息（content-type、content-length）；
+
+**Idempotency**. Idempotence is an important concept in the HTTP specification that states idempotent HTTP requests will result in the same state on the server no matter how many times that same request is executed. GET , HEAD , PUT , and DELETE all have this attribute, but **POST does not**.
+
+
+
 ## 5. security 
 
-authentication  
+### authentication  & authorization
 
-authorization (jwt header.payload.signature) 
+authentication is the process of verifying who a user is, while **authorization is the process of verifying what they have access to**. 
 
-https = http + ssl / tls  
+###  jwt (header.payload.signature) 
 
-private(server) + public key(everyone) -> symmetric key 
+JSON Web Token (JWT) is an open standard ([RFC 7519](https://tools.ietf.org/html/rfc7519)) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. 
 
-csrf 
+**Structure:**
 
-sql injection 
+ **header.** The header *typically* consists of two parts: the type of the token, which is JWT, and the signing algorithm being used, such as HMAC SHA256 or RSA
 
-password -> char[] 
+**payload.**The second part of the token is the payload, which contains the claims. Claims are statements about an entity (typically, the user) and additional data. There are three types of claims: *registered*, *public*, and *private* claims.
+
+**signature** To create the signature part you have to take the encoded header, the encoded payload, a secret, the algorithm specified in the header, and sign that.
+
+### https = http + ssl / tls  
+
+In HTTPS, the [communication protocol] is encrypted using [Transport Layer Security] (TLS) or, formerly, Secure Sockets Layer (SSL). The protocol is therefore also referred to as **HTTP over TLS**, or **HTTP over SSL**.
+The principal motivations for HTTPS are [authentication]of the accessed [website], and protection of the [privacy] and [integrity] of the exchanged data while in transit.
+
+### private(server) + public key(everyone) -> symmetric key 
+
+### csrf 
+
+**Cross-Site Request Forgery** (CSRF) is an attack that forces an end user to execute unwanted actions on a web application in which they're currently authenticated. 会话劫持.
+
+Cross-site request forgery attacks (CSRF or XSRF for short) are **used to send malicious requests from an authenticated user to a web application**. The attacker can't see the responses to the forged requests, so CSRF attacks focus on state changes, not theft of data
+
+solve: For stateful software use the synchronizer token pattern.For stateless software use double submit cookies
+
+### sql injection 
+
+*SQL injection* is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database.
+
+solve: parameter sql qurey.
+
+### password -> char[] 
+
+String 不能改 容易被catch到
+
+**Strings are immutable**. That means once you've created the `String`, if another process can dump memory, there's no way (aside from [reflection](https://en.wikipedia.org/wiki/Reflection_(computer_programming))) you can get rid of the data before [garbage collection](https://en.wikipedia.org/wiki/Garbage_collection_(computer_science)) kicks in.
+
+With an array, you can explicitly wipe the data after you're done with it. You can overwrite the array with anything you like, and the password won't be present anywhere in the system, even before garbage collection.
 
 ## 6. encoding ->base64 -> ascii 1 - 255 ,1 - 127 7bits  
 
@@ -175,4 +253,33 @@ password -> char[]
 
 @ExceptionHandler 
 
+```
+**@RestController** = @Controller + @ResponseBody  is singleton
+
+When you annotate a controller class with @RestController it does two purposes, first, it says that the controller class is handling a request for REST APIs and second you don't need to annotate each method with the @ResposneBody annotation to signal that the response will be converted into a Resource using various HttpMessageConverers.
+
+**@Controller** 
+
+This annotation is used to make a class as a web controller, which can handle client requests and send a response back to the client.
+
+**@GetMapping("/user/{id}")** = @RequestMapping(value="/user/{id}", method = RequestMethod.GET)
+
+**@RequestMapping("/api")**
+
+It's a method level annotation that is specified over a handler method.
+
+**@PathVariable**  **写在method argument里
+
+is used to retrieve data from the URL,his annotation enables the controller to handle a request for parameterized URLs like URLs that have variable input as part of their path
+
+@ExceptionHandler
+works at the @Controller level. The @ExceptionHandler annotated method is only active for that particular Controller, not globally for the entire application. Of course, adding this to every controller makes it not well suited for a general exception handling mechanism.
+```
+
+### 延伸：how to handle an exception in Spring Application?
+
+
+
 ## 8. documentation -> swagger
+
+Swagger is a set of open-source tools built around the OpenAPI Specification that can **help you design, build, document and consume REST APIs**. The major Swagger tools include: Swagger Editor – browser-based editor where you can write OpenAPI specs. Swagger UI – renders OpenAPI specs as interactive API documentation.
