@@ -2,13 +2,15 @@
 
 ## 1. advantages of orm  centralized query language connection pool object mapping lazy loading / eager loading relation 1 - m , m - m, m - 1, 1 - 1 cache  criteria query -> dynamic query 
 
+Object-Relational Mapping (ORM) is a technique that lets you query and manipulate data from a database using an object-oriented paradigm.范例 of your preferred programming language.
+
 ### advantages of orm
 
 ORM is the approach of taking object-oriented data and mapping to a relational data store
 
 Advantages: speeds-up development. reduce the development cost and time. overcome the specific SQL deafferents.
 
-Disadvantages: developer may lost understand of what code is doing. has tendency to be slow.
+Disadvantages: developer may lost understand of what code is doing. has tendency趋势 to be slow.
 
 ### ?centralized query language
 
@@ -40,7 +42,7 @@ one to many 实现： FrogienKey JoinTable
 
 many to many 实现： 需要中间表 JoinTable
 
-### cache
+### cache(first level and second level)
 
 First: open by default, session level, locally, if session closed, cache is gone
 Second: close by default,** session factory level, globally, if seesion factory shut down, cache is gone
@@ -82,7 +84,7 @@ The SimpleJpaRepository is **the default implementation of Spring Data JPA repos
 
 ## ?5. lazy initialization exception 
 
-Hibernate throws the *LazyInitializationException* when it needs to initialize a lazily fetched association to another entity without an active session context. That’s usually the case if you try to use an uninitialized association in your client application or web layer. 在读取数据的时候，Session已经关闭
+Hibernate throws the *LazyInitializationException* when it needs to initialize a lazily fetched association to another entity without an **active session context**. That’s usually the case if you try to use an uninitialized association in your client application or web layer. 在读取数据的时候，Session已经关闭,not saved into cache/memory?
 
 ## 6. @transactional 
 
@@ -117,9 +119,7 @@ Spring事务管理器回滚一个事务的推荐方法是在当前事务的上�
 
 ## 7.  Entity
 
-Entities in JPA are nothing but **POJOs representing data that can be persisted to the database**. An entity represents a table stored in a database. Every instance of an entity represents a row in the table.
-
-
+Entities in JPA are nothing but **POJOs representing data that can be persisted to the database**. An entity represents a table stored in a database. Every instance of an entity represents a row in the table.一个entity一张表
 
 
 
@@ -153,7 +153,7 @@ With sticky sessions, **a load balancer assigns an identifying attribute to a us
 
 ## 3. status code   
 
-200 OK, 201 Created, 204 OK with no content  400 bad request, 401 unauthenticated , 403 unauthroized, 404 not found  500 internal error 
+200 OK, 201 Created, 204 OK with no content  400 bad request, **401 unauthenticated , 403 unauthroized**, 404 not found  500 internal error 
 
 ```
 100-informational response 收到Web浏览器请求，正在进一步的处理中
@@ -166,7 +166,7 @@ With sticky sessions, **a load balancer assigns an identifying attribute to a us
 400- client side errors
 401- This status code request occurs when **authentication is required** but has failed or not 			been provided.
 404- NOT Found，意味着请求中所引用的文档不存在。
-403- need accout/necessay permission, different from 401, no authentication apply.
+403- need accout/necessay permission, need authorization.
 409-  a request **conflicts with the current state of the resource**. This is usually an issue 			with simultaneous updates, or versions, that conflict with one another.
 410- Resource requested is no longer available and will not be available again.
 500- server side error
@@ -495,3 +495,24 @@ The apparent purpose of **@EnableAutoConfiguration** is to enable automatic conf
 
  @SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan .
 
+# Microservice
+
+## 1.advantages 
+
+### more request
+
+### scale
+
+### deploy -> geo location
+
+###  rpc / soap / rest api / message
+
+###  one service to one team
+
+###  easy to release new version
+
+## 2. disadvantages
+
+### complex
+
+### centralized configuration
