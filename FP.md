@@ -284,8 +284,6 @@ works at the @Controller level. The @ExceptionHandler annotated method is only a
 
 Swagger is a set of open-source tools built around the OpenAPI Specification that can **help you design, build, document and consume REST APIs**. The major Swagger tools include: Swagger Editor – browser-based editor where you can write OpenAPI specs. Swagger UI – renders OpenAPI specs as interactive API documentation.
 
-
-
 # Spring 
 
 ## 1. IOC + AOP  
@@ -295,6 +293,10 @@ IOC: Inversion of control is a design principle which helps to invert the contro
 AOP: Aspect-Oriented Programming entails包含 breaking down program logic into distinct parts called concerns. The functions that span multiple points of an application are called **cross-cutting concerns** and these cross-cutting concerns are conceptually separate from the application's business logic. 
 
 Dependency Injection helps you **decouple your application objects** from each other and AOP helps you **decouple cross-cutting concerns** from the objects that they affect.
+
+A called B, we inject some code between A and B. In order to use AOP, all the objects should in the bean container. If create a object outside container, AOP will not kick in.
+
+spring用**代理类**包裹切面，把他们织入到Spring管理的bean中。也就是说代理类伪装成目标类，它会截取对目标类中方法的调用，让调用者对目标类的调用都先变成调用伪装类，伪装类中就先执行了切面（aspect injection?），再把调用转发给真正的目标bean。
 
 ## 2. dependency injection, application context 
 
