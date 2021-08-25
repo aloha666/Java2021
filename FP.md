@@ -389,6 +389,10 @@ When we put @Lazy annotation over the @Configuration class, it indicates that al
 
 The difference between byType and byName autowiring is as follows : **Autowire byType will search for a bean in configuration file**, whose id match with the property type to be wired whereas **autowire byName will search for a bean whose id is matching with the property name to be wired**.
 
+If annotated with `@Autowired` it will inject the bean with the matching type (An exception will be thrown if there are more than one of a type). To specify a name use the `@Qualifier` annotation.
+
+
+
 ## 5. Annotations
 
 ### @Component + @Service + @Repository + @Controller + @Bean  
@@ -496,6 +500,8 @@ Spring Boot auto-configuration **attempts to automatically configure your Spring
 The apparent purpose of **@EnableAutoConfiguration** is to enable automatic configuration features of the Spring Boot application, which automatically configures things if certain classes are present in classpath
 
  @SpringBootApplication = @Configuration + @EnableAutoConfiguration + @ComponentScan .
+
+加深理解？
 
 # Microservice
 
