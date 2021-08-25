@@ -103,63 +103,159 @@ use: AOP
 
 # Jakarta EE(JavaEE)
 
-Jakarta EE Specifications
-Servlet
-JPA
-JMS
-JAX-B (for xml)
-JAX-RS (for rest api)
+### Jakarta EE Specifications
+
+The Java EE Platform specification is **the umbrella specification that defines the** Java EE platform.
+
+### Servlet
+
+Simply put, a Servlet  runs on the Java-enabled web server or application server, is **a class that handles requests, processes them and reply back with a response**.
+
+### JPA
+
+The Java Persistence API (JPA) is one possible approach to ORM. Via JPA the developer can **map, store, update and retrieve data from relational databases to Java objects and vice versa**
+
+### JMS
+
+The Java Message Service (JMS) API is a **messaging standard that allows application components based on the Java Platform Enterprise Edition (Java EE) to create, send, receive, and read messages**.
+
+The Java Message Service (JMS) makes it easy to develop enterprise applications that **asynchronously send and receive business data and events**.
+
+### JAX-B (for xml)
+
+JAXB **allows Java developers to access and process XML data without having** to know XML or XML processing
+
+provides two main features: the ability to marshal Java objects into XML and the inverse, i.e. to unmarshal XML back into Java objects. 
+
+### JAX-RS (for rest api)
+
+Jakarta RESTful Web Services,  is a Jakarta EE API specification that provides support in creating web services according to the Representational State Transfer architectural pattern. **JAX-RS** uses the Restful architectural structure to communicate between a client and a server. 
+
+The Jakarta XML Web Services is a Jakarta EE API for creating web services, particularly SOAP services. JAX-WS uses SOAP as its main method of communication. SOAP ( **Simple Object Access Protocol**) is a message protocol that allows distributed elements of an application to communicate.
 
 # HTTP(Hypertext Transfer Protocol)
 
-Request-Response model
-Request
-	Method
-	Header
-	Body
-Response
-	Status Code
-	Header
-	Body
+### Request-Response model
 
-Cookie
-HTTPS
-URL components(https://www.xyz.com/path/user/123?name=jackie&tel=321)
-For Rest API, the payload(body) could be JSON/XML
+The typical model for computers communicating on a network is request-response. In the request-response model, a client computer or software requests data or services, and **a server computer or software responds to the request by providing the data or service**.
+
+HTTP stands for Hypertext Transfer Protocol, as a request-response protocol, HTTP gives users a way to interact with web resources such as HTML files by transmitting hypertext messages between clients and servers.
+
+HTTP is a [stateless protocol]. A stateless protocol does not require the [HTTP server] to retain information or status about each user for the duration of multiple requests. However, some [web applications] implement states or [server side sessions] using for instance [HTTP cookies] or hidden [variables] within [web forms].
+
+### Request
+
+​	Method
+​	Header
+​	Body
+
+### Response
+
+​	Status Code
+​	Header
+​	Body
+
+### Cookie (stateless?)
+
+Cookies are created to identify you when you visit a new website.
+HTTP cookies (also called web cookies, Internet cookies, browser cookies, or simply cookies) are small blocks of data created by a web server while a user is browsing a website and placed on the user's computer or other device by the user’s web browser.
+
+### HTTPS
+
+In HTTPS, the [communication protocol] is encrypted using [Transport Layer Security] (TLS) or, formerly, Secure Sockets Layer (SSL). The protocol is therefore also referred to as **HTTP over TLS**, or **HTTP over SSL**.
+The principal motivations for HTTPS are [authentication]of the accessed [website], and protection of the [privacy] and [integrity] of the exchanged data while in transit. 
+
+### URL components(https://www.xyz.com/path/user/123?name=jackie&tel=321)
+
+**A scheme**. The scheme identifies the protocol to be used to access the resource on the Internet. It can be HTTP (without SSL) or HTTPS (with SSL).
+**A host**. The host name identifies the host that holds the resource. For example, www.example.com. A server provides services in the name of the host, but hosts and servers do not have a one-to-one mapping. Refer to Host names.
+Host names can also be followed by a port number. Refer to Port numbers. Well-known port numbers for a service are normally omitted from the URL. Most servers use the well-known port numbers for HTTP and HTTPS , so most HTTP URLs omit the port number.
+
+**A path**. The path identifies the specific resource in the host that the web client wants to access. For example, /software/htp/cics/index.html.
+**A query string**. If a query string is used, it follows the path component, and provides a string of information that the resource can use for some purpose (for example, as parameters for a search or as data to be processed). The query string is usually a string of name and value pairs; for example, term=bluebird. Name and value pairs are separated from each other by an ampersand (&); for example, term=bluebird&source=browser-search.
+
+
+
+### ?For Rest API, the payload(body) could be JSON/XML
 
 # Architecture Design
 
-Three-Layers Architecture(what and why)
-	Demand on Inversion Of Control(IOC) and DI
-	Loose Coupling
-Service Oriented Architecture( SOA ) - ESB (Enterprise Service Bus)
-Microservices
-	Basic components
-Frontend-backend separation
+### Three-Layers Architecture(what and why)
+
+Web layer/presentation layer - Service layer/logic layer - Data Access Object (DAO) layer
+
+Between layers, using interface instead of concrete class. 
+
+1. It gives you the ability to update the technology stack of one tier, without impacting other areas of the application.
+2. It allows for different development teams to each work on their own areas of expertise. Today’s developers are more likely to have deep competency in one area, like coding the front end of an application, instead of working on the full stack.
+3. You are able to scale the application up and out. A separate back-end tier, for example, allows you to deploy to a variety of databases instead of being locked into one particular technology. It also allows you to scale up by adding multiple web servers.
+4. It adds reliability and more independence of the underlying servers or services.
+5. It provides an ease of maintenance of the code base, managing presentation code and business logic separately, so that a change to business logic, for example, does not impact the presentation layer.
+
+### Demand on Inversion Of Control(IOC) and DI
+
+​	Loose Coupling
+
+### Service Oriented Architecture( SOA ) - ESB (Enterprise Service Bus)
+
+The Enterprise Service Bus (ESB) is **a software architecture which connects all the services together over a bus like infrastructure**. It acts as communication center in the SOA by allowing linking multiple systems, applications and data and connects multiple systems with no disruption.
+
+disadvantage: not scalable, infrastructure is designed.
+
+### ?Frontend-backend separation
+
+The division of frontend and backend will create a communication gap, leaving both the teams uninformed or unclear information regarding the changes on the respective ends. Keeping the frontend and backend together will lessen the chances of such miscommunications, facilitating smooth application development.
+
+If your front-end is separate from the back-end, **it becomes easier to work on one module keeping the other one untouched**. Modularity also makes it easier for two teams or two people to work on front-end and back-end simultaneously without worrying about overwriting or messing up other person's work. **Scalability** is better.
 
 # Microservices
 
-Service Discovery
-Load Balancing
-Communication
-	REST api
-	RPC
-	Messaging System
-Logging
-Monitoring
-Fault Tolerance
+Microservice architecture – a variant of the service-oriented architecture structural style – arranges an application as a collection of loosely-coupled services. In a microservices architecture, services are fine-grained and the protocols are lightweight
+
+### Service Discovery
+
+Eureka
+
+### Load Balancing
+
+Ribbon
+
+### Communication
+
+https://medium.com/the-sixt-india-blog/microservice-communication-53cbc93cf4de
+
+​	REST api
+​	RPC
+​	Messaging System
+
+### ?Logging
+
+In Java, logging is an important feature that **helps developers to trace out the errors**. In Spring, the log level configurations can be set in the application. properties file which is processed during runtime. Spring supports 5 default log levels, **ERROR , WARN , INFO , DEBUG , and TRACE** , with INFO being the default log level configuration.
+
+### ?Monitoring
+
+Spring Boot Actuator
+
+### Fault Tolerance
+
+Fault tolerance is the property that enables a system to continue operating properly in the event of the failure of some of its components. **Hystrix Fault Tolerance and Circuit Breaker can be used.**
 
 # RESTful WebServices
 
-Design
-	Method (GET, POST, PUT, DELETE, PATCH)
-	URI
-	HEADER(Authorization, content-type)
-	Payload(JSON/XML)
-Implementation
-	Spring Web MVC (@RestController)
-Documentation (Swagger)
-Test (POSTman, RestAssured)
+### Design
+
+​	Method (GET, POST, PUT, DELETE, PATCH)
+​	URI
+​	HEADER(Authorization, content-type)
+​	Payload(JSON/XML)
+
+### Implementation
+
+​	Spring Web MVC (@RestController)
+
+### Documentation (Swagger)
+
+### Test (POSTman, RestAssured)
 
 # Consume RESTful
 
