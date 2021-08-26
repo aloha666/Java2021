@@ -306,11 +306,29 @@ Rest Template is used **to create applications that consume RESTful Web Services
 
 FeignClient is **a library for creating REST API clients in a declarative way**. progamm	based on interface.
 
-Feign allows you to abstract the mechanics of calling a REST service. Once you configure and annotate the Feign interface, you can call a REST service by making a simple Java function call. The actual implementation of making a REST call is handled at runtime by Feign. This means that the implementation can be configured without changing your business logic code.
+Feign allows programmer to abstract the mechanics of calling a REST service. Once you configure and annotate the Feign interface, you can call a REST service by making a simple Java function call. The actual implementation of making a REST call is handled at runtime by Feign. This means that the implementation can be configured without changing your business logic code.
+
+advantage: not hard coding url, So there is **no need to write any unit test** as there is no code to test in the first place
+
+disadvantage:more effore when create
 
 ### JpaRepository<ReportRequestEntity, String>
 
 #   Family
+
+Spring Framework
+
+```
+Spring Framework is a Java platform that provides comprehensive infrastructure support for developing Java applications.
+
+On one hand, Spring comes with some of the existing technologies like ORM framework, logging framework, J2EE and JDK Timers etc, Hence we don’t need to integrate explicitly those technologies. Spring WEB framework has a well-designed web MVC framework, which provides a great alternate to lagacy web framework. This simplify the programer's work for setting up.
+
+On the other had, Spring has the implematation of DI and AOP, which simplify the programer's work to develop, create a convient enviroment for programming.
+
+
+```
+
+
 
 Spring IOC/DI
 	Basic usage/annotations
@@ -324,13 +342,36 @@ Spring IOC/DI
 @Valid：用在方法入参上无法单独提供嵌套验证功能。能够用在成员属性（字段）上，提示验证框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。
 ```
 
-
-
 Spring AOP
+
+```
+Aspect-Oriented Programming entails包含 breaking down program logic into distinct parts called concerns. The functions that span multiple points of an application are called **cross-cutting concerns** and these cross-cutting concerns are conceptually separate from the application's business logic. 
+
+Dependency Injection helps you **decouple your application objects** from each other and AOP helps you **decouple cross-cutting concerns** from the objects that they affect.
+```
+
+
+
 Spring MVC (rest api)
 SpringBoot
+
+```
+Advantages:
+Opinionated ‘starter' dependencies to simplify the build and application configuration
+Embedded server to avoid complexity in application deployment
+Metrics, Health check, and externalized configuration
+Automatic config for Spring functionality – whenever possible
+```
+
 Spring Security
 Spring Data
+
+```
+Spring Data is a high level SpringSource project whose purpose is to unify and ease the access to different kinds of persistence stores, both relational database systems and NoSQL data stores.
+```
+
+
+
 Spring Cloud (for microservices)
 
 # Amazon WebServices (AWS)

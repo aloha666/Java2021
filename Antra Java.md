@@ -5029,7 +5029,7 @@ Usage for Singleton
 //D: check if instance is exist or not, if not then sychornaze the class. Also use volatile for the instance () to make the implement of the creating new instance in order.
 
 public class SingletonD {
-	private static volatile SingletonD instance= null; //voltile keyword can make sure the instace is created before it is referenced & return
+	private static volatile SingletonD instance = null; //voltile keyword can make sure the instace is created before it is referenced & return
 	private SingletonD(){}
 
     public static SingletonD getInstance(){
