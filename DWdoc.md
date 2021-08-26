@@ -127,7 +127,9 @@ JAXB **allows Java developers to access and process XML data without having** to
 
 provides two main features: the ability to marshal Java objects into XML and the inverse, i.e. to unmarshal XML back into Java objects. 
 
-### JAX-RS (for rest api)
+### JAX-RS (for rest api) 
+
+和spring web MVC 同级
 
 Jakarta RESTful Web Services,  is a Jakarta EE API specification that provides support in creating web services according to the Representational State Transfer architectural pattern. **JAX-RS** uses the Restful architectural structure to communicate between a client and a server. 
 
@@ -232,6 +234,13 @@ https://medium.com/the-sixt-india-blog/microservice-communication-53cbc93cf4de
 
 In Java, logging is an important feature that **helps developers to trace out the errors**. In Spring, the log level configurations can be set in the application. properties file which is processed during runtime. Spring supports 5 default log levels, **ERROR , WARN , INFO , DEBUG , and TRACE** , with INFO being the default log level configuration.
 
+```
+print:sync, only in console, 
+logger:aync, print to define files, have differen levels
+```
+
+
+
 ### ?Monitoring
 
 Spring Boot Actuator
@@ -242,12 +251,36 @@ Fault tolerance is the property that enables a system to continue operating prop
 
 # RESTful WebServices
 
+Restful Web Services is **a lightweight, maintainable, and scalable service that is built on the REST architecture**. 
+
+URL定位资源，用HTTP动词（GET,POST,DELETE,DETC）描述操作。
+
 ### Design
 
-​	Method (GET, POST, PUT, DELETE, PATCH)
+​	**Method (GET, POST, PUT, DELETE, PATCH)**
+
 ​	URI
-​	HEADER(Authorization, content-type)
-​	Payload(JSON/XML)
+
+​			A **URI is an **identifier** of a specific resource. Like a page, or book, or a document.
+
+​			A **URL** is special type of identifier that also tells you how to access it, such as `HTTPs`, `FTP`, etc.—like **https://**			www.google.com.
+
+```
+要让一个资源可以被识别，需要有个唯一标识，在Web中这个唯一标识就是URI(Uniform Resource Identifier)。
+
+URI既可以看成是资源的地址，也可以看成是资源的名称。如果某些信息没有使用URI来表示，那它就不能算是一个资源， 只能算是资源的一些信息而已。
+
+使用?用来过滤资源
+很多人只是把?简单的当做是参数的传递，很容易造成URI过于复杂、难以理解。可以把?用于对资源的过滤， 例如/git/git/pulls用来表示git项目的所有推入请求，而/pulls?state=closed用来表示git项目中已经关闭的推入请求， 这种URL通常对应的是一些特定条件的查询结果或算法运算结果。
+```
+
+
+
+​	**HEADER(Authorization, content-type)**
+
+​		ResultSet object is associated with a header (called meta data), which contains information about the resultset 		object, such as authorization, content type.
+
+​	**Payload(JSON/XML)**
 
 ### Implementation
 
@@ -255,17 +288,44 @@ Fault tolerance is the property that enables a system to continue operating prop
 
 ### Documentation (Swagger)
 
+Swagger is the most widely used tooling ecosystem for developing APIs with the OpenAPI Specification (OAS)
+
+The format is both machine-readable and human-readable. As a result, it can be used **to share documentation among product managers, testers and developers**, but can also be used by various tools to automate API-related processes.
+
+API documentation is **a technical content deliverable, containing instructions about how to effectively use and integrate with an API**. ... API description formats like the OpenAPI/Swagger Specification have automated the documentation process, making it easier for teams to generate and maintain them.
+
 ### Test (POSTman, RestAssured)
 
 # Consume RESTful
 
-RestTemplate class
-OpenFeign Client
+### !!!RestTemplate class
 
-# Spring Family
+Rest Template is used **to create applications that consume RESTful Web Services**.
+
+### OpenFeign Client
+
+FeignClient is **a library for creating REST API clients in a declarative way**. progamm	based on interface.
+
+Feign allows you to abstract the mechanics of calling a REST service. Once you configure and annotate the Feign interface, you can call a REST service by making a simple Java function call. The actual implementation of making a REST call is handled at runtime by Feign. This means that the implementation can be configured without changing your business logic code.
+
+### JpaRepository<ReportRequestEntity, String>
+
+#   Family
 
 Spring IOC/DI
 	Basic usage/annotations
+
+```java
+//@valid : method level, or member atteubute
+//@validated: group level
+
+@Validated：用在方法入参上无法单独提供嵌套验证功能。不能用在成员属性（字段）上，也无法提示框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。**不能用在类的属性上**
+
+@Valid：用在方法入参上无法单独提供嵌套验证功能。能够用在成员属性（字段）上，提示验证框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。
+```
+
+
+
 Spring AOP
 Spring MVC (rest api)
 SpringBoot
@@ -370,3 +430,12 @@ How do you do code review? or what kind of code is good code?
 What are the aspects to consider to start a new project if you are the technical lead?
 Do you have a complete picture of SDLC?
 What is the typical day of a software engineer?
+
+# Project Questions
+
+1. what is constrcutor injection? what benefits? what problem?
+2. what is a thread pool? 
+3. what is the conpletebFuture? what benefit? what usage?
+4. what is eureka? what is ribbon?@loadbalance?irule()?
+5. what is config service?
+6. why use this name? 命名原则？
