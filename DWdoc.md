@@ -591,21 +591,67 @@ What is the typical day of a software engineer?
 
 
 1. what is a rest controller?
+
+   ```
+   RestController = @Controller + @ResponseBody
+   
+   ```
+
+   
+
 2. how to get pathvariable? what is a @requestparam?
+
 3. what is the ResponseEntity?
+
 4. what is a logger, why we use a logger?
+
 5. what is constrcutor injection? what benefits? what problem?
+
 6. what is a thread pool? 
+
 7. what is the conpletebFuture? what benefit? what usage?
+
+   ```java
+   //future: to get the result of the async result, use future.get(); 虽然Future以及相关使用方法提供了异步执行任务的能力，但是对于结果的获取却是很不方便，只能通过阻塞或者轮询的方式得到任务的结果。
+   //future.get() will block the main thread until the result is return, to solve this, we ues completablefuture
+   //completablefuture will not block the thread, it will provide a return method or catch exception.
+   
+   //run a new thread; exectuor:
+   public static CompletableFuture<Void> 	runAsync(Runnable runnable, Executor executor)
+   //当CompletableFuture的计算结果完成，或者抛出异常的时候，我们可以执行特定的Action。
+   //run after complete: 方法不以Async结尾，意味着Action使用相同的线程执行
+   public CompletableFuture<T> whenComplete(BiConsumer<? super T,? super Throwable> action)
+   //catch exception:
+   exceptionally(Function<Throwable,? extends T> fn)
+   
+       
+   //vairable used in lambda should be final?
+   ```
+
+   
+
 8. what does @transactional do?
+
 9. what is a report VO?
+
 10. what is an inputstream?
+
 11. what is an application poerperties?
+
 12. what is eureka.instance.prefer-ip-address mean?
+
 13. what is eureka.server.wait-time-in-ms-when-sync-empty mean?
+
 14. what is eureka? what is ribbon?@loadbalance?irule()?
+
 15. what is config service? what advantage?
+
 16. what is bootstrap.yml?
+
 17. what is zuul service? what benefit?
+
 18. why use this name? 命名原则？
+
 19. %s : insert a string here
+
+20. Hystrix? 服务中断 服务降级
