@@ -6025,17 +6025,15 @@ This annotation is used to make a class as a web controller, which can handle cl
 
 It's a method level annotation that is specified over a handler method.
 
-**@PathVariable**  **写在method argument里
+**@PathVariable**  **写在method argument里 **   **used in the URI for the incoming request. Let’s look at the below request URL:**
 
 is used to retrieve data from the URL,his annotation enables the controller to handle a request for parameterized URLs like URLs that have variable input as part of their path
 
 ```java
 http://localhost:8080/books/900083838
 
-@RequestMapping(value="/books/{ISBN}",
-                        method= RequestMethod.GET)
-public String showBookDetails(@PathVariable("ISBN") String id,
-Model model){
+@RequestMapping(value="/books/{ISBN}", method= RequestMethod.GET)
+public String showBookDetails(@PathVariable("ISBN") String id, Model model){
    model.addAttribute("ISBN", id);
    return "bookDetails";
 }
@@ -6043,7 +6041,7 @@ Model model){
 
 
 
-**@RequestParam **写在method argument里
+**@RequestParam **写在method argument里 **annotation used for accessing the query parameter values from the request**
 
 is used to bind HTTP parameters into method arguments of handler methods.
 
@@ -6054,6 +6052,17 @@ http://localhost:8080/books?ISBN=900083838
 public String showBookDetails( @RequestParam("ISBN") String ISBN, Model model){ 		
   											model.addAttribute("ISBN", ISBN); return "bookDetails"; 
 											}
+```
+
+```java
+// http://localhost:8080/springmvc/hello/101?param1=10&param2=20
+
+@RequestMapping("/hello/{id}")
+public String getDetails(
+    @RequestParam(value="param1", required=true) String param1,
+        @RequestParam(value="param2", required=false) String param2){
+...
+}
 ```
 
 
@@ -6069,8 +6078,6 @@ public @ResponseBody Course saveCourse(@RequestBody Course aCourse){
 						}
 
 ```
-
-
 
 **@ResponseBody**
 

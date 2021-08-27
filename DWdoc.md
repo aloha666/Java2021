@@ -588,9 +588,24 @@ What is the typical day of a software engineer?
 
 # Project Questions
 
-1. what is constrcutor injection? what benefits? what problem?
-2. what is a thread pool? 
-3. what is the conpletebFuture? what benefit? what usage?
-4. what is eureka? what is ribbon?@loadbalance?irule()?
-5. what is config service?
-6. why use this name? 命名原则？
+
+
+1. what is a rest controller?
+2. how to get pathvariable? what is a @requestparam?
+3. what is the ResponseEntity?
+4. what is a logger, why we use a logger?
+5. what is constrcutor injection? what benefits? what problem?
+6. what is a thread pool? 
+7. what is the conpletebFuture? what benefit? what usage?
+8. what does @transactional do?
+9. what is a report VO?
+10. what is an inputstream?
+11. what is an application poerperties?
+12. what is eureka.instance.prefer-ip-address mean?
+13. what is eureka.server.wait-time-in-ms-when-sync-empty mean?
+14. what is eureka? what is ribbon?@loadbalance?irule()?
+15. what is config service? what advantage?
+16. what is bootstrap.yml?
+17. what is zuul service? what benefit?
+18. why use this name? 命名原则？
+19. %s : insert a string here
