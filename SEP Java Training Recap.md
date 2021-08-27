@@ -41,10 +41,34 @@
 1. HTTP
     - Request (Method) GET PUT POST DELET (idempotent)
     - Reponse (status code)
+    
 1. Servlet
+
+    ```
+    A servlet is simply a class which responds to a particular type of network request - most commonly an HTTP request.Basically servlets are usually used to implement web applications .
+    ```
+
     - Filter(pre-post process)
+
+      ```
+      A Servlet filter is an object that can intercept HTTP requests targeted at your web application. 
+      A filter is an object that is invoked at the preprocessing and postprocessing of a request. It is mainly used to perform filtering tasks such as conversion, logging, compression, encryption and decryption, input validation etc
+      ```
+
     - doGet/doPost
+
+      ```
+      You should use doGet() when you want to intercept on HTTP GET requests. You should use doPost() when you want to intercept on HTTP POST requests.
+      ```
+
     - DispachterServlet
+
+      ```
+      The job of the DispatcherServlet is to take an incoming URI and find the right combination of handlers (generally methods on Controller classes) and views (generally JSPs) that combine to form the page or resource that's supposed to be found at that location.
+      
+      DispatcherServlet is essentially a Servlet (it extends HttpServlet ) whose primary purpose is to handle incoming web requests matching the configured URL pattern.
+      ```
+
 1. Three-Tiers Architecture
     - Web / service-business / dao -repository
     - Interface loose couple
