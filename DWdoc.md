@@ -316,7 +316,7 @@ disadvantage:more effore when create
 
 #   Family
 
-Spring Framework
+### Spring Framework
 
 ```
 Spring Framework is a Java platform that provides comprehensive infrastructure support for developing Java applications.
@@ -330,8 +330,9 @@ On the other had, Spring has the implematation of DI and AOP, which simplify the
 
 
 
-Spring IOC/DI
-	Basic usage/annotations
+### Spring IOC/DI
+
+​	Basic usage/annotations
 
 ```java
 //@valid : method level, or member atteubute
@@ -342,7 +343,7 @@ Spring IOC/DI
 @Valid：用在方法入参上无法单独提供嵌套验证功能。能够用在成员属性（字段）上，提示验证框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。
 ```
 
-Spring AOP
+### Spring AOP
 
 ```
 Aspect-Oriented Programming entails包含 breaking down program logic into distinct parts called concerns. The functions that span multiple points of an application are called **cross-cutting concerns** and these cross-cutting concerns are conceptually separate from the application's business logic. 
@@ -352,8 +353,9 @@ Dependency Injection helps you **decouple your application objects** from each o
 
 
 
-Spring MVC (rest api)
-SpringBoot
+### Spring MVC (rest api)
+
+### SpringBoot
 
 ```
 Advantages:
@@ -363,16 +365,38 @@ Metrics, Health check, and externalized configuration
 Automatic config for Spring functionality – whenever possible
 ```
 
-Spring Security
-Spring Data
+### Spring Security
+
+### Spring Data
 
 ```
 Spring Data is a high level SpringSource project whose purpose is to unify and ease the access to different kinds of persistence stores, both relational database systems and NoSQL data stores.
+
+JpaRepo:
+MonoRepo:
+```
+
+### Spring Cloud (for microservices)
+
+```java
+Spring Cloud is defined as an open-source library that provides tools for quickly deploying the JVM based application on the clouds
+```
+
+SpringBoot vs Spring
+
+```
+SpringBoot:
+Opinionated ‘starter' dependencies to simplify the build and application configuration
+Embedded server to avoid complexity in application deployment
+Metrics, Health check, and externalized configuration
+Automatic config for Spring functionality – whenever possible
+
+All of the Spring configuration above is automatically included by adding the Boot web starter through a process called auto-configuration.What this means is that Spring Boot will look at the dependencies, properties, and beans that exist in the application and enable configuration based on these.
+
+In a few words, we can say that Spring Boot is simply an extension of Spring itself to make development, testing, and deployment more convenient.
 ```
 
 
-
-Spring Cloud (for microservices)
 
 # Amazon WebServices (AWS)
 
@@ -394,36 +418,95 @@ ECS/ECR
 
 # Build
 
-SpringBoot
-	executable Jar
-Maven / Gradle
-	structure
-	life cycle(compile, test,package, install..)
-	dependency management
-	plugins
+### SpringBoot
+
+​	**executable Jar**
+
+​	The spring-boot-loader modules lets Spring Boot support executable jar and war files. If you use the Maven plugin or 	the Gradle plugin, executable jars are automatically generated, and you generally do not need to know the details of 	how they work.
+
+​	
+
+### Maven / Gradle
+
+​	**structure**
+
+​	Apache Maven is a **software project management and comprehension tool**.
+
+​	src - main - java/res; src-main-test; pom file
+
+​	POM stands for "Project Object Model". It is an XML representation of a Maven project held in a file named pom.xml. 	The POM contains all necessary information about a project, as well as configurations of plugins to be used during 	the build process.
+
+​	**life cycle(compile, test,package, install..)**
+
+​	validate - compile -test - package - verify (Integration test) - install - deploy
+
+​	**dependency management**
+
+​	**plugins**
+
+​	The Spring Boot Maven Plugin provides Spring Boot support in Apache Maven. It allows you to package executable 	jar or war archives, run Spring Boot applications, generate build information and start your Spring Boot application 	prior to running integration tests.
+
+​	**plugin is a Jar file which executes the task, and dependency is a Jar which provides the class files to execute the task.**
 
 # Project Management
 
-Maven
-VersionControl(Source Control) System
-	Git
-	SVN
-Issue Tracking tools
-	Jira
-Analysis Tools
-	SonarQube
-Document
-	Wiki / confluence
+### Maven
+
+### VersionControl(Source Control) System
+
+Git
+SVN: Version Control Subversion is one of many version control options available today. It's often abbreviated as 	 SVN.
+
+### Issue Tracking tools
+
+Jira:Jira Software is part of a family of products designed **to help teams of all types manage work**. Originally, Jira was designed as a bug and issue tracker
+
+### Analysis Tools
+
+SonarQube: SonarQube is a Code Quality Assurance tool that collects and analyzes source code, and provides reports for the code quality of your project. It combines static and dynamic analysis tools and enables quality to be measured continually over time.
+
+### Document
+
+Wiki / confluence: Confluence is the wiki software for today's modern team, giving every project and person their own Space to create and share. 
 
 # Test / Quality Analysis
 
-Unit Test vs Integration Test
-Manual Test vs Automation Test
-Maven 
-JUnit
-Mockito
-API test( RESTAssured), PostMan
-PMD/SonaQube Report(Static code scan), Jacoco coverage report
+### Unit Test vs Integration Test
+
+Unit Test: Unit Testing is defined as a type of software testing where individual components of a software are tested.
+
+Integration Test: Integration testing is the process of testing the interface between two software units or modules. Its focus is on determining the correctness of the interface.
+
+|                         Unit Testing                         |                     Integration Testing                      |
+| :----------------------------------------------------------: | :----------------------------------------------------------: |
+| In unit testing each module of the software is tested separately. | In integration testing all modules of the the software are tested combined. |
+| In unit testing tester knows the internal design of the software. | In integration testing doesn’t know the internal design of the software. |
+|  Unit testing is performed first of all testing processes.   | Integration testing is performed after unit testing and before system testing. |
+|             Unit testing is a white box testing.             |         Integration testing is a black box testing.          |
+|    Unit testing is basically performed by the developer.     |       Integration testing is performed by the tester.        |
+|        Detection of defects in unit testing is easy.         |  Detection of defects in integration testing is difficult.   |
+| It tests parts of the project without waiting for others to be completed. |       It tests only after the completion of all parts.       |
+|                 Unit testing is less costly.                 |             Integration testing is more costly.              |
+
+
+
+### Manual Test vs Automation Test
+
+Autaomation Test:Test automation can **automate some repetitive but necessary tasks in a formalized testing process already in place**, or perform additional testing that would be difficult to do manually. Test automation is critical for continuous delivery and continuous testing.
+
+### Maven 
+
+### JUnit
+
+JUnit is a Java unit testing framework that's one of the best test methods for **regression testing**. An open-source framework, it is used to write and run repeatable automated tests.
+
+### Mockito
+
+Mockito is a mocking framework, JAVA-based library that is used for effective unit testing of JAVA applications. Mockito is used to mock interfaces so that a dummy functionality can be added to a mock interface that can be used in unit testing.
+
+### API test( RESTAssured), PostMan
+
+### PMD/SonaQube Report(Static code scan), Jacoco coverage report
 
 # CI/CD
 
@@ -431,14 +514,35 @@ Jenkins Pipeline
 
 # Security
 
-Basic HTTP Authentication(username/password)
-Token based (JWT)
-OAuth2
-Single-sign-on(SSO)
-Authentication vs Authorization
-Server Side validation (@Valid)
-CORS
-Basic Spring Security configuration
+### Basic HTTP Authentication(username/password)
+
+HTTP basic authentication is a simple challenge and response mechanism with which a server can request authentication information (a user ID and password) from a client. The client passes the authentication information to the server in an Authorization header. The authentication information is in base-64 encoding.
+
+### Token based (JWT)
+
+Jason Web Token, JSON Web Token is a proposed Internet standard for creating data with optional signature and/or optional encryption whose payload holds JSON that asserts some number of claims. The tokens are signed either using a private secret or a public/private key. 
+
+### OAuth2
+
+OAuth doesn't share password data but instead uses authorization tokens to prove an identity between consumers and service providers. OAuth is an authentication protocol that allows you to approve one application interacting with another on your behalf without giving away your password.
+
+### Single-sign-on(SSO)
+
+Single sign-on (SSO) is an authentication method that enables users to securely authenticate with multiple applications and websites by using just one set of credentials.
+
+### Authentication vs Authorization
+
+ Authentication confirms that users are who they say they are. Authorization gives those users permission to access a resource.
+
+### Server Side validation (@Valid)
+
+Server-side code is used to validate the data before the data is saved in the database or otherwise used by the application. If the data fails validation, a response is sent back to the client with corrections that the user needs to make.
+
+### CORS
+
+Cross-Origin Resource Sharing (CORS) is an HTTP-header based mechanism that allows a server to indicate any origins (domain, scheme, or port) other than its own from which a browser should permit loading of resources. ... For security reasons, browsers restrict cross-origin HTTP requests initiated from scripts.
+
+### Basic Spring Security configuration
 
 # Database
 
@@ -456,11 +560,21 @@ MongoDB why mongoDB? advantage
 
 # Deployment
 
-Basic SSH knowledge
-Jar file vs War file
-Docker
-image
-container
+### Basic SSH knowledge
+
+### Jar file vs War file
+
+Generally, a JAR file contains Java related resources like libraries, classes etc. JAR file is like winzip file except that Jar files are platform independent. A WAR file is simply a JAR file but **contains only Web related Java files like Servlets, JSP, HTML**.
+
+### ?Docker
+
+Docker is **an open platform for developing, shipping, and running applications**. Docker enables you to separate your applications from your infrastructure so you can deliver software quickly. With Docker, you can manage your infrastructure in the same ways you manage your applications.
+
+### image
+
+Docker images are read-only templates used to build containers. Containers are deployed instances created from those templates. Images and containers **are closely related**, and are essential in powering the Docker software platform.
+
+### container
 
 # Questions
 
