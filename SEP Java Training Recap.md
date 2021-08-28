@@ -2,25 +2,221 @@
 ---
 ## Core Java
 1. Collections
-    - List / Map / Set
+    - List / Map / Set Interfaces
+    
+      ```
+      list: can have duplicate,keep insert position
+      map:key-value pair
+      set: no duplicate
+      ```
+    
+      
+    
     - ArrayList / LinkedList / Array / HashMap / TreeMap / LinkedHashMap / TreeSet / HashSet
+    
+      ```
+      ArrayList:
+      LinkedList:
+      Array:
+      HashMap: dynamic array + linkedlist/red-black tree
+      TreeMap:
+      LinkedHashMap:
+      TreeSet:
+      HashSet:
+      ```
+    
+      ```
+      An object that maps keys to values. A map cannot contain duplicate keys; each key can map to at most one value. In order to make it fast to locate the key-value pair in Big O one time. **Hahsmap internally uses an array of linkedlist**. Each element in this array is a bucket. Hashmap uses the **hashcode()** method to calculate the **index** of the target bucket. After finding the bucket, it uses the **equals()** method to check if there is duplicate key. if the operation is get(), then it will return the key-value paire, if it is put(), it will overwrite the key-value with the new value.If there are two keys having the same hashCode(), due to the nature of hashmap, those two keys will use the same bucket. this is **hash collision**.
+      ```
+    
+      
+    
     - equals() hashcode()
+    
+      ```
+      equals(): == by defualt, need override to compare by vales/attribtues.
+      hashcode(): if two object equals, then they should have the same hashcode, so we need to overwrite the hashcode() method to contains all the values/attributes.
+      ```
+    
+      
 1. Multithreading
     - ConcurrentHashMap / Collections.synchronizedMap(xxxx) -> synchronzedMap / hashtable(X)
+    
+      ```
+      multi-thread safe HashMap, use in high concurrecy situation.将ConcurrentHashMap容器的数据分段存储，每一段数据分配一个Segment（锁），当线程占用其中一个Segment时，其他线程可正常访问其他段数据。
+      ```
+    
+      ```
+      SynchronizedMap的读写就加锁 类似hashtable
+      ```
+    
+      ```
+      hashtable vs hashmap
+      hashtable multithreading safe, not recommaned
+      hashtable slow and do not have null value.
+      ```
+    
     - Synchronized(lock){....}
+    
+      ```
+      **Synchorzied**: used on method, coupling and slow, the execuation will be in a random order (?). In other words, use synchorized with notifyAll( ) cannot contorl the order of thread execution.
+      ```
+    
+      
+    
     - Lock interface
+    
+      ```
+      **Lock:** a interface that lock() the resource for the thread to use, will unlock()  after use. wait will release lock, while sleep will not.
+      
+      **synchronized**: object.wait(), object.notify()/notifyAll(), execuation with random order based on OS
+      
+      **Lock + condition**: condition.await(), condition.signal()/signalAll(), execution with assigned order based on programmers requiremen
+      ```
+    
+      ```
+      join(): 让thread按顺序进行 当前thread结束，才运行下一个thread。
+      ```
+    
+      
 1. Java 8
     - Stream -> terminal operation(foreach, collection) / intermediate operation(filter, map, reduce, flatmap, sorted)
+    
+      ```
+      A stream does not store data and, in that sense, is not a data structure. It also never modifies the underlying data source.This functionality – java.util.stream – supports functional-style operations on streams of elements, such as map-reduce transformations on collections.
+      
+      forEach：it loops over the stream elements, calling the supplied function on each element. TERMINAL
+      map: produces a new stream after applying a function to each element of the original stream NON-TERMINAL
+      collect: its one of the common ways to get stuff out of the stream once we are done with all the processing TERMINAL
+      filter： this produces a new stream that contains elements of the original stream that pass a given test (specified by a Predicate). NON-TERMINAL
+      reduce -  produce one single result from a sequence of elements, by repeatedly applying a combining operation to the elements in the sequence.一个聚合方法，它可以把一个Stream的所有元素按照聚合函数聚合成一个结果。TERMINAL
+      ```
+    
+      
+    
     - Functional Interface (Function, Predicate, Comparator,...)
+    
+      ```
+      Functional interface is a kind of interface that has **only 1 abstract method**.
+      
+      Functional Interface是指带有 @FunctionalInterface 注解的interface。它的特点是其中只有一个子类必须要实现的abstract方法。如果abstract方法前面带有default关键字，则不做计算。其实这个也很好理解，因为Functional Interface改写成为lambda表达式之后，并没有指定实现的哪个方法，如果有多个方法需要实现的话，就会有问题。
+      
+      function<T,R>: apply(T) method 作用：使用传入的lambda expression 对传入数据T（一般是collection)进行操作，返回结果R。有进有出
+      Consumer<T>: accept(T) method 作用：接受传入参数T，不返回。只进不出，performs the operation on the given argument(print?)
+      Predicate<T>: test(T) method 作用：使用传入的lambda expression 对传入数据T（一般是collection)进行判断 返回真假
+      Supplier<T>： get() method 作用：不传入参数，返回一个指定的T值（类如randomInt）不劳而获
+      
+      ```
+    
+      
+    
     - Method References (Class::method)
+    
+      ```
+      Method references are a special type of lambda expressions. They're often used to create simple lambda expressions by referencing existing methods.
+      
+      Reference to a static method	ContainingClass::staticMethodName
+      Reference to an instance method of a particular object containingObject::instanceMethodName
+      Reference to an instance method of an arbitrary object of a particular type	ContainingType::methodName
+      Reference to a constructor	ClassName::new
+      
+      ```
+    
     - Lambda Expression
+    
+      ```
+      one line statement, a simpified anonymous method. can be used as an argument in the functional interface. 
+      ```
+    
+      
+    
     - CompletableFuture(non-blocking Future, vs Future)
+    
     - LocalDateTime Api
+    
+      ```
+      LocalDateTime is an immutable date-time object that represents a date-time, often viewed as year-month-day-hour-minute-second.
+      LocalDate d = LocalDate.now(); // 当前日期
+      LocalTime t = LocalTime.now(); // 当前时间
+      LocalDateTime dt = LocalDateTime.now(); // 当前日期和时间
+      
+      LocalDateTime dt = LocalDateTime.now(); // 当前日期和时间
+      LocalDate d = dt.toLocalDate(); // 转换到当前日期
+      LocalTime t = dt.toLocalTime(); // 转换到当前时间
+      ```
+    
+      
 1. JVM
     - Heap vs Stack
+    
+      ```
+      Heap Area: It is a shared runtime data area and stores the **actual object** in a memory. It is instantiated during the virtual machine startup. There exists one and only one heap for a running JVM process.
+      
+      Method Area: It is a **logical part** of the heap area and is created on virtual machine startup. for Metadata? string pool?
+      
+      Stack:A stack is created at the same time when a **thread** is created and is used to store data and partial results which will be needed while returning value for method and performing dynamic linking.Needs not to be contiguous 连续. 
+      
+      Native Method Stack: A Native Method Stack stores similar data elements as a JVM Stack and it is used to help executing native (non-Java) methods. such as: start0 in thread.start();
+      
+      PC Registers: Each **JVM thread** which carries out the task of a specific method has a **program counter register** associated with it. The non native method has a PC which stores the address of the available JVM instruction whereas in a native method, the value of program counter is undefined. PC register is capable of storing the return address or a native pointer on some specific platform.
+      ```
+    
+      
 1. Garbage Collection
 1. Design Patterns
    - Singleton, factory......
+   
+     ```
+     **creational patterns:** hiding the creation logic, seprating the creation and using of objects. singleton pattern, facttory patter, builder pattern
+     
+     **strucutral pattern:** concern about class and object composition, using simple objects and combined into complex structure. proxy patter
+     
+     **behavioral patter:** concern the behaviour of the object, or to say concern about the communication between objects, observer pattern
+     
+     ### Singleton (important)
+     
+     only one instance is created. It can be used as logger, driver objects, caching, thread pool and so on.
+     
+     pro: only one instance means we do not need to create and destory multi instances, which decrease the usage of memory.
+     ?con: conflic with single responsity, a class should concern about its inside logic, not about how it should be instanced
+     
+     use: when only need one global instance
+     
+     ### Factory
+     
+     we create objects without exposing the creation logic to the client and refer to newly created objects using a common interface.
+     
+     pro:to create one object, client only need to know the name.if we want add a new product, just need to add one more class.
+     		
+     con:every time a new product need a new class, it will add the complexity to the system. and it couples the system to the class.
+     
+     use: we need some object but we only know the name. Hibernate can just change the 方言 and dirver to connet different database.
+     
+     ### Builder
+     
+     builder is a creational design pattern that lets you construct complex objects step by step.
+     Instead of declare different type of constructors, the builder pattern can build the object with input features.
+     
+     pro: easy to build and expandation, same process but different instance.
+     con: the product shoud share similiaries, and if there will be a lot of classes created if the changes are complex.
+     
+     use: when the objects has complex inside logics and contains more than one attribteds.
+     
+     
+     ### Proxy
+     
+     provide substitute for another object, control the access to the original objects, perform some operations before and after request/response(AOP?)
+     
+     static: create before invoke
+     dyanamic: create when invoke during runtime.
+     
+     pro: separete the proxy and real object, decoupling the system,protect the orignal object.
+     con:lower process speed and increate the comlexity of the system.
+     
+     use: AOP
+     ```
+   
+     
 
 ## SQL vs NoSQL
 1. Relationship
@@ -239,7 +435,7 @@
     |                 Unit testing is less costly.                 |             Integration testing is more costly.              |
 
 1. JUnit
-    
+   
     ```
     JUnit is a Java unit testing framework that's one of the best test methods for **regression testing**. An open-source framework, it is used to write and run repeatable automated tests.
     ```
