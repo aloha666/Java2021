@@ -364,6 +364,12 @@
 ## Spring Family
 1. IOC, DI
     - Loose coupling - @Autowired, @Controller, Service, Repository, Bean
+    
+      ```
+      Bean Type: singleton, prototype, session, global session
+      ```
+    
+      
 1. AOP
     - PointCut, Advice, Aspect, Joinpoint
     
@@ -741,8 +747,6 @@ What is the typical day of a software engineer?
    logger:aync, print to define files, have differen levels 
    ```
 
-   
-
 5. what is constrcutor injection? what benefits? what problem?
 
 6. what is a thread pool? 
@@ -767,8 +771,6 @@ What is the typical day of a software engineer?
    //vairable used in lambda should be final?
    ```
 
-   
-
 8. what does @transactional do?
 
 9. what is a report VO?
@@ -776,6 +778,10 @@ What is the typical day of a software engineer?
 10. what is an inputstream?
 
 11. what is an application poerperties?
+
+    ```
+    Properties files are used to keep 'N' number of properties in a single file to run the application in a different environment.
+    ```
 
 12. what is eureka.instance.prefer-ip-address mean?
 
@@ -842,6 +848,15 @@ What is the typical day of a software engineer?
     
 
 16. what is bootstrap.yml?
+
+    ```
+    bootstrap.yml is loaded before application.yml.
+    It is typically used for the following:
+     -when using Spring Cloud Config Server, you should specify spring.application.name and spring.cloud.config.server.git.uri inside bootstrap.yml
+     -some encryption/decryption information
+    ```
+
+    
 
 17. what is zuul service? what benefit?
 
