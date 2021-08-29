@@ -271,20 +271,95 @@
 
 ## Web Services
 1. RESTful
+    
+    ```
+    REST, or REpresentational State Transfer, is an architectural style for providing standards between computer systems on the web, making it easier for systems to communicate with each other.
+    Restful Web Services is **a lightweight, maintainable, and scalable service that is built on the REST architecture**. 
+    ```
+    
     - HTTP JSON
+    
+      ```http
+      HTTP/1.1 200 OK                                 //状态行
+      Date: Sat, 31 Dec 2005 23:59:59 GMT							//响应头
+      Content-Type: text/html;charset=ISO-8859-1
+      Content-Length: 122
+      
+      ＜html＞                                        //响应正文
+      ＜head＞
+      ＜title＞http＜/title＞
+      ＜/head＞
+      ＜body＞
+      ＜!-- body goes here --＞
+      ＜/body＞
+      ＜/html＞
+      ```
+    
+      ```http
+      GET/sample.jspHTTP/1.1               // 请求方法 URI协议/版本
+      Accept:image/gif.image/jpeg,*/*			// Request Header
+      Accept-Language:zh-cn
+      Connection:Keep-Alive
+      Host:localhost
+      User-Agent:Mozila/4.0(compatible;MSIE5.01;Window NT5.0)
+      Accept-Encoding:gzip,deflate
+      
+      username=jinqiao&password=1234       //Request body
+      ```
+    
+      
+    
+      ```
+      HTTP body:json
+      ```
+    
     - Easy simple
+    
 1. SOAP
     - XML
     - Complicated
+    
 1. Microservices
     - popular
+    
     - Docker. cloud. flexble, scalable
+    
     - Service Discovery - Spring Cloud Eureka
+    
     - Ribbon(LB)
+    
     - Sleuth zipkin (trasaction trace)
+    
+      ```
+      sleth:发牌照,trace id, span id
+      zipkin:记录牌照行为(timing data)
+      ```
+    
+      ```
+      Spring Cloud Sleuth is used to generate and attach the trace id, span id to the logs so that these can then be used by tools like Zipkin and ELK for storage and analysis. Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures.
+      ```
+    
     - Zuul (APIGateway)
+    
+      ```
+      advantage:
+      ```
+    
+      
+    
     - Config Server
+    
     - Fault tolerance - Resilience4j(retry-cache-fallback-circuitbreaker)
+    
+      ```
+      Resilience4j is a lightweight, easy-to-use fault tolerance library.
+      retry: try to reconnect in a certain time.Caller A resend the request and see if success, may be connect to other server provide B service.
+      cache: B is not avaiable, return previous data saved in cache.
+      fallback: execute after ciruitbreaker
+      ciruitbreaker: when service B is slow/not available, the caller A may want to shut down service B if the rate is lower than the setting value, the fallback to call another service as replacement.
+      ```
+    
+      
 
 ## Spring Family
 1. IOC, DI
@@ -490,8 +565,15 @@
 ## ?CI/CD
 1. Jenkins - pipeline 
 
+   ![CI/CD Flow](https://www.redhat.com/cms/managed-files/styles/wysiwyg_full_width/s3/ci-cd-flow-desktop.png?itok=2EX0MpQZ)
+
    ```
-   continuous integration Continuous deliver&development
+   continuous integration is an automation process for developers, Successful CI means new code changes to an app are regularly built, tested, and merged to a shared repository. It’s a solution to the problem of having too many branches of an app in development at once that might conflict with each other.
+   
+   Continuous deliver a developer’s changes to an application are automatically bug tested and uploaded to a repository (like GitHub or a container registry), where they can then be deployed to a live production environment by the operations team. It’s an answer to the problem of poor visibility and communication between dev and business teams. To that end, the purpose of continuous delivery is to ensure that it takes minimal effort to deploy new code.
+   
+   Continuous development utomatically releasing a developer’s changes from the repository to production, where it is usable by customers. It addresses the problem of overloading operations teams with manual processes that slow down app delivery. It builds on the benefits of continuous delivery by automating the next stage in the pipeline.
+   
    
    ```
 
@@ -501,6 +583,8 @@
 
 ## Security
 1. Encode / Encryption / Hash 
+
+   
 
 1. JWT
 
@@ -564,7 +648,15 @@
 
 1. ACID
 
+## Add
 
+What will you do after getting a new task?
+What if the project is running slow?
+How to fix an error or exception occured on the server?
+How do you do code review? or what kind of code is good code?
+What are the aspects to consider to start a new project if you are the technical lead?
+Do you have a complete picture of SDLC?
+What is the typical day of a software engineer?
 
 ## Project
 
