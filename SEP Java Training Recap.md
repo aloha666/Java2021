@@ -568,11 +568,11 @@
    ![CI/CD Flow](https://www.redhat.com/cms/managed-files/styles/wysiwyg_full_width/s3/ci-cd-flow-desktop.png?itok=2EX0MpQZ)
 
    ```
-   continuous integration is an automation process for developers, Successful CI means new code changes to an app are regularly built, tested, and merged to a shared repository. It’s a solution to the problem of having too many branches of an app in development at once that might conflict with each other.
+   continuous integration is an automation process for developers, Successful CI means new code changes to an app are regularly built, tested, and merged to a shared repository. It’s a solution to the problem of having too many branches of an app in development at once that might conflict with each other解决bug finding问题.
    
-   Continuous deliver a developer’s changes to an application are automatically bug tested and uploaded to a repository (like GitHub or a container registry), where they can then be deployed to a live production environment by the operations team. It’s an answer to the problem of poor visibility and communication between dev and business teams. To that end, the purpose of continuous delivery is to ensure that it takes minimal effort to deploy new code.
+   Continuous deliver a developer’s changes to an application are automatically bug tested and uploaded to a repository (like GitHub or a container registry), where they can then be deployed to 部署到实时生产环境中 a live production environment by the operations team. It’s an answer to the problem of poor visibility and communication between dev and 运维团队 business teams. To that end, the purpose of continuous delivery is to ensure that it takes minimal effort to deploy new code.
    
-   Continuous development utomatically releasing a developer’s changes from the repository to production, where it is usable by customers. It addresses the problem of overloading operations teams with manual processes that slow down app delivery. It builds on the benefits of continuous delivery by automating the next stage in the pipeline.
+   Continuous development automatically releasing a developer’s changes from the repository to production, where it is usable by customers. It addresses the problem of overloading operations teams with manual processes that slow down app delivery解决部署缓慢问题. It builds on the benefits of continuous delivery by automating the next stage in the pipeline.
    
    
    ```
@@ -590,6 +590,11 @@
 
    ```
    Jason Web Token, JSON Web Token is a proposed Internet standard for creating data with optional signature and/or optional encryption whose payload holds JSON that asserts some number of claims. The tokens are signed either using a private secret or a public/private key. 
+   用户第一次登录服务器
+   在服务器上为该用户生成一个token
+   该token存储在用户的浏览器中
+   用户随后发出的任何请求都将包含该token
+   如果用户退出登录或token失效（如过期），则该token将被销毁。用户必须重新登录以获得新的toke
    ```
 
 1. OAuth2
@@ -665,17 +670,78 @@ What is the typical day of a software engineer?
 1. what is a rest controller?
 
    ```
-   RestController = @Controller + @ResponseBody
+   @RestController = @Controller + @ResponseBody
+   
+   @RequestBody and @ResponseBody annotations are used to bind the HTTP request/response body with a domain object in method parameter or return type.
+   
+   ```
+
+2. how to get pathvariable? what is a @requestparam?
+
+   ```
+   @pathvaribale: extract values from the URI path:
+   @requestparam:extract values from the query string
+   ```
+
+   ```java
+   //http://localhost:8080/foos/abc
+   // ----
+   //ID: abc
+   
+   @GetMapping("/foos/{id}")
+   @ResponseBody
+   public String getFooById(@PathVariable String id) {
+       return "ID: " + id;
+   }
+   ```
+
+   ```java
+   //http://localhost:8080/foos?id=abc
+   //----
+   //ID: abc
+   @GetMapping("/foos")
+   @ResponseBody
+   public String getFooByIdUsingQueryParam(@RequestParam String id) {
+       return "ID: " + id;
+   }
+   ```
+
+   
+
+3. what is the ResponseEntity?
+
+   ```java
+   //ResponseEntity represents the whole HTTP response: status code, headers, and body. As a //result, we can use it to fully configure the HTTP response.
+   
+   @GetMapping("/age")
+   ResponseEntity<String> age(
+     @RequestParam("yearOfBirth") int yearOfBirth) {
+    
+       if (isInFuture(yearOfBirth)) {
+           return new ResponseEntity<>(
+             "Year of birth cannot be in the future", 
+             HttpStatus.BAD_REQUEST);
+       }
+   
+       return new ResponseEntity<>(
+         "Your age is " + calculateAge(yearOfBirth), 
+         HttpStatus.OK);
+   }
    
    ```
 
    
 
-2. how to get pathvariable? what is a @requestparam?
-
-3. what is the ResponseEntity?
-
 4. what is a logger, why we use a logger?
+
+   ```
+   In Java, logging is an important feature that **helps developers to trace out the errors**. In Spring, the log level configurations can be set in the application. properties file which is processed during runtime. Spring supports 5 default log levels, **ERROR , WARN , INFO , DEBUG , and TRACE** , with INFO being the default log level configuration.
+   
+   print:sync, only in console, 
+   logger:aync, print to define files, have differen levels 
+   ```
+
+   
 
 5. what is constrcutor injection? what benefits? what problem?
 
@@ -684,6 +750,7 @@ What is the typical day of a software engineer?
 7. what is the conpletebFuture? what benefit? what usage?
 
    ```java
+   //https://blog.csdn.net/qq_31865983/article/details/106137777
    //future: to get the result of the async result, use future.get(); 虽然Future以及相关使用方法提供了异步执行任务的能力，但是对于结果的获取却是很不方便，只能通过阻塞或者轮询的方式得到任务的结果。
    //future.get() will block the main thread until the result is return, to solve this, we ues completablefuture
    //completablefuture will not block the thread, it will provide a return method or catch exception.
