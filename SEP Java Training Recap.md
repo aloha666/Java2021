@@ -779,18 +779,150 @@ What is the typical day of a software engineer?
 
 12. what is eureka.instance.prefer-ip-address mean?
 
+    ```
+    preferIpAddress to true and, when the application registers with eureka, it uses its IP address rather than its hostname
+    ```
+
 13. what is eureka.server.wait-time-in-ms-when-sync-empty mean?
+
+    ```
+    When the eureka server is started, you cannot wait for the instance registration information from the peer node.同步为空时 等待时间
+    ```
+
+    
 
 14. what is eureka? what is ribbon?@loadbalance?irule()?
 
+    ```
+    Eureka: 遵循AP原则，is a service registry, means , it knows which ever microservices are running and in which port. Eureka is deploying as a sperate application and we can use @EnableEurekaServer annotation along with @SpringBootAPplication to make that app a eureka server. So our eureka service registery is UP and running. From now on all microservices will be registered in this eureka server by using @EnableDiscoveryClient annotation along with @SpringBootAPplication in all deployed microservices.
+    Eureka Server：提供服务的注册与发现
+    Service Provider：服务生产方，将自身服务注册到Eureka中，从而使服务消费方能狗找到
+    Service Consumer：服务消费方，从Eureka中获取注册服务列表，从而找到消费服务
+    
+    EureKa自我保护机制：好死不如赖活着
+    一句话总结就是：某时刻某一个微服务不可用，eureka不会立即清理，依旧会对该微服务的信息进行保存！
+    如果短时间内丢失大量的实例心跳，便会触发eureka server的自我保护机制。
+    
+    Eureka保证的是AP
+    
+    ​ Eureka看明白了这一点，因此在设计时就优先保证可用性。Eureka各个节点都是平等的，几个节点挂掉不会影响正常节点的工作，剩余的节点依然可以提供注册和查询服务。而Eureka的客户端在向某个Eureka注册时，如果发现连接失败，则会自动切换至其他节点，只要有一台Eureka还在，就能保住注册服务的可用性，只不过查到的信息可能不是最新的，除此之外，Eureka还有之中自我保护机制，如果在15分钟内超过85%的节点都没有正常的心跳，那么Eureka就认为客户端与注册中心出现了网络故障，此时会出现以下几种情况：
+    
+    Eureka不在从注册列表中移除因为长时间没收到心跳而应该过期的服务
+    Eureka仍然能够接受新服务的注册和查询请求，但是不会被同步到其他节点上 (即保证当前节点依然可用)
+    当网络稳定时，当前实例新的注册信息会被同步到其他节点中
+    ```
+
+    ```
+    Spring Cloud Ribbon 是基于Netflix Ribbon 实现的一套客户端负载均衡的工具。Consumer side load balancer
+    
+    集中式LB
+    即在服务的提供方和消费方之间使用独立的LB设施，如Nginx(反向代理服务器)，由该设施负责把访问请求通过某种策略转发至服务的提供方！
+    进程式 LB
+    将LB逻辑集成到消费方，消费方从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选出一个合适的服务器。
+    Ribbon 就属于进程内LB，它只是一个类库，集成于消费方进程，消费方通过它来获取到服务提供方的地址！
+    
+    给restTemplate加@loadbalanced,将获取服务地址改成application name
+    
+    同一服务的application name一样 instance id地址不同
+    通过一个IRule Bean制定规则，若不制定，则是轮流规则
+    
+    ```
+
+    
+
 15. what is config service? what advantage?
+
+    ```
+    Spring Cloud Config为分布式系统中的外部配置提供服务器和客户端支持。使用Config Server，您可以在所有环境中管理应用程序的外部属性。
+    ​ spring cloud config 为微服务架构中的微服务提供集中化的外部支持，配置服务器为各个不同微服务应用的所有环节提供了一个中心化的外部配置。
+    
+    Central configuration server provides configurations (properties) to each micro service connected. As mentioned in the above diagram, Spring Cloud Config Server can be used as a central cloud config server by integrating to several environments.
+    ```
+
+    
 
 16. what is bootstrap.yml?
 
 17. what is zuul service? what benefit?
+
+    ```
+    Zull包含了对请求的路由(用来跳转的)和过滤两个最主要功能：Router&Filter
+    
+    ​ 其中路由功能负责将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础，而过滤器功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础
+    
+    @EnableZuulProxy
+    
+    
+    Zuul Server is an API Gateway application. It handles all the requests and performs the dynamic routing of microservice applications. It works as a front door for all the requests. It is also known as Edge Server. Zuul is built to enable dynamic routing, monitoring, resiliency, and security
+    
+    
+    ```
+
+    ```java
+    @EnableZuulProxy
+    @SpringBootApplication
+    public class RoutingAndFilteringGatewayApplication {
+    
+      public static void main(String[] args) {
+        SpringApplication.run(RoutingAndFilteringGatewayApplication.class, args);
+      }
+    
+      @Bean
+      public SimpleFilter simpleFilter() {
+        return new SimpleFilter();
+      }
+    
+    }
+    ```
+
+    
 
 18. why use this name? 命名原则？
 
 19. %s : insert a string here
 
 20. Hystrix? 服务中断 服务降级
+
+    ```
+    微服务A调用微服务B和微服务C，微服务B和微服务C又调用其他的微服务，这就是所谓的“扇出”，如果扇出的链路上某个微服务的调用响应时间过长，或者不可用，对微服务A的调用就会占用越来越多的系统资源，进而引起系统崩溃，所谓的“雪崩效应”。
+    Hystrix 能够保证在一个依赖出问题的情况下，不会导致整个体系服务失败，避免级联故障，以提高分布式系统的弹性。
+    
+    CicketBreaker “断路器”本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控 (类似熔断保险丝) ，向调用方返回一个服务预期的，可处理的备选响应 (FallBack) ，而不是长时间的等待或者抛出调用方法无法处理的异常，这样就可以保证了服务调用方的线程不会被长时间，不必要的占用，从而避免了故障在分布式系统中的蔓延，乃至雪崩。
+    
+    @EnableCircuitBreaker
+    @HystrixCommand(fallbackMethod = "fallbackMethod")
+    ```
+
+    ```java
+    //main.class
+    @SpringBootApplication
+    @EnableCircuitBreaker
+    public class MainClientApplication {
+    
+        @LoadBalanced
+        @Bean
+        public RestTemplate restTemplate() {
+            return new RestTemplate();
+        }
+    
+        public static void main(String[] args) {
+            SpringApplication.run(MainClientApplication.class, args);
+        }
+    
+    }
+    
+    //serviceimpl
+    @HystrixCommand(fallbackMethod = "fallbackMethod", commandProperties = {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds", value = "2000")})
+    private void sendDirectRequests(ReportRequest request) {
+    
+        }
+    
+    //fallback method
+    public void fallbackMethod(ReportRequest request){
+            log.error("Something wrong to generate record in sync, use Async instead");
+            generateReportsAsync(request);
+        }
+    ```
+
+    
+
