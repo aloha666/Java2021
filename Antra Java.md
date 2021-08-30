@@ -6487,7 +6487,7 @@ LB decide which B address to call(包办).
 
 Let service A knows all the B service address and the pick one(选妃). Acheived by service discovery, not signle point failure.
 
-### Eurka
+### Eureka
 
 **Service Discovery** (Eurka Server): remember all IP addresses
 

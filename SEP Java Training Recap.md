@@ -320,6 +320,10 @@
     
     - Docker. cloud. flexble, scalable
     
+      ```
+      Docker is an open source containerization platform. It enables developers to package applications into containers—standardized executable components combining application source code with the operating system (OS) libraries and dependencies required to run that code in any environment.
+      ```
+    
     - Service Discovery - Spring Cloud Eureka
     
     - Ribbon(LB)
@@ -358,12 +362,44 @@
       
 
 ## Spring Family
+
+```
+Spring vs Springboot
+1Opinionated ‘starter' dependencies to simplify the build and application configuration
+Embedded server to avoid complexity in application deployment
+Metrics, Health check, and externalized configuration
+Automatic config for Spring functionality – whenever possible
+```
+
+
+
 1. IOC, DI
     - Loose coupling - @Autowired, @Controller, Service, Repository, Bean
     
       ```
+      The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration, and @ComponentScan
+      
+      @EnableAutoConfiguration: enable Spring Boot’s auto-configuration mechanism
+      @ComponentScan: enable @Component scan on the package where the application is located (see the best practices)
+      @Configuration: allow to register extra beans in the context or import additional configuration classes
+      
+      
+      The @EnableAutoConfiguration annotation enables Spring Boot to auto-configure the application context. Therefore, it automatically creates and registers beans based on both the included jar files in the classpath and the beans defined by us.
+      ```
+      
+      
+      
+      ```
       Bean Type: singleton, prototype, session, global session
       ```
+      
+      ```
+      The Application Context is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
+      
+       It adds more enterprise-specific functionality such as the ability to resolve textual messages from a properties file and the ability to publish application events to interested **event listener**s.
+      ```
+      
+      
     
 1. AOP
     - PointCut, Advice, Aspect, Joinpoint
@@ -389,17 +425,35 @@
       
     
     - use cases - secutiry, cache, audit, log, transaction management @Transactional
+    
 1. MVC
     - @Controller, @RestController
+    
     - @RequestMapping(URL,Method) -> method
+    
     - input @PathVarible @RequestParam @RequestHeader @RequestBody
+    
     - output @ResponseBody - Json/xml -> Jackson and Jax-b
+    
     - @Validated bean validation
+    
+      ```
+      //@valid : method level, or member atteubute
+      //@validated: group level
+      
+      @Validated：用在方法入参上无法单独提供嵌套验证功能。不能用在成员属性（字段）上，也无法提示框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。**不能用在类的属性上**
+      
+      @Valid：用在方法入参上无法单独提供嵌套验证功能。能够用在成员属性（字段）上，提示验证框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。
+      ```
+    
     - @ExceptionHandler -> Exception
+    
     - @ControllerAdvice -> class -> @ExceptionHandler -> global exception handler(?)
+    
 1. Data
     - simplify the dao implementation.
     - JPA  MongoDB
+    
 1. Security
     - Configuration
     
@@ -409,9 +463,24 @@
       @Secured:The Spring Method Level security is used in Spring Boot applications that have user Roles and Authorities configured.
       @Pre-Authorized:This annotation contains a Spring Expression Language (SpEL) snippet that is assessed to determine if the request should be authenticated.
       ```
+    
 1. Cloud
+   
+    ```
+    Spring Cloud provides tools for developers to quickly build some of the common patterns in distributed systems.
+    Its a unmberlla that covers all the needed tool for MS.
+    ```
+    
+    
+    
     - Microservice 
+    
+      ```
+      Microservice architecture – a variant of the service-oriented architecture structural style – arranges an application as a collection of loosely-coupled services. In a microservices architecture, services are fine-grained and the protocols are lightweight
+      ```
+    
     - AWS
+    
     - Messaging/Integration
 
 ## AWS
@@ -678,8 +747,8 @@ What is the typical day of a software engineer?
 2. how to get pathvariable? what is a @requestparam?
 
    ```
-   @pathvaribale: extract values from the URI path:
-   @requestparam:extract values from the query string
+   @pathvariable: extract values from the URI path:
+   @requestparam: extract values from the query string
    ```
 
    ```java
@@ -767,11 +836,11 @@ What is the typical day of a software engineer?
 
 6. what is a thread pool? 
 
-7. what is the conpletebFuture? what benefit? what usage?
+7. what is the completebFuture? what benefit? what usage?
 
    ```java
    //https://blog.csdn.net/qq_31865983/article/details/106137777
-   //future: to get the result of the async result, use future.get(); 虽然Future以及相关使用方法提供了异步执行任务的能力，但是对于结果的获取却是很不方便，只能通过阻塞或者轮询的方式得到任务的结果。
+   //future: to get the result of the async result, use future.get(); 虽然Future以及相关使用方法提供了异步执行任务的能力，但是对于结果的获取却是很不方便，只能通过阻塞get()或者轮询的方式isdone(得到任务的结果。
    //future.get() will block the main thread until the result is return, to solve this, we ues completablefuture
    //completablefuture will not block the thread, it will provide a return method or catch exception.
    
@@ -782,7 +851,7 @@ What is the typical day of a software engineer?
    public CompletableFuture<T> whenComplete(BiConsumer<? super T,? super Throwable> action)
    //catch exception:
    exceptionally(Function<Throwable,? extends T> fn)
-   
+       
        
    //vairable used in lambda should be final?
    ```
@@ -794,7 +863,7 @@ What is the typical day of a software engineer?
    		 -thenApplyAync: 由线程池再分配
    		 
    		 -thenAccept:接受上一个任务的返回值，但无返回
-   		 -thenRun: 没有入， 也不返回
+   		 -thenRun: 没有入参， 也不返回
    		 
    		 -exceptionally:某个任务执行异常时执行的回调方法
    		 
@@ -827,6 +896,10 @@ What is the typical day of a software engineer?
 
 10. what is an inputstream?
 
+    ```
+    InputStream , represents an ordered stream of bytes. In other words, you can read data from a Java InputStream as an ordered sequence of bytes. This is useful when reading data from a file, or received over the network.
+    ```
+
 11. what is an application poerperties?
 
     ```
@@ -848,9 +921,13 @@ What is the typical day of a software engineer?
 14. what is eureka? what is ribbon?@loadbalance?irule()?
 
     ```
+    Microservice architecture – a variant of the Service-Oriented Architecture structural style – arranges an application as a collection of loosely-coupled services. In a microservices architecture, services are fine-grained and the protocols are lightweight
+    ```
+
+    ```
     Eureka: 遵循AP原则，is a service registry, means , it knows which ever microservices are running and in which port. Eureka is deploying as a sperate application and we can use @EnableEurekaServer annotation along with @SpringBootAPplication to make that app a eureka server. So our eureka service registery is UP and running. From now on all microservices will be registered in this eureka server by using @EnableDiscoveryClient annotation along with @SpringBootAPplication in all deployed microservices.
     Eureka Server：提供服务的注册与发现
-    Service Provider：服务生产方，将自身服务注册到Eureka中，从而使服务消费方能狗找到
+    Service Provider：服务生产方，将自身服务注册到Eureka中，从而使服务消费方能找到
     Service Consumer：服务消费方，从Eureka中获取注册服务列表，从而找到消费服务
     
     EureKa自我保护机制：好死不如赖活着
@@ -868,6 +945,8 @@ What is the typical day of a software engineer?
 
     ```
     Ribbon: Client/Consumer side load balancer
+    给restTemplate加@loadbalanced,将获取服务地址改成application name
+    
     Spring Cloud Ribbon 是基于Netflix Ribbon 实现的一套客户端负载均衡的工具。
     
     集中式LB Server Side Load Balancer?
@@ -875,8 +954,6 @@ What is the typical day of a software engineer?
     进程式 LB
     将LB逻辑集成到消费方，消费方从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选出一个合适的服务器。
     Ribbon 就属于进程内LB，它只是一个类库，集成于消费方进程，消费方通过它来获取到服务提供方的地址！
-    
-    给restTemplate加@loadbalanced,将获取服务地址改成application name
     
     同一服务的application name一样 instance id地址不同
     通过一个IRule Bean制定规则，若不制定，则是轮流规则
@@ -910,16 +987,13 @@ What is the typical day of a software engineer?
 17. what is zuul service? what benefit?
 
     ```
-    Zull包含了对请求的路由(用来跳转的)和过滤两个最主要功能：Router &Filter
+    Zull包含了对请求的路由(用来跳转的)和过滤两个最主要功能：Router & Filter
     
     ​ 其中路由功能负责将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础，而过滤器功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础
     
     @EnableZuulProxy
     
-    
-    Zuul Server is an API Gateway application. It handles all the requests and performs the dynamic routing of microservice applications. It works as a front door for all the requests. It is also known as Edge Server. Zuul is built to enable dynamic routing, monitoring, resiliency, and security
-    
-    
+    Zuul Server is an API Gateway application. It handles all the requests and performs the dynamic routing of microservice applications. It works as a front door for all the requests. It is also known as Edge Server. Zuul is built to enable dynamic routing, monitoring, resiliency, and security.
     ```
 
     ```java
@@ -937,6 +1011,14 @@ What is the typical day of a software engineer?
       }
     
     }
+    ```
+
+    ```
+    Zuul大部分功能都是通过过滤器来实现的。Zuul中定义了四种标准过滤器类型，这些过滤器类型对应于请求的典型生命周期。
+    (1) PRE：这种过滤器在请求被路由之前调用。我们可利用这种过滤器实现身份验证、在集群中选择请求的微服务、记录调试信息等。
+    (2) ROUTING：这种过滤器将请求路由到微服务。这种过滤器用于构建发送给微服务的请求，并使用Apache HttpClient或Netfilx Ribbon请求微服务。
+    (3) POST：这种过滤器在路由到微服务以后执行。这种过滤器可用来为响应添加标准的HTTP Header、收集统计信息和指标、将响应从微服务发送给客户端等。
+    (4) ERROR：在其他阶段发生错误时执行该过滤器。
     ```
 
     
@@ -962,7 +1044,6 @@ What is the typical day of a software engineer?
     @SpringBootApplication
     @EnableCircuitBreaker
     public class MainClientApplication {
-    
         @LoadBalanced
         @Bean
         public RestTemplate restTemplate() {
@@ -974,13 +1055,11 @@ What is the typical day of a software engineer?
         }
     
     }
-    
     //serviceimpl
     @HystrixCommand(fallbackMethod = "fallbackMethod", commandProperties = {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds", value = "2000")})
     private void sendDirectRequests(ReportRequest request) {
     
         }
-    
     //fallback method
     public void fallbackMethod(ReportRequest request){
             log.error("Something wrong to generate record in sync, use Async instead");
@@ -989,4 +1068,46 @@ What is the typical day of a software engineer?
     ```
 
     
+
+```java
+@GetMapping("/report")
+public ResposenEntiry<GeneralResponse> listReport(){
+    return ResponseEntity.ok(new GeneralResponse(resportService.getList()));
+}
+
+@DeleteMapping("/report/{id}")
+public ResponseEntity<GeneralResponse> deleteById(@pathVariable String id){
+    try{
+     reportService.deleteById(id);   
+    }catch(RequestNotFoundException e){
+        return ResponsEntity<>(HttpStatus.BAD_REQUEST);
+    }
+    return ResponseEntity.ok(newGeneralResponse());
+}
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
