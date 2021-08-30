@@ -15,12 +15,12 @@
     - ArrayList / LinkedList / Array / HashMap / TreeMap / LinkedHashMap / TreeSet / HashSet
     
       ```
-      ArrayList:
-      LinkedList:
-      Array:
+      ArrayList:use dynamic arrary to store, slow, may need to adjust the array,better for storing and accessing data.
+      LinkedList: use double linked list to store, fast, better for manipulating data.
+      Array: fixed length datatype.
       HashMap: dynamic array + linkedlist/red-black tree
-      TreeMap:
-      LinkedHashMap:
+      TreeMap: red-black tree
+      LinkedHashMap: DLL+hashmap
       TreeSet:
       HashSet:
       ```
@@ -38,7 +38,6 @@
       hashcode(): if two object equals, then they should have the same hashcode, so we need to overwrite the hashcode() method to contains all the values/attributes.
       ```
     
-      
 1. Multithreading
     - ConcurrentHashMap / Collections.synchronizedMap(xxxx) -> synchronzedMap / hashtable(X)
     
@@ -78,7 +77,6 @@
       join(): 让thread按顺序进行 当前thread结束，才运行下一个thread。
       ```
     
-      
 1. Java 8
     - Stream -> terminal operation(foreach, collection) / intermediate operation(filter, map, reduce, flatmap, sorted)
     
@@ -145,7 +143,6 @@
       LocalTime t = dt.toLocalTime(); // 转换到当前时间
       ```
     
-      
 1. JVM
     - Heap vs Stack
     
@@ -161,7 +158,6 @@
       PC Registers: Each **JVM thread** which carries out the task of a specific method has a **program counter register** associated with it. The non native method has a PC which stores the address of the available JVM instruction whereas in a native method, the value of program counter is undefined. PC register is capable of storing the return address or a native pointer on some specific platform.
       ```
     
-      
 1. Garbage Collection
 1. Design Patterns
    - Singleton, factory......
@@ -271,7 +267,7 @@
 
 ## Web Services
 1. RESTful
-    
+   
     ```
     REST, or REpresentational State Transfer, is an architectural style for providing standards between computer systems on the web, making it easier for systems to communicate with each other.
     Restful Web Services is **a lightweight, maintainable, and scalable service that is built on the REST architecture**. 
@@ -369,7 +365,6 @@
       Bean Type: singleton, prototype, session, global session
       ```
     
-      
 1. AOP
     - PointCut, Advice, Aspect, Joinpoint
     
@@ -677,11 +672,9 @@ What is the typical day of a software engineer?
 
    ```
    @RestController = @Controller + @ResponseBody
-   
-   @RequestBody and @ResponseBody annotations are used to bind the HTTP request/response body with a domain object in method parameter or return type.
-   
+   @RequestBody and @ResponseBody annotations are used to bind the HTTP request/response body with a domain object in method parameter or return type
    ```
-
+   
 2. how to get pathvariable? what is a @requestparam?
 
    ```
@@ -749,6 +742,29 @@ What is the typical day of a software engineer?
 
 5. what is constrcutor injection? what benefits? what problem?
 
+   ```
+   **Field Injection** throw everything in field-normal used, use @Autowired
+   
+   Pro: Easy to use, no constructors or setters required.Can be easily combined with the constructor and/or setter approach
+   
+   Con: Less control over object instantiation. A number of dependencies can reach dozens until you notice that something went wrong in your design. No immutability — the same as for setter injection.
+   
+   
+   **Constructor Injection** use a constructor to inject objects,@Autowired can be omitted. (recommended)
+   
+   Pro: 1.**easy for test**; 2.can add check lines since it's method (same as setter injection)  
+   
+   Con: may have **cycle situation** A->B->C->A, can not create any object if autowire in constructor.
+   
+   **Setter Injection** use@Autowired and setter
+   
+   Pro: Flexibility in dependency resolution or object reconfiguration, it can be done anytime. Plus, this freedom solves the circular dependency issue of constructor injection.
+   
+   Con:Null checks are required, because dependencies may not be set at the moment. more error-prone and less secure than constructor injection due to the possibility of overriding dependencies.
+   ```
+
+   
+
 6. what is a thread pool? 
 
 7. what is the conpletebFuture? what benefit? what usage?
@@ -771,7 +787,41 @@ What is the typical day of a software engineer?
    //vairable used in lambda should be final?
    ```
 
+   ```
+   Execute: -supplyAsync: 带返回值
+   		-runAsync:不带返回值
+   Callback: -thenApply: 某个任务完成后执行的操作 带返回值
+   		 -thenApplyAync: 由线程池再分配
+   		 
+   		 -thenAccept:接受上一个任务的返回值，但无返回
+   		 -thenRun: 没有入， 也不返回
+   		 
+   		 -exceptionally:某个任务执行异常时执行的回调方法
+   		 
+   		 -whenComplate:某个任务执行完成后执行的回调方法，无返回
+   		 -handle:同whenComplete但是有返回值
+   ```
+
+   
+
 8. what does @transactional do?
+
+   ```
+   how is transaction AOP? The annotation will tell Spring to start a transaction before the method run and then close it after the method finished.
+   
+   It can start a new transaction and commit or rollback if runtime exception/error happen (check exception will be handled), will not automatically rollback for checked exception.
+   ```
+
+   | 事务隔离级别                                                 | 说明                                                |
+   | ------------------------------------------------------------ | --------------------------------------------------- |
+   | @Transactional(isolation = Isolation.READ_UNCOMMITTED)       | 读取未提交数据(会出现脏读， 不可重复读)，基本不使用 |
+   | @Transactional(isolation = Isolation.READ_COMMITTED)(SQLSERVER默认) | 读取已提交数据(会出现不可重复读和幻读)              |
+   | @Transactional(isolation = Isolation.REPEATABLE_READ)        | 可重复读(会出现幻读)                                |
+   | @Transactional(isolation = Isolation.SERIALIZABLE)           | 串行化                                              |
+
+   | 事务传播行为                                     | 说明                                                   |
+   | ------------------------------------------------ | ------------------------------------------------------ |
+   | @Transactional(propagation=Propagation.REQUIRED) | 如果有事务， 那么加入事务， 没有的话新建一个(默认情况) |
 
 9. what is a report VO?
 
@@ -792,10 +842,8 @@ What is the typical day of a software engineer?
 13. what is eureka.server.wait-time-in-ms-when-sync-empty mean?
 
     ```
-    When the eureka server is started, you cannot wait for the instance registration information from the peer node.同步为空时 等待时间
+    When the eureka server is started, you do not wait for the instance registration information from the peer node. 同步为空时 等待时间
     ```
-
-    
 
 14. what is eureka? what is ribbon?@loadbalance?irule()?
 
@@ -819,9 +867,10 @@ What is the typical day of a software engineer?
     ```
 
     ```
-    Spring Cloud Ribbon 是基于Netflix Ribbon 实现的一套客户端负载均衡的工具。Consumer side load balancer
+    Ribbon: Client/Consumer side load balancer
+    Spring Cloud Ribbon 是基于Netflix Ribbon 实现的一套客户端负载均衡的工具。
     
-    集中式LB
+    集中式LB Server Side Load Balancer?
     即在服务的提供方和消费方之间使用独立的LB设施，如Nginx(反向代理服务器)，由该设施负责把访问请求通过某种策略转发至服务的提供方！
     进程式 LB
     将LB逻辑集成到消费方，消费方从服务注册中心获知有哪些地址可用，然后自己再从这些地址中选出一个合适的服务器。
@@ -861,7 +910,7 @@ What is the typical day of a software engineer?
 17. what is zuul service? what benefit?
 
     ```
-    Zull包含了对请求的路由(用来跳转的)和过滤两个最主要功能：Router&Filter
+    Zull包含了对请求的路由(用来跳转的)和过滤两个最主要功能：Router &Filter
     
     ​ 其中路由功能负责将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础，而过滤器功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础
     
