@@ -448,6 +448,18 @@ Automatic config for Spring functionality – whenever possible
     
     - @ExceptionHandler -> Exception
     
+      ```
+      @ExceptionHandler:controller层面异常处理, 优先级最高
+      实现HandlerExceptionResolver接口，优先级最后
+      @controllerAdvice+@ExceptionHandler，优先级第二
+      
+      优先级中被一个捕获了就不在执行其他的。
+      
+      
+      ```
+    
+      
+    
     - @ControllerAdvice -> class -> @ExceptionHandler -> global exception handler(?)
     
 1. Data
@@ -735,7 +747,23 @@ What is the typical day of a software engineer?
 
 ## Project
 
+0. what is restTemplate? what is openFeign?
 
+   ```
+   Rest Template is used **to create applications that consume RESTful Web Services**.
+   
+   ### OpenFeign Client
+   
+   FeignClient is **a library for creating REST API clients in a declarative way**. progamm	based on interface.
+   
+   Feign allows programmer to abstract the mechanics of calling a REST service. Once you configure and annotate the Feign interface, you can call a REST service by making a simple Java function call. The actual implementation of making a REST call is handled at runtime by Feign. This means that the implementation can be configured without changing your business logic code.
+   
+   advantage: not hard coding url, So there is **no need to write any unit test** as there is no code to test in the first place
+   
+   disadvantage:more effore when create
+   ```
+
+   
 
 1. what is a rest controller?
 
@@ -851,8 +879,9 @@ What is the typical day of a software engineer?
    public CompletableFuture<T> whenComplete(BiConsumer<? super T,? super Throwable> action)
    //catch exception:
    exceptionally(Function<Throwable,? extends T> fn)
-       
-       
+   //when complete 执行完成后会将执行结果和执行过程中抛出得到异常传入回调方法 如果无异常则异常为null
+   whenComplete(Result T, Exception e)
+     
    //vairable used in lambda should be final?
    ```
 
@@ -892,7 +921,14 @@ What is the typical day of a software engineer?
    | ------------------------------------------------ | ------------------------------------------------------ |
    | @Transactional(propagation=Propagation.REQUIRED) | 如果有事务， 那么加入事务， 没有的话新建一个(默认情况) |
 
-9. what is a report VO?
+9. what is @joincolumn?@jointable?
+
+   ```
+   @joincolumn: foreign key (one to one) primary key(one to many)
+   @jointable(joinclumn=pk,inversejoincolumn=f): associate table
+   ```
+
+   
 
 10. what is an inputstream?
 
