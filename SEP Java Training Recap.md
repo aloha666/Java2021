@@ -5,7 +5,7 @@
     - List / Map / Set Interfaces
     
       ```
-      list: can have duplicate,keep insert position
+      list: can have duplicate,keep insert order
       map:key-value pair
       set: no duplicate
       ```
@@ -25,6 +25,15 @@
     
       ```
       An object that maps keys to values. A map cannot contain duplicate keys; each key can map to at most one value. In order to make it fast to locate the key-value pair in Big O one time. **Hahsmap internally uses an array of linkedlist**. Each element in this array is a bucket. Hashmap uses the **hashcode()** method to calculate the **index** of the target bucket. After finding the bucket, it uses the **equals()** method to check if there is duplicate key. if the operation is get(), then it will return the key-value paire, if it is put(), it will overwrite the key-value with the new value.If there are two keys having the same hashCode(), due to the nature of hashmap, those two keys will use the same bucket. this is **hash collision**.
+      ```
+    
+      ```
+      Rules That Every Red-Black Tree Follows: 
+      Every node has a colour either red or black.
+      The root of the tree is always black.
+      There are no two adjacent red nodes (A red node cannot have a red parent or red child).
+      Every path from a node (including root) to any of its descendants NULL nodes has the same number of black nodes.
+      longest distance < 2* short distance
       ```
     
     - equals() hashcode()
@@ -54,6 +63,7 @@
     - Synchronized(lock){....}
     
       ```
+      a synchronized method can only run in one thread in the same time.
       **Synchorzied**: used on method, coupling and slow, the execuation will be in a random order (?). In other words, use synchorized with notifyAll( ) cannot contorl the order of thread execution.
       ```
     
@@ -83,6 +93,8 @@
       filter： this produces a new stream that contains elements of the original stream that pass a given test (specified by a Predicate). NON-TERMINAL
       reduce -  produce one single result from a sequence of elements, by repeatedly applying a combining operation to the elements in the sequence.一个聚合方法，它可以把一个Stream的所有元素按照聚合函数聚合成一个结果。TERMINAL
       ```
+    
+      
     
     - Functional Interface (Function, Predicate, Comparator,...)
     
@@ -179,7 +191,7 @@
      		
      con:every time a new product need a new class, it will add the complexity to the system. and it couples the system to the class.
      
-     use: we need some object but we only know the name. Hibernate can just change the 方言 and dirver to connet different database.
+     use: we need some object but we only know the name. Hibernate can just change the 方言 dialect and dirver to connet different database.
      
      ### Builder
      
@@ -190,7 +202,6 @@
      con: the product shoud share similiaries, and if there will be a lot of classes created if the changes are complex.
      
      use: when the objects has complex inside logics and contains more than one attribteds.
-     
      
      ### Proxy
      
@@ -209,28 +220,37 @@
 ## SQL vs NoSQL
 
 ```
-sql relationa
+sql relational non sql non-relational
 ```
-
-
 
 1. Relationship
     - 1-1, m-1, m-m
+    
 1. Joins
     - outer inner 
+    
 1. Query
     - select from where group by having order by;
     - join ... on...
+    
 1. ORM Object Relation Mapping
     - JPA / Hibernate
     - Lazy Loading/Fetch  eager
     - Cascade (ALL, NONE, MERGE, PERSIST)
+    
 1. SQL vs NoSQL
+
 1. MongoDB - JSON- Schemaless - Replica, Sharding
+
+    ```
+    replica: only master node allow written
+    ```
+
+    
 
 ## Web
 1. HTTP
-    - Request (Method) GET PUT POST DELET (idempotent)
+    - Request (Method) GET PUT POST DELETE (idempotent)
     
       ```
       provider consumer
@@ -280,6 +300,20 @@ sql relationa
     - HTTP JSON
     
       ```http
+      GET/sample.jspHTTP/1.1               // 请求方法 URI协议/版本
+      Accept:image/gif.image/jpeg,*/*			// Request Header
+      Accept-Language:zh-cn
+      Connection:Keep-Alive
+      Host:localhost
+      User-Agent:Mozila/4.0(compatible;MSIE5.01;Window NT5.0)
+      Accept-Encoding:gzip,deflate
+      
+      username=jinqiao&password=1234       //Request body
+      ```
+    
+      
+    
+      ```http
       HTTP/1.1 200 OK                                 //状态行
       Date: Sat, 31 Dec 2005 23:59:59 GMT							//响应头
       Content-Type: text/html;charset=ISO-8859-1
@@ -295,20 +329,6 @@ sql relationa
       ＜/html＞
       ```
     
-      ```http
-      GET/sample.jspHTTP/1.1               // 请求方法 URI协议/版本
-      Accept:image/gif.image/jpeg,*/*			// Request Header
-      Accept-Language:zh-cn
-      Connection:Keep-Alive
-      Host:localhost
-      User-Agent:Mozila/4.0(compatible;MSIE5.01;Window NT5.0)
-      Accept-Encoding:gzip,deflate
-      
-      username=jinqiao&password=1234       //Request body
-      ```
-    
-      
-    
       ```
       HTTP body:json
       ```
@@ -316,9 +336,9 @@ sql relationa
     - Easy simple
     
 1. SOAP
-    
+   
     ```
-    SOAP: XML
+    SOAP: Simple Object Access Protocol
     ```
     
     - XML
@@ -388,12 +408,9 @@ Automatic config for Spring functionality – whenever possible
       ```
       The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration, and @ComponentScan
       
-      @EnableAutoConfiguration: enable Spring Boot’s auto-configuration mechanism
+      @EnableAutoConfiguration: on enables Spring Boot to auto-configure the application context. Therefore, it automatically creates and registers beans based on both the included jar files in the classpath and the beans defined by us.
       @ComponentScan: enable @Component scan on the package where the application is located (see the best practices)
       @Configuration: allow to register extra beans in the context or import additional configuration classes
-      
-      
-      The @EnableAutoConfiguration annotation enables Spring Boot to auto-configure the application context. Therefore, it automatically creates and registers beans based on both the included jar files in the classpath and the beans defined by us.
       
       The Application Context is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
       
@@ -430,7 +447,10 @@ Automatic config for Spring functionality – whenever possible
       ```
     
       ```
-      advice: around, before, after returnning, after throw,after
+      advice: around, before, after returnning, after throw, after
+      
+      Around:**around** Run advice before and after the advised method is invoked. run两次？No.
+      **Around advice** runs "around" a matched method execution. It has the opportunity to do work both before and after the method executes, and to determine when, how, and even if, the method actually gets to execute at all. Around advice is often used if you need to **share state before and after a method execution** in a thread-safe manner (starting and stopping a timer for example).
       ```
     
       
@@ -462,7 +482,7 @@ Automatic config for Spring functionality – whenever possible
       ```
       @ExceptionHandler:controller层面异常处理, 优先级最高
       实现HandlerExceptionResolver接口，优先级最后
-      @controllerAdvice+@ExceptionHandler，优先级第二
+      @controllerAdvice+class+@ExceptionHandler，优先级第二 处理全局异常
       
       优先级中被一个捕获了就不在执行其他的。
       
@@ -491,7 +511,7 @@ Automatic config for Spring functionality – whenever possible
    
     ```
     Spring Cloud provides tools for developers to quickly build some of the common patterns in distributed systems.
-    Its a unmberlla that covers all the needed tool for MS.
+    Its a unmberlla project that covers all the needed tool for MS.
     ```
     
     
@@ -661,8 +681,9 @@ Automatic config for Spring functionality – whenever possible
       ```
       JaCoCo is an open source toolkit for measuring **code coverage** in a code base and reporting it through visual reports
       visulized the code
+      
+      instrcution coverage, branches coverage, cyclematic complexi
       ```
-    
       
     
 1. SonarQube
@@ -940,9 +961,12 @@ What is the typical day of a software engineer?
    | @Transactional(isolation = Isolation.REPEATABLE_READ)        | 可重复读(会出现幻读)                                |
    | @Transactional(isolation = Isolation.SERIALIZABLE)           | 串行化                                              |
 
-   | 事务传播行为                                     | 说明                                                   |
-   | ------------------------------------------------ | ------------------------------------------------------ |
-   | @Transactional(propagation=Propagation.REQUIRED) | 如果有事务， 那么加入事务， 没有的话新建一个(默认情况) |
+   | 事务传播行为                                         | 说明                                                         |
+   | ---------------------------------------------------- | ------------------------------------------------------------ |
+   | @Transactional(propagation=Propagation.REQUIRED)     | 如果有事务， 那么加入事务， 没有的话新建一个(默认情况)       |
+   | @Transactional(propagation=Propagation.REQUIRES_NEW) | 不管是否存在事务，都创建一个新的事务，原来的挂起，新的执行完毕，继续执行老的事务 |
+
+   
 
 9. what is @joincolumn?@jointable?
 
@@ -1033,6 +1057,12 @@ What is the typical day of a software engineer?
     It is typically used for the following:
      -when using Spring Cloud Config Server, you should specify spring.application.name and spring.cloud.config.server.git.uri inside bootstrap.yml
      -some encryption/decryption information
+     
+     
+     cloud.config.fail-fast:在某些情况下，如果服务无法连接到配置服务器，则可能希望启动服务失败。
+     cloud.config.fail-retry-muliplier:指数
+     cloud.config.fail-retry-maxIntervel:初始退避间隔为
+     cloud.config.fail-retry-attempts:重试
     ```
 
 17. what is zuul service? what benefit?
@@ -1045,6 +1075,8 @@ What is the typical day of a software engineer?
     @EnableZuulProxy
     
     Zuul Server is an API Gateway application. It handles all the requests and performs the dynamic routing of microservice applications. It works as a front door for all the requests. It is also known as Edge Server. Zuul is built to enable dynamic routing, monitoring, resiliency, and security.
+    
+    The advantage of this type of design is that common aspects like CORS, authentication, and security can be put into a centralized service, so all common aspects will be applied on each request, and if any changes occur in the future, we just have to update the business logic of this Edge Service
     ```
 
     ```java

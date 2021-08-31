@@ -2014,7 +2014,7 @@ The **java.lang.Object.notifyAll()** wakes up all threads that are waiting on th
 ```java
 
 public class TestNotifyNotifyAll {
- 
+
 	private static Object obj = new Object();
 	
 	public static void main(String[] args) {
