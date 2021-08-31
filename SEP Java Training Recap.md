@@ -10,8 +10,6 @@
       set: no duplicate
       ```
     
-      
-    
     - ArrayList / LinkedList / Array / HashMap / TreeMap / LinkedHashMap / TreeSet / HashSet
     
       ```
@@ -28,8 +26,6 @@
       ```
       An object that maps keys to values. A map cannot contain duplicate keys; each key can map to at most one value. In order to make it fast to locate the key-value pair in Big O one time. **Hahsmap internally uses an array of linkedlist**. Each element in this array is a bucket. Hashmap uses the **hashcode()** method to calculate the **index** of the target bucket. After finding the bucket, it uses the **equals()** method to check if there is duplicate key. if the operation is get(), then it will return the key-value paire, if it is put(), it will overwrite the key-value with the new value.If there are two keys having the same hashCode(), due to the nature of hashmap, those two keys will use the same bucket. this is **hash collision**.
       ```
-    
-      
     
     - equals() hashcode()
     
@@ -61,8 +57,6 @@
       **Synchorzied**: used on method, coupling and slow, the execuation will be in a random order (?). In other words, use synchorized with notifyAll( ) cannot contorl the order of thread execution.
       ```
     
-      
-    
     - Lock interface
     
       ```
@@ -90,8 +84,6 @@
       reduce -  produce one single result from a sequence of elements, by repeatedly applying a combining operation to the elements in the sequence.一个聚合方法，它可以把一个Stream的所有元素按照聚合函数聚合成一个结果。TERMINAL
       ```
     
-      
-    
     - Functional Interface (Function, Predicate, Comparator,...)
     
       ```
@@ -105,8 +97,6 @@
       Supplier<T>： get() method 作用：不传入参数，返回一个指定的T值（类如randomInt）不劳而获
       
       ```
-    
-      
     
     - Method References (Class::method)
     
@@ -125,8 +115,6 @@
       ```
       one line statement, a simpified anonymous method. can be used as an argument in the functional interface. 
       ```
-    
-      
     
     - CompletableFuture(non-blocking Future, vs Future)
     
@@ -159,6 +147,11 @@
       ```
     
 1. Garbage Collection
+
+    ```
+    system.gc(), runtime.getruntime.gc().
+    ```
+
 1. Design Patterns
    - Singleton, factory......
    
@@ -212,9 +205,15 @@
      use: AOP
      ```
    
-     
 
 ## SQL vs NoSQL
+
+```
+sql relationa
+```
+
+
+
 1. Relationship
     - 1-1, m-1, m-m
 1. Joins
@@ -222,7 +221,7 @@
 1. Query
     - select from where group by having order by;
     - join ... on...
-1. ORM
+1. ORM Object Relation Mapping
     - JPA / Hibernate
     - Lazy Loading/Fetch  eager
     - Cascade (ALL, NONE, MERGE, PERSIST)
@@ -232,6 +231,11 @@
 ## Web
 1. HTTP
     - Request (Method) GET PUT POST DELET (idempotent)
+    
+      ```
+      provider consumer
+      ```
+    
     - Reponse (status code)
     
 1. Servlet
@@ -312,6 +316,11 @@
     - Easy simple
     
 1. SOAP
+    
+    ```
+    SOAP: XML
+    ```
+    
     - XML
     - Complicated
     
@@ -321,7 +330,7 @@
     - Docker. cloud. flexble, scalable
     
       ```
-      Docker is an open source containerization platform. It enables developers to package applications into containers—standardized executable components combining application source code with the operating system (OS) libraries and dependencies required to run that code in any environment.
+      Docker is a container to bind the application and running enviorment, build once and run everywhere, differen from VM, it is light weighted and do not require a guest OS, it is isolated at the application level, and can be build as to an image and upload to a repostiry.
       ```
     
     - Service Discovery - Spring Cloud Eureka
@@ -385,18 +394,16 @@ Automatic config for Spring functionality – whenever possible
       
       
       The @EnableAutoConfiguration annotation enables Spring Boot to auto-configure the application context. Therefore, it automatically creates and registers beans based on both the included jar files in the classpath and the beans defined by us.
-      ```
       
-      
-      
-      ```
-      Bean Type: singleton, prototype, session, global session
-      ```
-      
-      ```
       The Application Context is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
       
        It adds more enterprise-specific functionality such as the ability to resolve textual messages from a properties file and the ability to publish application events to interested **event listener**s.
+      ```
+      
+       
+      
+      ```
+      Bean Type: singleton, prototype, session, global session
       ```
       
       
@@ -411,7 +418,7 @@ Automatic config for Spring functionality – whenever possible
       
       **Advice** 通知  This is the actual action to be taken either before or after the method execution.This is **an actual piece of code** that is invoked during the program execution by Spring AOP framework. 什么时候发生？
       
-      **jointpoint**  连接点 **runtime concept, not real code,**  This represents a point in your application where you can plug-in the AOP aspect. 在哪里发生？(code location)  
+      **joinpoint**  连接点 **runtime concept, not real code,**  This represents a point in your application where you can plug-in the AOP aspect. 在哪里发生？(code location)  
       
       **pointcut,** 切入点 This is a set of one or more join points where an advice should be executed.（连接点的集合？） You can specify pointcuts using expressions or patterns as we will see in our AOP examples. 发生在谁身上？
       
@@ -420,6 +427,10 @@ Automatic config for Spring functionality – whenever possible
       **target** 目标 The object being advised by one or more aspects. This object will always be a proxied object, also referred to as the advised object.
       
       **Weaving** Weaving is the process of linking aspects with other application types or objects to create an advised object. This can be done at compile time, load time, or at runtime.
+      ```
+    
+      ```
+      advice: around, before, after returnning, after throw,after
       ```
     
       
@@ -556,12 +567,29 @@ Automatic config for Spring functionality – whenever possible
    ```
    develop-test-User Acceptance Test-Production
    
+   QA:Quality Assuance
    UAT: actual users test the software to validate that it is performing according to the required real-life scenarios.
    ```
 
 1. GIT
 
 1. Maven
+
+   ```
+   Apache Maven is a **software project management and comprehension tool**.
+   
+   ​	src - main - java/res; src-main-test; pom file
+   
+   ​	POM stands for "Project Object Model". The POM contains all necessary information about a project, as well as configurations of plugins to be used during the build process.
+   
+   ​	**life cycle(compile, test,package, install..)**
+   
+   ​	validate - compile -test - package - verify (Integration test) - install - deploy
+   
+   ​	**dependency management**
+   
+   ​	**plugins**
+   ```
 
 1. Agile Scrum
 
@@ -654,19 +682,19 @@ Automatic config for Spring functionality – whenever possible
    
    Continuous deliver a developer’s changes to an application are automatically bug tested and uploaded to a repository (like GitHub or a container registry), where they can then be deployed to 部署到实时生产环境中 a live production environment by the operations team. It’s an answer to the problem of poor visibility and communication between dev and 运维团队 business teams. To that end, the purpose of continuous delivery is to ensure that it takes minimal effort to deploy new code.
    
-   Continuous development automatically releasing a developer’s changes from the repository to production, where it is usable by customers. It addresses the problem of overloading operations teams with manual processes that slow down app delivery解决部署缓慢问题. It builds on the benefits of continuous delivery by automating the next stage in the pipeline.
+   Continuous deployment automatically releasing a developer’s changes from the repository to production, where it is usable by customers. It addresses the problem of overloading operations teams with manual processes that slow down app delivery解决部署缓慢问题. It builds on the benefits of continuous delivery by automating the next stage in the pipeline.
    
+   
+   CI: 应用代码的新更改会定期构建、测试并合并到共享存储库中. 解决在一次开发中有太多应用分支，从而导致相互冲突的问题。
+   CDelivery: 持续交付通常是指开发人员对应用的更改会自动进行错误测试并上传到存储库（如 GitHub 或容器注册表），然后由运维团队将其部署到实时生产环境live production environment 中。这旨在解决开发和运维团队之间可见性及沟通较差的问题。因此，持续交付的目的就是确保尽可能减少部署新代码时所需的工作量。
+   CDeployment: 自动将开发人员的更改从存储库发布到生产环境，以供客户使用。它主要为了解决因手动流程降低应用交付速度，从而使运维团队超负荷的问题。持续部署以持续交付的优势为根基，实现了管道后续阶段的自动化.
    
    ```
-
-   
 
 1. Linux 
 
 ## Security
 1. Encode / Encryption / Hash 
-
-   
 
 1. JWT
 
@@ -694,18 +722,14 @@ Automatic config for Spring functionality – whenever possible
 1. Authentication vs Authorization
 
    ```
-    Authentication confirms that users are who they say they are. Authorization gives those users permission to access a resource.
+    Authentication confirms that usersname and password. Authorization gives those users permission to access a resource.
    ```
-
-   
 
 1. HTTP Authorization Header
 
    ```
    HTTP basic authentication is a simple challenge and response mechanism with which a server can request authentication information (a user ID and password) from a client. The client passes the authentication information to the server in an Authorization header. The authentication information is in base-64 encoding.
    ```
-
-   
 
 1. HTTPS
 
@@ -714,7 +738,6 @@ Automatic config for Spring functionality – whenever possible
    The principal motivations for HTTPS are [authentication]of the accessed [website], and protection of the [privacy] and [integrity] of the exchanged data while in transit. 
    ```
 
-   
 
 ## Other 
 1. Documentation - Swagger RESTful
@@ -739,6 +762,12 @@ Automatic config for Spring functionality – whenever possible
 
 What will you do after getting a new task?
 What if the project is running slow?
+
+```
+Cause No. 1: You have one big thread
+Cause No. 2: Your database is !@#$
+```
+
 How to fix an error or exception occured on the server?
 How do you do code review? or what kind of code is good code?
 What are the aspects to consider to start a new project if you are the technical lead?
@@ -762,8 +791,6 @@ What is the typical day of a software engineer?
    
    disadvantage:more effore when create
    ```
-
-   
 
 1. what is a rest controller?
 
@@ -802,8 +829,6 @@ What is the typical day of a software engineer?
    }
    ```
 
-   
-
 3. what is the ResponseEntity?
 
    ```java
@@ -825,8 +850,6 @@ What is the typical day of a software engineer?
    }
    
    ```
-
-   
 
 4. what is a logger, why we use a logger?
 
@@ -860,9 +883,11 @@ What is the typical day of a software engineer?
    Con:Null checks are required, because dependencies may not be set at the moment. more error-prone and less secure than constructor injection due to the possibility of overriding dependencies.
    ```
 
-   
-
 6. what is a thread pool? 
+
+   ```
+   A thread pool is a pool threads that can be "reused" to execute tasks, so that each thread may execute more than one task. A thread pool is an alternative to creating a new thread for each task you need to execute.
+   ```
 
 7. what is the completebFuture? what benefit? what usage?
 
@@ -900,8 +925,6 @@ What is the typical day of a software engineer?
    		 -handle:同whenComplete但是有返回值
    ```
 
-   
-
 8. what does @transactional do?
 
    ```
@@ -927,8 +950,6 @@ What is the typical day of a software engineer?
    @joincolumn: foreign key (one to one) primary key(one to many)
    @jointable(joinclumn=pk,inversejoincolumn=f): associate table
    ```
-
-   
 
 10. what is an inputstream?
 
@@ -961,12 +982,12 @@ What is the typical day of a software engineer?
     ```
 
     ```
-    Eureka: 遵循AP原则，is a service registry, means , it knows which ever microservices are running and in which port. Eureka is deploying as a sperate application and we can use @EnableEurekaServer annotation along with @SpringBootAPplication to make that app a eureka server. So our eureka service registery is UP and running. From now on all microservices will be registered in this eureka server by using @EnableDiscoveryClient annotation along with @SpringBootAPplication in all deployed microservices.
+    Eureka: 遵循AP原则，is a service registry, means , it knows which ever microservices are running and in which port. Eureka is deploying as a sperate application and we can use @EnableEurekaServer annotation along with @SpringBootApplication to make that app a eureka server. So our eureka service registery is UP and running. From now on all microservices will be registered in this eureka server by using @EnableDiscoveryClient annotation along with @SpringBootAPplication in all deployed microservices.
     Eureka Server：提供服务的注册与发现
     Service Provider：服务生产方，将自身服务注册到Eureka中，从而使服务消费方能找到
     Service Consumer：服务消费方，从Eureka中获取注册服务列表，从而找到消费服务
     
-    EureKa自我保护机制：好死不如赖活着
+    Eurka自我保护机制：好死不如赖活着
     一句话总结就是：某时刻某一个微服务不可用，eureka不会立即清理，依旧会对该微服务的信息进行保存！
     如果短时间内丢失大量的实例心跳，便会触发eureka server的自我保护机制。
     
@@ -996,8 +1017,6 @@ What is the typical day of a software engineer?
     
     ```
 
-    
-
 15. what is config service? what advantage?
 
     ```
@@ -1007,8 +1026,6 @@ What is the typical day of a software engineer?
     Central configuration server provides configurations (properties) to each micro service connected. As mentioned in the above diagram, Spring Cloud Config Server can be used as a central cloud config server by integrating to several environments.
     ```
 
-    
-
 16. what is bootstrap.yml?
 
     ```
@@ -1017,8 +1034,6 @@ What is the typical day of a software engineer?
      -when using Spring Cloud Config Server, you should specify spring.application.name and spring.cloud.config.server.git.uri inside bootstrap.yml
      -some encryption/decryption information
     ```
-
-    
 
 17. what is zuul service? what benefit?
 
@@ -1057,9 +1072,9 @@ What is the typical day of a software engineer?
     (4) ERROR：在其他阶段发生错误时执行该过滤器。
     ```
 
-    
-
 18. why use this name? 命名原则？
+
+    ![img](https://pic4.zhimg.com/80/v2-59c4d62185a8ff082bf331e361f51c2f_720w.jpg)
 
 19. %s : insert a string here
 
@@ -1103,7 +1118,6 @@ What is the typical day of a software engineer?
         }
     ```
 
-    
 
 ```java
 @GetMapping("/report")
@@ -1125,7 +1139,26 @@ public ResponseEntity<GeneralResponse> deleteById(@pathVariable String id){
 
 ```
 
+## Self
 
+Reflection API & Classloader
+
+```
+### ClassLoader
+
+The Java ClassLoader is a part of the Java Runtime Environment that dynamically loads Java classes into the Java Virtual Machine.no
+
+### Reflection: 
+
+Reflection is an API which is used to examine or modify the behavior of methods, classes, interfaces at the run time. (是不是不利于encapsulation)
+
+java中class.forName()和classLoader都可用来对类进行加载。
+
+class.forName()前者除了将类的.class文件加载到jvm中之外，还会对类进行解释，执行类中的static块。Returns the Class object associated with the class or interface with the given string name. Invoking this method is equivalent to: Class.forName(className, true, currentLoader)
+
+而classLoader只干一件事情，就是将.class文件加载到jvm中，不会执行static中的内容,只有在newInstance才会去执行static块。
+Invoking this method is equivalent to invoking loadClass(name, false).
+```
 
 
 
