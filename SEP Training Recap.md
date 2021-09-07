@@ -453,21 +453,25 @@ Automatic config for Spring functionality – whenever possible
       **Around advice** runs "around" a matched method execution. It has the opportunity to do work both before and after the method executes, and to determine when, how, and even if, the method actually gets to execute at all. Around advice is often used if you need to **share state before and after a method execution** in a thread-safe manner (starting and stopping a timer for example).
       ```
     
-      
+    - use cases - security, cache, audit, log, transaction management @Transactional
     
-    - use cases - secutiry, cache, audit, log, transaction management @Transactional
+      
     
 1. MVC
     - @Controller, @RestController
-    
+
+      ```
+       @ResponseBody: This annotation enables automatic serialization of the return object into the HttpResponse.
+      ```
+
     - @RequestMapping(URL,Method) -> method
-    
+
     - input @PathVarible @RequestParam @RequestHeader @RequestBody
-    
+
     - output @ResponseBody - Json/xml -> Jackson and Jax-b
-    
+
     - @Validated bean validation
-    
+
       ```
       //@valid : method level, or member atteubute
       //@validated: group level
@@ -476,27 +480,24 @@ Automatic config for Spring functionality – whenever possible
       
       @Valid：用在方法入参上无法单独提供嵌套验证功能。能够用在成员属性（字段）上，提示验证框架进行嵌套验证。能配合嵌套验证注解@Valid进行嵌套验证。
       ```
-    
+
     - @ExceptionHandler -> Exception
-    
+
+    - @ControllerAdvice -> class -> @ExceptionHandler -> global exception handler(?)
+
       ```
-      @ExceptionHandler:controller层面异常处理, 优先级最高
-      实现HandlerExceptionResolver接口，优先级最后
-      @controllerAdvice+class+@ExceptionHandler，优先级第二 处理全局异常
+      - @ExceptionHandler:controller层面异常处理, 优先级最高
+      - @controllerAdvice+class+@ExceptionHandler，优先级第二 处理全局异常
+      - 实现HandlerExceptionResolver接口，优先级最后
       
       优先级中被一个捕获了就不在执行其他的。
-      
-      
       ```
-    
-      
-    
-    - @ControllerAdvice -> class -> @ExceptionHandler -> global exception handler(?)
-    
-1. Data
+
+    - Data
+
     - simplify the dao implementation.
     - JPA  MongoDB
-    
+
 1. Security
     - Configuration
     
@@ -513,8 +514,6 @@ Automatic config for Spring functionality – whenever possible
     Spring Cloud provides tools for developers to quickly build some of the common patterns in distributed systems.
     Its a unmberlla project that covers all the needed tool for MS.
     ```
-    
-    
     
     - Microservice 
     
@@ -1200,9 +1199,119 @@ Invoking this method is equivalent to invoking loadClass(name, false).
 
 
 
+# Interview
 
+## 08/19/2021 - Tesla 
 
+first round
+when some service run slow, how to check
+coding: design Max Stack
+coding: how to build a word dictionary to store words， like applications, apple, and appointments. And how to find all the words starting with “app”?
 
+## 08/18/2021 - Capital One
+
+self introduction, project
+coding: rest api design, how to write the get mapping
+AWS experience
+java 8 features
+
+## 08/17-2021 - Walmart Lab
+
+create an REST API, use SpringBoot, what are the steps involved? Write down all the steps
+
+## Walmart  final 
+
+what is message queue
+how do you cache 
+coding: match (, [, {, ), ], }
+coding: sort Person object by multiple attributes like name and age
+
+## 2021/08/17 - Walmart Lab 1st -
+
+where did you use multi-threading
+how to debug
+how to improve server performance
+coding: longest palindrom substring
+cicd
+how does server handle fail tolerance 
+how to solve production issues
+
+## 2021/08/17 - Apple 1st
+
+multithread in your project
+coding : group anagram word
+coding: design rest api and write spring controller
+spring bean scope
+AWS experience
+jar vs war file
+completableFuture
+how to create thread pool
+@RestController vs @Controller
+functional programming 
+supplier vs consumer
+s3 bucket
+how to run spring project
+how to deploy the project
+
+##  2021/08/13 - Apple
+
+biggest challenge in your previous project
+what is Mono class
+coding: reverse linked list
+coding: merge two array in ascending order
+coding: remove node from the last
+
+## 2021/08/13 - Apple 
+
+CICD pipeline
+how to test/start your app locally
+coding: group anagrams
+ArrayList vs LinkedList
+annotations in spring 
+types of dependency injection
+multi-thread
+executor service
+Future
+sns, sqs
+java 8, java 11
+
+## 2021/08/12 - Apple
+
+what the spring boot version you use
+restful api
+block and non-blocking request
+multi thread
+webclient
+
+## 2021/08/06 - Swift
+
+what is ip address
+what is subnet
+ssh 
+jps, top
+how to make increase to 100% usage of cpu 
+coding: fibernaic
+static keyword
+public keyword
+main method 
+override vs overload
+java is multi inheritance?
+function interface
+coding: reverse string
+
+## Equifax Inc.
+
+gcp or AWS experience
+spring experience
+security experience
+JWT token 
+how to valid the user credential 
+how do you config the spring security
+splunk
+flatmap vs map
+filter(Predicate)
+@PostMapping
+bean scope
 
 
 
