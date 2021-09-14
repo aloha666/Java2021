@@ -91,7 +91,7 @@
       map: produces a new stream after applying a function to each element of the original stream NON-TERMINAL
       collect: its one of the common ways to get stuff out of the stream once we are done with all the processing TERMINAL
       filter： this produces a new stream that contains elements of the original stream that pass a given test (specified by a Predicate). NON-TERMINAL
-      reduce -  produce one single result from a sequence of elements, by repeatedly applying a combining operation to the elements in the sequence.一个聚合方法，它可以把一个Stream的所有元素按照聚合函数聚合成一个结果。TERMINAL
+      reduce:  produce one single result from a sequence of elements, by repeatedly applying a combining operation to the elements in the sequence.一个聚合方法，它可以把一个Stream的所有元素按照聚合函数聚合成一个结果。NON-TERMINAL
       ```
     
       
@@ -394,13 +394,11 @@ sql relational non sql non-relational
 
 ```
 Spring vs Springboot
-1Opinionated ‘starter' dependencies to simplify the build and application configuration
+Springboot ‘starter' dependencies to simplify the build and application configuration
 Embedded server to avoid complexity in application deployment
 Metrics, Health check, and externalized configuration
 Automatic config for Spring functionality – whenever possible
 ```
-
-
 
 1. IOC, DI
     - Loose coupling - @Autowired, @Controller, Service, Repository, Bean
