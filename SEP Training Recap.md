@@ -1163,9 +1163,6 @@ public ResponseEntity<GeneralResponse> deleteById(@pathVariable String id){
     }
     return ResponseEntity.ok(newGeneralResponse());
 }
-
-
-
 ```
 
 ## Self
