@@ -374,8 +374,6 @@ sql relational non sql non-relational
       advantage:
       ```
     
-      
-    
     - Config Server
     
     - Fault tolerance - Resilience4j(retry-cache-fallback-circuitbreaker)
@@ -406,9 +404,9 @@ Automatic config for Spring functionality – whenever possible
       ```
       The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration, and @ComponentScan
       
-      @EnableAutoConfiguration: on enables Spring Boot to auto-configure the application context. Therefore, it automatically creates and registers beans based on both the included jar files in the classpath and the beans defined by us.
-      @ComponentScan: enable @Component scan on the package where the application is located (see the best practices)
-      @Configuration: allow to register extra beans in the context or import additional configuration classes
+      @EnableAutoConfiguration(配置bean): on enables Spring Boot to auto-configure the application context. Therefore, it automatically creates and registers beans based on both the included jar files in the classpath and the beans defined by us.
+      @ComponentScan(发现bean): enable @Component scan on the package where the application is located (see the best practices)
+      @Configuration(内部bean): allow to register extra beans in the context or import additional configuration classes
       
       The Application Context is Spring's advanced container. Similar to BeanFactory, it can load bean definitions, wire beans together, and dispense beans upon request. 
       
@@ -1185,128 +1183,6 @@ class.forName()前者除了将类的.class文件加载到jvm中之外，还会�
 而classLoader只干一件事情，就是将.class文件加载到jvm中，不会执行static中的内容,只有在newInstance才会去执行static块。
 Invoking this method is equivalent to invoking loadClass(name, false).
 ```
-
-
-
-
-
-
-
-
-
-# Interview
-
-## 08/19/2021 - Tesla 
-
-first round
-when some service run slow, how to check
-coding: design Max Stack
-coding: how to build a word dictionary to store words， like applications, apple, and appointments. And how to find all the words starting with “app”?
-
-## 08/18/2021 - Capital One
-
-self introduction, project
-coding: rest api design, how to write the get mapping
-AWS experience
-java 8 features
-
-## 08/17-2021 - Walmart Lab
-
-create an REST API, use SpringBoot, what are the steps involved? Write down all the steps
-
-## Walmart  final 
-
-what is message queue
-how do you cache 
-coding: match (, [, {, ), ], }
-coding: sort Person object by multiple attributes like name and age
-
-## 2021/08/17 - Walmart Lab 1st -
-
-where did you use multi-threading
-how to debug
-how to improve server performance
-coding: longest palindrom substring
-cicd
-how does server handle fail tolerance 
-how to solve production issues
-
-## 2021/08/17 - Apple 1st
-
-multithread in your project
-coding : group anagram word
-coding: design rest api and write spring controller
-spring bean scope
-AWS experience
-jar vs war file
-completableFuture
-how to create thread pool
-@RestController vs @Controller
-functional programming 
-supplier vs consumer
-s3 bucket
-how to run spring project
-how to deploy the project
-
-##  2021/08/13 - Apple
-
-biggest challenge in your previous project
-what is Mono class
-coding: reverse linked list
-coding: merge two array in ascending order
-coding: remove node from the last
-
-## 2021/08/13 - Apple 
-
-CICD pipeline
-how to test/start your app locally
-coding: group anagrams
-ArrayList vs LinkedList
-annotations in spring 
-types of dependency injection
-multi-thread
-executor service
-Future
-sns, sqs
-java 8, java 11
-
-## 2021/08/12 - Apple
-
-what the spring boot version you use
-restful api
-block and non-blocking request
-multi thread
-webclient
-
-## 2021/08/06 - Swift
-
-what is ip address
-what is subnet
-ssh 
-jps, top
-how to make increase to 100% usage of cpu 
-coding: fibernaic
-static keyword
-public keyword
-main method 
-override vs overload
-java is multi inheritance?
-function interface
-coding: reverse string
-
-## Equifax Inc.
-
-gcp or AWS experience
-spring experience
-security experience
-JWT token 
-how to valid the user credential 
-how do you config the spring security
-splunk
-flatmap vs map
-filter(Predicate)
-@PostMapping
-bean scope
 
 
 
