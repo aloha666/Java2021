@@ -1186,9 +1186,27 @@ Invoking this method is equivalent to invoking loadClass(name, false).
 
 
 
+# Interview
 
+## Code Coverage
 
+语句覆盖(StatementCoverage) : 度量被测代码中每个可执行语句是否被执行到了
 
+判定覆盖(DecisionCoverage): 度量程序中每一个判定的分支是否都被测试到了
+
+条件覆盖(ConditionCoverage): 度量判定中的每个子表达式结果true和false是否被测试到了.条件覆盖不是将判定中的每个条件表达式的结果进行排列组合，而是只要每个条件表达式的结果true和false测试到了就OK了.
+
+路径覆盖(PathCoverage): 度量了是否函数的每一个分支都被执行了.就是所有可能的分支都执行一遍，有多个分支嵌套时，需要对多个分支进行排列组合，可想而知，测试路径随着分支的数量指数级别增加
+
+```
+a. 覆盖率数据只能代表你测试过哪些代码，不能代表你是否测试好这些代码。（比如上面第一个除零Bug）
+
+b. 不要过于相信覆盖率数据。
+
+c. 不要只拿语句覆盖率(行覆盖率)来考核你的测试人员。
+
+d. 路径覆盖率 > 判定覆盖 > 语句覆盖
+```
 
 
 
