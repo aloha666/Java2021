@@ -235,8 +235,12 @@ sql relational non sql non-relational
     
 1. ORM Object Relation Mapping
     - JPA / Hibernate
+    
     - Lazy Loading/Fetch  eager
+    
     - Cascade (ALL, NONE, MERGE, PERSIST)
+    
+      **When we perform some action on the target entity, the same action will be applied to the associated entity.**
     
 1. SQL vs NoSQL
 
@@ -341,7 +345,10 @@ sql relational non sql non-relational
     SOAP: Simple Object Access Protocol
     ```
     
-    - XML
+    - XML/WSDL
+    
+      WSDL is a xml files include all the information about the resource locations and method, it like a package, the consumer call directly call the method in the WSDL file to interact with the resource.
+    
     - Complicated
     
 1. Microservices
@@ -539,6 +546,7 @@ Automatic config for Spring functionality – whenever possible
    ```
    IAM:AWS Identity and Access Management (IAM) enables you to manage access to AWS services and resources securely.
    VPC:Amazon Virtual Private Cloud (Amazon VPC) enables you to launch AWS resources into a virtual network that you've defined. 
+   这是一种运行在公有云上，将一部分公有云资源为某个用户隔离出来，给这个用户私有使用的资源的集合。VPC是这么一种云，它由公有云管理，运行在公共资源上，但是保证每个用户之间的资源是隔离，用户在使用的时候不受其他用户的影响，感觉像是在使用自己的私有云一样。
    ```
 
    
@@ -570,7 +578,7 @@ Automatic config for Spring functionality – whenever possible
    ```
    SNS:Amazon Simple Notification Service is a notification service provided as part of Amazon Web Services
    SQS:Amazon Simple Queue Service is a distributed message queuing service introduced by Amazon.com
-   
+   SNS- create topic, SQS - subscribe to the topic
    AWS SNS is a publisher subscriber network, where subscribers can subscribe to topics and will receive messages whenever a publisher publishes to that topic. AWS SQS is a queue service, which stores messages in a queue
    ```
 
