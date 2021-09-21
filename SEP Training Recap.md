@@ -1210,3 +1210,67 @@ d. 路径覆盖率 > 判定覆盖 > 语句覆盖
 
 
 
+
+
+## Agile Develop
+
+### waterflow style: 
+
+step by step, too long and hard to maintain
+
+
+
+### Agile style: 
+
+divide project to pieces/**sprint** and solve one by one,
+
+**Story Ticket**: 1.business logic (Todo) 2. Accept Crietia (result to be expected) 
+
+For each sprint, a developer work on story ticket, maintain a list of steps to achieve the story ticket. Then start writing codes. After finish, submit to PM for review. Then deploy.
+
+
+
+### Scrum Meeting
+
+Determine the tickets
+
+
+
+### CICD Pipeline
+
+#### Dev Pipeline
+
+Start -> Build -> Test 1 -> Test 2 -> Code Quality Check (SonarQube) -> Deploy to Dev Environment
+
+#### QA Pipeline
+
+Start -> Build -> Test 1 -> Test 2 -> Code Quality Check (SonarQube) -> Deploy to QA Environment
+
+#### Prod Pipeline
+
+Start -> Build -> Test 1 -> Test 2 -> Code Quality Check (SonarQube) -> Deploy to Production Environment
+
+
+
+### Retro Meeting After Sprint
+
+discuss the result of sprint, thing to keep, enhance and change
+
+
+
+### Archteicture  Project
+
+ Introduce the project:
+
+business logic (3 sentences) -> Archtecture of the project? From UI to database, how is the data flow? 
+
+
+
+```
+You can tell them that you used MVC because you want to split the presentation logic from the appearance of your application so that a graphical designer or frontend developer can create the frontend independently from the backend developer that creates the application logic.
+
+The reason for using Hibernate is to isolate the business logic from the database code so that a DBA can make choices about what database to use and how to configure it and the architect that creates the domain model can do so without having to worry about database-specific features.
+
+Using a multi-tier application like what you describe makes it much more maintainable and it will cost your prospective employer/client much less time and money to have you or others develop new features, and they will be more robust because it is easier to debug and test them since each feature can be isolated from the rest when testing.
+```
+
