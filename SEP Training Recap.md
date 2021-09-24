@@ -708,13 +708,12 @@ Automatic config for Spring functionality – whenever possible
    
    Continuous deployment automatically releasing a developer’s changes from the repository to production, where it is usable by customers. It addresses the problem of overloading operations teams with manual processes that slow down app delivery解决部署缓慢问题. It builds on the benefits of continuous delivery by automating the next stage in the pipeline.
    
-   
    CI: 应用代码的新更改会定期构建、测试并合并到共享存储库中. 解决在一次开发中有太多应用分支，从而导致相互冲突的问题。
    CDelivery: 持续交付通常是指开发人员对应用的更改会自动进行错误测试并上传到存储库（如 GitHub 或容器注册表），然后由运维团队将其部署到实时生产环境live production environment 中。这旨在解决开发和运维团队之间可见性及沟通较差的问题。因此，持续交付的目的就是确保尽可能减少部署新代码时所需的工作量。
    CDeployment: 自动将开发人员的更改从存储库发布到生产环境，以供客户使用。它主要为了解决因手动流程降低应用交付速度，从而使运维团队超负荷的问题。持续部署以持续交付的优势为根基，实现了管道后续阶段的自动化.
    
    ```
-
+   
 1. Linux 
 
 ## Security
@@ -1235,8 +1234,6 @@ divide project to pieces/**sprint** and solve one by one,
 **Story Ticket**: 1.business logic (Todo) 2. Accept Crietia (result to be expected) 
 
 For each sprint, a developer work on story ticket, maintain a list of steps to achieve the story ticket. Then start writing codes. After finish, submit to PM for review. Then deploy.
-
-
 
 ### Scrum Meeting
 
